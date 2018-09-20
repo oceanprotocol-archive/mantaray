@@ -6,6 +6,7 @@
 >    [oceanprotocol.com](https://oceanprotocol.com)
 
 TODO Change this to match the repo name and testing environments
+
 [![Travis (.com)](https://img.shields.io/travis/com/oceanprotocol/oceandb-elasticsearch-driver.svg)](https://travis-ci.com/oceanprotocol/oceandb-elasticsearch-driver)
 [![Codacy coverage](https://img.shields.io/codacy/coverage/de067a9402c64b989c76b27cfc74fefe.svg)](https://app.codacy.com/project/ocean-protocol/oceandb-elasticsearch-driver/dashboard)
 [![PyPI](https://img.shields.io/pypi/v/oceandb-elasticsearch-driver.svg)](https://pypi.org/project/oceandb-elasticsearch-driver/)
@@ -35,6 +36,8 @@ Manage assets for data science
  -
 
 ## Prerequisites
+TODO Add prereqs from quickstart
+## Quickstart
 
 ### Create a new virtual environment
 Using pip, conda, etc.
@@ -52,9 +55,7 @@ Install the package itself, from local git repo, or online from Github;
 `conda env update --name mantaray1`
 
 `keeper-contracts` running
-## Quickstart
 
-...
 
 
 ## Environment variables
