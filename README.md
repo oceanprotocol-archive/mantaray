@@ -2,7 +2,7 @@
 
 # ocean-repo-name
 
->    🐳  [Description of repo](https://www.elastic.co/) component for (Python).
+>    🐳  [Data Science level 2 ](https://www.elastic.co/) production and management for (Python).
 >    [oceanprotocol.com](https://oceanprotocol.com)
 
 TODO Change this to match the repo name and testing environments
@@ -28,14 +28,30 @@ TODO Change this to match the repo name and testing environments
 
 ## Features
 
-TODO
-Elasticsearch driver to connect implementing OceanDB.
+Manage assets for data science
+ - Upload datasets and metadata for production testing
+ -
+ - Register assets into smart contracts
+ -
 
 ## Prerequisites
 
-TODO
-You should have running a elasticsearch instance.
+### Create a new virtual environment
+Using pip, conda, etc.
 
+Activate the environment.
+### Install the [osmosis-aws-driver](https://github.com/oceanprotocol/osmosis-aws-driver) S3 plugin to manage datasets on S3
+
+
+Install the package itself, from local git repo, or online from Github;
+`~/ocn/osmosis-aws-driver/pip install -e .`
+
+`pip install git+https://github.com/tangentlabs/django-oscar-paypal.git@issue/34/oscar-0.6`
+
+
+`conda env update --name mantaray1`
+
+`keeper-contracts` running
 ## Quickstart
 
 ...
