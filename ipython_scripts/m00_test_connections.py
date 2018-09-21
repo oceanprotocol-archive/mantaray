@@ -40,20 +40,26 @@ logging.debug("Current working directory: {}".format(os.getcwd()))
 
 #PATH_PROJECT_BASE = 
 #assert os.path.exists(PATH_PROJECT_BASE)
-FNAME_SOURCE_CATALOG = "OceanDataSets_master catalog clean.csv"
+FNAME_SOURCE_CATALOG = "Original/OceanDataSets_master catalog clean.csv"
 FNAME_CURRENT_CATALOG = r"Master catalog current.csv"
 PATH_SOURCE_CATALOGUE = os.path.join(os.getcwd(),'catalog', FNAME_SOURCE_CATALOG)
 PATH_CURRENT_CATALOGUE = os.path.join(os.getcwd(),'catalog', FNAME_CURRENT_CATALOG)
 assert os.path.exists(PATH_SOURCE_CATALOGUE), "{}".format(PATH_SOURCE_CATALOGUE)
 assert os.path.exists(PATH_CURRENT_CATALOGUE), "{}".format(PATH_CURRENT_CATALOGUE)
 
-PATH_DATA_CATALOGUE_CLEAN = os.path.join(PATH_PROJECT_BASE,'planktonDS_data_seeding/OceanDataSets_master catalog clean.csv')
-
 #%% Load the data catalogue
-df = pd.read_csv(PATH_DATA_CATALOGUE)
-df.columns
+df = pd.read_csv(PATH_CURRENT_CATALOGUE)
+res = df.head()
+
+#df.drop('Unnamed: 0')
 
 
+#dropit = ['Unnamed: 0']
+#df = df.drop(dropit,axis=1)
+
+#df.to_csv(PATH_CURRENT_CATALOGUE, index=False)
+
+#df.columns
 
 #%%
 
