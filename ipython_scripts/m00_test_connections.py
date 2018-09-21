@@ -31,7 +31,8 @@ logger.handlers = [handler]
 logger.critical("Logging started")
 
 
-
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 #%% IO
 # The working directory is the repo root
 logging.debug("Current working directory: {}".format(os.getcwd()))
@@ -49,8 +50,17 @@ assert os.path.exists(PATH_CURRENT_CATALOGUE), "{}".format(PATH_CURRENT_CATALOGU
 
 #%% Load the data catalogue
 df = pd.read_csv(PATH_CURRENT_CATALOGUE)
-res = df.head()
 
+total_GB = sum(df.loc[:,'SizeGB'])
+logging.debug("Loaded data catalogue with {} records representing {:0.0f} GB".format(len(df),total_GB))
+logging.debug("{} files have been flagged as already uploaded to S3.".format(sum(df['uploaded'])))
+errors = df[df['error'] != 'No error']['error'].value_counts()
+logging.debug("{} files have been flagged with an upload error.".format(sum(errors)))
+for err in errors.iteritems():
+    print(*err)
+
+res = df.head()
+df = df[0:5]
 #df.drop('Unnamed: 0')
 
 
@@ -72,4 +82,8 @@ ocn_s3 = ocean_s3.S3_Plugin(config)
 for i,b in enumerate(ocn_s3.list_buckets()):
     print(i,b['Name'])
 #%%
-    
+for row in df.iterrows():
+    print(row)
+
+#%%
+df['uploaded']
