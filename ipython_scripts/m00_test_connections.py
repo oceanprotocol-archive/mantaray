@@ -1,3 +1,4 @@
+import osmosis_aws_driver.data_S3_plugin as ocean_s3
 # General imports
 import sys
 import os
@@ -56,31 +57,23 @@ logging.debug("Loaded data catalogue with {} records representing {:0.0f} GB".fo
 logging.debug("{} files have been flagged as already uploaded to S3.".format(sum(df['uploaded'])))
 errors = df[df['error'] != 'No error']['error'].value_counts()
 logging.debug("{} files have been flagged with an upload error.".format(sum(errors)))
+
 for err in errors.iteritems():
     print(*err)
 
 res = df.head()
 df = df[0:5]
-#df.drop('Unnamed: 0')
 
-
-#dropit = ['Unnamed: 0']
-#df = df.drop(dropit,axis=1)
-
-#df.to_csv(PATH_CURRENT_CATALOGUE, index=False)
-
-#df.columns
-
-#%%
-
-import osmosis_aws_driver.data_S3_plugin as ocean_s3
-dir(ocean_s3)
+#%% List buckets
 config = dict()
 config['region'] = 'eu-central-1'
 ocn_s3 = ocean_s3.S3_Plugin(config)
 
 for i,b in enumerate(ocn_s3.list_buckets()):
     print(i,b['Name'])
+#%% Get the bucket
+bucketname ="data-catalogue-r00"
+bucket = ocn_s3.s3_client.head_bucket(Bucket=bucketname)
 #%%
 for row in df.iterrows():
     print(row)
