@@ -6,7 +6,6 @@ import os
 import pandas as pd
 import hashlib
 
-
 #%% Logging
 import logging
 loggers_dict = logging.Logger.manager.loggerDict
@@ -34,15 +33,15 @@ logger.critical("Logging started")
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
 #%% IO
+
 # The working directory is the repo root
 logging.debug("Current working directory: {}".format(os.getcwd()))
-#os.path.expanduser(r"~/ocn/plankton-datascience")
-#os.path.cw
 
-#PATH_PROJECT_BASE = 
-#assert os.path.exists(PATH_PROJECT_BASE)
+# The source catalog
 FNAME_SOURCE_CATALOG = "Original/OceanDataSets_master catalog clean.csv"
+# The current catalog stores the updated state
 FNAME_CURRENT_CATALOG = r"Master catalog current.csv"
 PATH_SOURCE_CATALOGUE = os.path.join(os.getcwd(),'catalog', FNAME_SOURCE_CATALOG)
 PATH_CURRENT_CATALOGUE = os.path.join(os.getcwd(),'catalog', FNAME_CURRENT_CATALOG)
@@ -64,16 +63,39 @@ for err in errors.iteritems():
 res = df.head()
 df = df[0:5]
 
-#%% List buckets
+
+#%% Create the connection via the wrapper
+
+# The `osmosis-aws-driver`, imported here as `ocean_s3` is a wrapper for Boto3.
 config = dict()
 config['region'] = 'eu-central-1'
 ocn_s3 = ocean_s3.S3_Plugin(config)
 
+#%% List buckets
+
 for i,b in enumerate(ocn_s3.list_buckets()):
     print(i,b['Name'])
+
 #%% Get the bucket
 bucketname ="data-catalogue-r00"
-bucket = ocn_s3.s3_client.head_bucket(Bucket=bucketname)
+#bucket = ocn_s3.s3_client.head_bucket(Bucket=bucketname)
+bucket = ocn_s3.s3_resource.Bucket(bucketname)
+
+#%% Get the files
+s3files = {obj.key:obj for obj in  bucket.objects.all()}
+
+# Select a subset of files
+these_keys = list(s3files.keys())[:2]
+for f in these_keys:
+    meta_data = s3files[f].Object().metadata
+    print(f, meta_data)
+
+total_GB=sum([s3files[f].size for f in s3files])/1000/1000/1000
+
+logging.debug("{} files on {}, {:0.2f} GB".format(len(s3files),bucketname,total_GB))
+
+#%%
+
 #%%
 for row in df.iterrows():
     print(row)
