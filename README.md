@@ -1,6 +1,6 @@
 [![banner](https://raw.githubusercontent.com/oceanprotocol/art/master/github/repo-banner%402x.png)](https://oceanprotocol.com)
 
-# ocean-repo-name
+# mantaray
 
 >    🐳  [Data Science level 2 ](https://www.elastic.co/) production and management for (Python).
 >    [oceanprotocol.com](https://oceanprotocol.com)
