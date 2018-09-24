@@ -37,7 +37,15 @@ Manage assets for data science
 
 ## Prerequisites
 
+During development, install directly from the locally downloaded repo and selected branch as follows;
+```
+source activate env_name
+cd ~/folder_to_repo/
+pip install -e .
+```
+
 - S3 command line tool, for uploading data - [osmosis_aws_driver](https://github.com/oceanprotocol/osmosis-aws-driver)
+
 - The Ocean Protocol interface, [squid-py](https://github.com/oceanprotocol/squid-py), 
 - Which in turn interfaces with the following docker images, running locally (using docker-compose);
 	 - Offline blockchain smart-contracts [oceanprotocol/keeper-contracts:0.1](https://hub.docker.com/r/oceanprotocol/keeper-contracts/)

@@ -67,8 +67,11 @@ df = df[0:5]
 #%% Create the connection via the wrapper
 
 # The `osmosis-aws-driver`, imported here as `ocean_s3` is a wrapper for Boto3.
-config = dict()
-config['region'] = 'eu-central-1'
+
+
+# config = dict()
+# config['region'] = 'eu-central-1'
+config = None
 ocn_s3 = ocean_s3.S3_Plugin(config)
 
 #%% List buckets
