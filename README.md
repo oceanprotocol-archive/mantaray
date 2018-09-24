@@ -2,15 +2,15 @@
 
 # mantaray
 
->    🐳  [Data Science level 2 ](https://www.elastic.co/) production and management for (Python).
+>    🐙 [Data Science level 2 ](https://placeholder.com) high level implementation management for (Python).
 >    [oceanprotocol.com](https://oceanprotocol.com)
 
 TODO Change this to match the repo name and testing environments
 
-[![Travis (.com)](https://img.shields.io/travis/com/oceanprotocol/oceandb-elasticsearch-driver.svg)](https://travis-ci.com/oceanprotocol/oceandb-elasticsearch-driver)
-[![Codacy coverage](https://img.shields.io/codacy/coverage/de067a9402c64b989c76b27cfc74fefe.svg)](https://app.codacy.com/project/ocean-protocol/oceandb-elasticsearch-driver/dashboard)
-[![PyPI](https://img.shields.io/pypi/v/oceandb-elasticsearch-driver.svg)](https://pypi.org/project/oceandb-elasticsearch-driver/)
-[![GitHub contributors](https://img.shields.io/github/contributors/oceanprotocol/oceandb-elasticsearch-driver.svg)](https://github.com/oceanprotocol/oceandb-elasticsearch-driver/graphs/contributors)
+[![Travis (.com)](https://img.shields.io/travis/com/oceanprotocol/mantaray.svg)](https://travis-ci.com/oceanprotocol/mantaray)
+[![Codacy coverage](https://img.shields.io/codacy/coverage/de067a9402c64b989c76b27cfc74fefe.svg)](https://app.codacy.com/project/ocean-protocol/mantaray/dashboard)
+[![PyPI](https://img.shields.io/pypi/v/mantaray.svg)](https://pypi.org/project/mantaray/)
+[![GitHub contributors](https://img.shields.io/github/contributors/oceanprotocol/mantaray.svg)](https://github.com/oceanprotocol/mantaray/graphs/contributors)
 
 ---
 
@@ -36,8 +36,29 @@ Manage assets for data science
  -
 
 ## Prerequisites
-TODO Add prereqs from quickstart
-## Quickstart
+
+- S3 command line tool, for uploading data - [osmosis_aws_driver](https://github.com/oceanprotocol/osmosis-aws-driver)
+- The Ocean Protocol interface, [squid-py](https://github.com/oceanprotocol/squid-py), 
+- Which in turn interfaces with the following docker images, running locally (using docker-compose);
+	 - Offline blockchain smart-contracts [oceanprotocol/keeper-contracts:0.1](https://hub.docker.com/r/oceanprotocol/keeper-contracts/)
+	 - Metadata Store interface [oceanprotocol/provider:0.1](https://hub.docker.com/r/oceanprotocol/provider/), which depends on; 
+		- mongo:3.6
+		- bigchaindb/bigchaindb:2.0.0-beta
+		- tendermint/tendermint:0.19.9
+
+## Quickstart: Publishing data
+To publish data, the following steps are performed;
+1. The dataset is formatted and prepared locally
+1. Metadata is prepared in a .json format according to [link](link)
+1. The dataset is uploaded to S3 using [osmosis_aws_driver.S3_Plugin](https://github.com/oceanprotocol/osmosis-aws-driver)
+	1. Credentials are managed by AWS/boto3
+	1. Call the S3_Plugin.upload() method
+	1. Record the URL
+	1. Check policy and permissions
+1. 
+
+## Developers notes
+
 
 ### Create a new virtual environment
 Using pip, conda, etc.
