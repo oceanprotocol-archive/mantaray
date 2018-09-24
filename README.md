@@ -29,15 +29,23 @@ TODO Change this to match the repo name and testing environments
 
 ## Features
 
-Manage assets for data science
- - Upload datasets and metadata for production testing
+Manage assets for data science in an interactive shell, as part of the
+typical data science workflow.
+ - Upload datasets and metadata to
+    - [ ] Local components and local chain
+    - [ ] Cloud-based and cloud chain
+    - [ ] Cloud based data and test network
  -
  - Register assets into smart contracts
  -
 
+Designed to be used with an interactive Python shell, for example the IPython
+Read–Eval–Print Loop (REPL) found in [Jupyter Notebooks](http://jupyter.org/) and other editors.
+
 ## Prerequisites
 
-During development, install directly from the locally downloaded repo and selected branch as follows;
+During development, install directly from the locally downloaded repo and
+selected branch as follows;
 ```
 source activate env_name
 cd ~/folder_to_repo/
