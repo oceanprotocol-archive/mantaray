@@ -31,16 +31,21 @@ TODO Change this to match the repo name and testing environments
 
 Manage assets for data science in an interactive shell, as part of the
 typical data science workflow.
- - Upload datasets and metadata to
-    - [ ] Local components and local chain
-    - [ ] Cloud-based and cloud chain
-    - [ ] Cloud based data and test network
- -
- - Register assets into smart contracts
- -
+ - Register and upload datasets and metadata to;
+    - [ ] Local components and local ethereum blockchain (Ganache)
+    - [ ] Cloud-hosted components and cloud ethereum blockchain (Ganache)
+    - [ ] Cloud-hosted components and test-network ethereum blockchain (Kovan test network)
+ - Discover and download datasets from;
+    - [ ] Local components and local ethereum blockchain (Ganache)
+    - [ ] Cloud-hosted components and cloud ethereum blockchain (Ganache)
+    - [ ] Cloud-hosted components and test-network ethereum blockchain (Kovan test network)
 
 Designed to be used with an interactive Python shell, for example the IPython
-Read–Eval–Print Loop (REPL) found in [Jupyter Notebooks](http://jupyter.org/) and other editors.
+Read–Eval–Print Loop (REPL) found in [Jupyter Notebooks](http://jupyter.org/)
+and other editors.
+
+## Exmamples
+[Test the components](/mantaray/ipython_scripts/m00_test_connections.py)
 
 ## Prerequisites
 
@@ -51,6 +56,9 @@ source activate env_name
 cd ~/folder_to_repo/
 pip install -e .
 ```
+
+For deployed components, use your favourite python package and environment
+management and PyPi directly (via requirements.txt).
 
 - S3 command line tool, for uploading data - [osmosis_aws_driver](https://github.com/oceanprotocol/osmosis-aws-driver)
 
