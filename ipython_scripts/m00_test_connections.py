@@ -97,6 +97,7 @@ total_GB=sum([s3files[f].size for f in s3files])/1000/1000/1000
 
 logging.debug("{} files on {}, {:0.2f} GB".format(len(s3files),bucketname,total_GB))
 
+
 #%%
 
 #%%
@@ -105,3 +106,5 @@ for row in df.iterrows():
 
 #%%
 df['uploaded']
+
+#%% Register the dataset onto blockchain

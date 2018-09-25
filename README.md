@@ -5,8 +5,6 @@
 >    🐙 [Data Science level 2 ](https://placeholder.com) high level implementation management for (Python).
 >    [oceanprotocol.com](https://oceanprotocol.com)
 
-TODO Change this to match the repo name and testing environments
-
 [![Travis (.com)](https://img.shields.io/travis/com/oceanprotocol/mantaray.svg)](https://travis-ci.com/oceanprotocol/mantaray)
 [![Codacy coverage](https://img.shields.io/codacy/coverage/de067a9402c64b989c76b27cfc74fefe.svg)](https://app.codacy.com/project/ocean-protocol/mantaray/dashboard)
 [![PyPI](https://img.shields.io/pypi/v/mantaray.svg)](https://pypi.org/project/mantaray/)
@@ -28,6 +26,13 @@ TODO Change this to match the repo name and testing environments
 ---
 
 ## Features
+![manta](manta_small.jpg)
+
+<p align="center">
+  <img width="400" src="https://media.giphy.com/media/Npt0Te9MTd2fe/giphy.gif" /><br />
+   <sup><a href="http://www.orcandenizcilik.com/hidrografi-ctd-olcumleri.php">source</a></sup>
+</p>
+
 
 Manage assets for data science in an interactive shell, as part of the
 typical data science workflow.
@@ -44,7 +49,7 @@ Designed to be used with an interactive Python shell, for example the IPython
 Read–Eval–Print Loop (REPL) found in [Jupyter Notebooks](http://jupyter.org/)
 and other editors.
 
-## Exmamples
+## Examples
 [Test the components](/mantaray/ipython_scripts/m00_test_connections.py)
 
 ## Prerequisites
@@ -70,7 +75,7 @@ management and PyPi directly (via requirements.txt).
 		- bigchaindb/bigchaindb:2.0.0-beta
 		- tendermint/tendermint:0.19.9
 
-## Quickstart: Publishing data
+## Quickstart: Publishing data on local components
 To publish data, the following steps are performed;
 1. The dataset is formatted and prepared locally
 1. Metadata is prepared in a .json format according to [link](link)
@@ -80,6 +85,10 @@ To publish data, the following steps are performed;
 	1. Record the URL
 	1. Check policy and permissions
 1. 
+
+## Quickstart: Discovering and downloading data on local components
+
+
 
 ## Developers notes
 
