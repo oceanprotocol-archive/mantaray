@@ -6,20 +6,20 @@ import os
 import pandas as pd
 import hashlib
 
-#%% Logging
+# %% Logging
 import logging
+
 loggers_dict = logging.Logger.manager.loggerDict
- 
+
 logger = logging.getLogger()
 logger.handlers = []
 
 # Set level
 logger.setLevel(logging.DEBUG)
 
-# Create formatter
 
-#FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-FORMAT = "%(asctime)s L%(levelno)s: %(message)s"
+# FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
+FORMAT = "%(asctime)s L%(levelno)s: %(module)-15s %(message)s"
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S"
 formatter = logging.Formatter(FORMAT, DATE_FMT)
@@ -30,12 +30,7 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.critical("Logging started")
 
-
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
-#%% IO
-
+#%%
 # The working directory is the repo root
 logging.debug("Current working directory: {}".format(os.getcwd()))
 
@@ -57,8 +52,9 @@ logging.debug("{} files have been flagged as already uploaded to S3.".format(sum
 errors = df[df['error'] != 'No error']['error'].value_counts()
 logging.debug("{} files have been flagged with an upload error.".format(sum(errors)))
 
+print("Error summary:")
 for err in errors.iteritems():
-    print(*err)
+    print('\t',*err)
 
 res = df.head()
 df = df[0:5]
