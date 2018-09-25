@@ -28,12 +28,6 @@
 ## Features
 ![manta](manta_small.jpg)
 
-<p align="center">
-  <img width="400" src="https://media.giphy.com/media/Npt0Te9MTd2fe/giphy.gif" /><br />
-   <sup><a href="http://www.orcandenizcilik.com/hidrografi-ctd-olcumleri.php">source</a></sup>
-</p>
-
-
 Manage assets for data science in an interactive shell, as part of the
 typical data science workflow.
  - Register and upload datasets and metadata to;
