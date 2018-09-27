@@ -17,7 +17,6 @@ logger.handlers = []
 # Set level
 logger.setLevel(logging.DEBUG)
 
-
 # FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
 FORMAT = "%(asctime)s L%(levelno)s: %(module)-15s %(message)s"
 
@@ -63,7 +62,6 @@ df = df[0:5]
 #%% Create the connection via the wrapper
 
 # The `osmosis-aws-driver`, imported here as `ocean_s3` is a wrapper for Boto3.
-
 
 # config = dict()
 # config['region'] = 'eu-central-1'
