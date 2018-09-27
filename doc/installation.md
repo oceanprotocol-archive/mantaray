@@ -12,6 +12,10 @@ conda install pandas
 conda install boto3
 ```
 
+```
+pip install web3==4.7.1 --ignore-installed
+```
+
 Install ocean components from a local git repo
 ```
 pip install ~/ocn/squid-py
