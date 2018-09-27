@@ -9,6 +9,7 @@ source activate $THISENVNAME
 Install standard packages
 ```
 conda install pandas
+conda install boto3
 ```
 
 Install ocean components from a local git repo
