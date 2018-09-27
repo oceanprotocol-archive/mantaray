@@ -29,7 +29,7 @@ THIS_BRANCH=develop
 pip install --upgrade --force-reinstall git+https://github.com/oceanprotocol/$THIS_REPO.git@$THIS_BRANCH
 ```
 
-Even more generally, see the /scripts/install_local.sh script to manage the installation process. 
+Even more generally, see the /scripts/install_local.sh script to manage the installation process.
 ```
 
 ```
