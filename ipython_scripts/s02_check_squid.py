@@ -1,7 +1,7 @@
 #%% Imports
-
+import pathlib
 import squid_py.ocean as ocean
-
+import sys
 # %% Logging
 import logging
 
@@ -26,5 +26,15 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.critical("Logging started")
 
-#%%
-print("Boto3 version:",boto3.__version__)
+logger.debug("Logging started")
+#%% Instantiate the wrapper
+PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
+assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
+ocn = ocean.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
+
+logging.info("Ocean smart contract node connected at {}".format(ocn.node_uri))
+logging.info("{:>40} {}".format("Token contract address:", ocn.token.address))
+logging.info("{:>40} {}".format("Authentication contract atddress:", ocn.auth.address))
+logging.info("{:>40} {}".format("Market contract address:", ocn.market.address))
+
+logging.info("Metadata store (provider) located at: {}".format(ocn.metadata.base_url))

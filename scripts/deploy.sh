@@ -1,6 +1,7 @@
 #!/bin/bash -x
 #
 # This script will create the local configuration file containing the contract addresses
+# The docker_keeper_contracts_1 image must be running!!
 
 
 CONF_TEMPLATE=config.ini
