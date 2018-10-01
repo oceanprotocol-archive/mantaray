@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
+#
+# This script is used to pip install requirements directly from GitHub
+# Specify the branch to stay up to date on latest changes on a new branch
+
 install_branch() {
+    # Given a github path (organization, repo, branch)
+    # pip install the repo
 	THIS_ORG=$1
 	THIS_REPO=$2
 	THIS_BRANCH=$3
