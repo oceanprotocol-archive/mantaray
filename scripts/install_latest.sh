@@ -13,7 +13,7 @@ install_branch() {
 	pip install --upgrade --force-reinstall git+https://github.com/$THIS_ORG/$THIS_REPO.git@$THIS_BRANCH
 }
 
-install_branch oceanprotocol squid-py feature/module-in-init
+install_branch oceanprotocol squid-py feat/add_subpackages
 
 install_branch oceanprotocol osmosis-driver-interface develop
 

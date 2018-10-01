@@ -59,7 +59,7 @@ res = df.head()
 df = df[0:5]
 
 
-#%% Create the connection via the wrapper
+#%% ## Create the connection via the wrapper
 
 # The `osmosis-aws-driver`, imported here as `ocean_s3` is a wrapper for Boto3.
 
@@ -73,6 +73,10 @@ ocn_s3 = ocean_s3.S3_Plugin(config)
 for i,b in enumerate(ocn_s3.list_buckets()):
     print(i,b['Name'])
 
+#%% Delete a bucket (WARNING!)
+# bucketname="ocean-test-osmosis-data-plugin-1537444458"
+# ocn_s3.delete_bucket(bucketname)
+
 #%% Get the bucket
 bucketname ="data-catalogue-r00"
 #bucket = ocn_s3.s3_client.head_bucket(Bucket=bucketname)
@@ -80,20 +84,15 @@ bucket = ocn_s3.s3_resource.Bucket(bucketname)
 
 #%% Get the files
 s3files = {obj.key:obj for obj in  bucket.objects.all()}
+total_GB=sum([s3files[f].size for f in s3files])/1000/1000/1000
+logging.debug("{} files on {}, {:0.2f} GB".format(len(s3files),bucketname,total_GB))
 
+#%%
 # Select a subset of files
 these_keys = list(s3files.keys())[:2]
 for f in these_keys:
     meta_data = s3files[f].Object().metadata
     print(f, meta_data)
-
-total_GB=sum([s3files[f].size for f in s3files])/1000/1000/1000
-
-logging.debug("{} files on {}, {:0.2f} GB".format(len(s3files),bucketname,total_GB))
-
-
-#%%
-
 #%%
 for row in df.iterrows():
     print(row)
