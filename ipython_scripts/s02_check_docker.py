@@ -6,6 +6,7 @@ import subprocess
 # import pathlib
 # import squid_py.ocean as ocean
 import sys
+from pprint import pprint
 #%% Logging
 import logging
 
@@ -41,10 +42,17 @@ client = docker.from_env()
 # Get the APIClient for running commands
 low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
+#%% Check running docker images using SDK
+for container in client.containers.list():
+    print(container.name, container.status)
+    print(container.image.tags)
+    print(container.labels)
+# container.logs()
 #%% Get addresses from images
-def get_address(api_client, container_id):
+def get_address(api_client, container_id,contract_name):
+
     # This is the python script to be executed in the running image
-    python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/OceanMarket.development.json', 'r'))['address'])"
+    python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/{}.development.json', 'r'))['address'])".format(contract_name)
 
     # Wrap the script in quotes (string) and add the python shell command
     command = r"python -c " + '"' + python_script + '"'
@@ -56,31 +64,11 @@ def get_address(api_client, container_id):
 
 # Get the docker image running the smart contracts
 container_keeper_contracts = client.containers.get('docker_keeper-contracts_1')
-res = get_address(low_level_api_client,container_keeper_contracts.id)
-res.decode("utf-8").rstrip()
+addresses=dict()
+addresses['market.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanMarket').decode("utf-8").rstrip()
+addresses['auth.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanToken').decode("utf-8").rstrip()
+addresses['token.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanAuth').decode("utf-8").rstrip()
 
-#%% Check running docker images using SDK
-for container in client.containers.list():
-    print(container.name, container.status)
-    print(container.image.tags)
-    print(container.labels)
-# container.logs()
-
-#%%
-
-container_keeper_contracts = client.containers.get('docker_keeper-contracts_1')
-
-exe = client.exec_create(container=container_keeper_contracts.id, cmd=cmds)
-exe_start= cli.exec_start(exec_id=exe, stream=True)
-
-for val in exe_start:
-    print (val)
+pprint(addresses)
 
 
-#%%
-
-container_keeper_contracts = client.containers.get('docker_keeper-contracts_1')
-# container_keeper_contracts.exe
-client.exec_
-
-market=$(docker exec -it docker_keeper-contracts_1 python -c "import sys, json; print(json.load(open('/keeper-contracts/artifacts/OceanMarket.development.json', 'r'))['address'])")
