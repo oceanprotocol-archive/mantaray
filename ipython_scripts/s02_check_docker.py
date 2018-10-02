@@ -35,30 +35,37 @@ logger.debug("Logging started")
 s = subprocess.Popen("docker ps" + "", shell=True).wait()
 print(s)
 
-#%% Check running docker images using SDK
+#%% Client, and low level API client
+# High level client
 client = docker.from_env()
-client.containers.list()
-for container in client.containers.list():
-   print(container.name, container.status)
-   print(container.image.tags)
-   print(container.labels)
-# container.logs()
-
-#%% Low level client
 # Get the APIClient for running commands
-api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
+low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
+
+#%% Get addresses from images
+def get_address(api_client, container_id):
+    # This is the python script to be executed in the running image
+    python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/OceanMarket.development.json', 'r'))['address'])"
+
+    # Wrap the script in quotes (string) and add the python shell command
+    command = r"python -c " + '"' + python_script + '"'
+
+    # Create and run the command
+    ex = api_client.exec_create(container=container_id, cmd=command)
+
+    return api_client.exec_start(ex)
+
 # Get the docker image running the smart contracts
 container_keeper_contracts = client.containers.get('docker_keeper-contracts_1')
+res = get_address(low_level_api_client,container_keeper_contracts.id)
+res.decode("utf-8").rstrip()
 
-# This is the python script to be executed in the running image
-python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/OceanMarket.development.json', 'r'))['address'])"
+#%% Check running docker images using SDK
+for container in client.containers.list():
+    print(container.name, container.status)
+    print(container.image.tags)
+    print(container.labels)
+# container.logs()
 
-# Wrap the script in quotes (string) and add the python shell command
-command = r"python -c " + '"' + python_script + '"'
-
-# Create and run the command
-ex = api_client.exec_create(container=container_keeper_contracts.id , cmd=command)
-api_client.exec_start(ex)
 #%%
 
 container_keeper_contracts = client.containers.get('docker_keeper-contracts_1')
