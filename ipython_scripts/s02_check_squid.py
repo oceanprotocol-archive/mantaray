@@ -14,7 +14,6 @@ logger.handlers = []
 # Set level
 logger.setLevel(logging.DEBUG)
 
-
 # FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
 # FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
 FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
@@ -27,13 +26,9 @@ formatter = logging.Formatter(FORMAT, DATE_FMT)
 handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 logger.handlers = [handler]
-logger.critical("Logging started")
-
 logger.debug("Logging started")
 
-#%% Check docker
-s = subprocess.check_output('docker ps', shell=True)
-print(s)
+
 
 #%% Instantiate the wrapper
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
