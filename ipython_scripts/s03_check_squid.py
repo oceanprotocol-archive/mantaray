@@ -31,9 +31,10 @@ logger.debug("Logging started")
 
 
 #%% Instantiate the wrapper
+
+# The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
-
 
 ocn = ocean.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
 
@@ -46,3 +47,4 @@ logging.info("Metadata store (provider) located at: {}".format(ocn.metadata.base
 
 
 
+#%%

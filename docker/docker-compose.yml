@@ -12,7 +12,8 @@ services:
     - backend
 
   keeper-contracts:
-    image: oceanprotocol/keeper-contracts:develop
+#    image: oceanprotocol/keeper-contracts:develop
+    image: keeper-contracts:test001
     ports:
     - 8545:8545
     networks:
