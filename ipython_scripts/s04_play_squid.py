@@ -80,7 +80,8 @@ class User():
                                                dataset['base']['price'], self.address)
         assert ocean.market.check_asset(asset_id)
 
-        logging.info("{} registered".format(asset_id.decode("").rstrip()))
+        # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
+        logging.info("registered asset: {}".format(asset_id))
 
 
 users = list()
