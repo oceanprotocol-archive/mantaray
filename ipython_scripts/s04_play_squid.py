@@ -7,6 +7,7 @@ Test functionality of squid-py wrapper.
 import pathlib
 import squid_py.ocean as ocean
 import sys
+import random
 
 # %% Logging
 import logging
@@ -17,7 +18,7 @@ logger = logging.getLogger()
 logger.handlers = []
 
 # Set level
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
 # FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
@@ -31,7 +32,7 @@ formatter = logging.Formatter(FORMAT, DATE_FMT)
 handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 logger.handlers = [handler]
-logger.debug("Logging started")
+logger.info("Logging started")
 
 #%% Instantiate the wrapper
 
@@ -48,23 +49,39 @@ logging.info("{:>40} {}".format("Market contract address:", ocean.market.address
 
 logging.info("Metadata store (provider) located at: {}".format(ocean.metadata.base_url))
 
+#%% Transfer fundsj
+# By default, 10 wallet addresses are created in Ganache
+# A simple wrapper for each address is created to represent a user
+# A few users are instantiated and listed
+
+class User():
+    def __init__(self,num,ocean_obj):
+        self.name = 'user' + str(num)
+        self.ocean = ocean_obj
+        self.address = self.ocean.helper.web3.eth.accounts[num]
+        self.balance = self.update_balance()
+
+        logging.debug(self)
+
+    def __str__(self):
+        self.update_balance()
+        return "{} at {}... with {} token".format(self.name,self.address[0:6],self.balance)
+
+    def update_balance(self):
+        self.balance = self.ocean.token.get_token_balance(self.address)
+
+    def request_dev_tokens(self,amount):
+        """For development, a user can request free tokens"""
+        self.ocean.market.request_tokens(amount, self.address)
+
+users = list()
+for i in range(len(ocean.helper.web3.eth.accounts)):
+    user = User(i,ocean)
+    user.request_dev_tokens(random.randint(0,100))
+    users.append(user)
+
 #%%
-
-def init_user(num):
-    user = dict()
-    user['name']
-
-user1={'name':'user1'}
-user2={'name':'user2'}
-user1['account'] = ocean.helper.web3.eth.accounts[0]
-user
-user2['account'] = ocean.helper.web3.eth.accounts[1]
-ocean.token.
-requested_amount = 2000
-logging.debug("{} requests {} from {}".format(user1['account'], requested_amount, user2['account'].lower()))
-assert ocean.market.request_tokens(2000, provider_account)
-
-buyer_balance_start = ocean.token.get_token_balance(user1['account'])
+for u in users: print(u)
 
 #%%
 
@@ -73,8 +90,6 @@ buyer_balance_start = ocean.token.get_token_balance(user1['account'])
 # import squid_py.acl as acl
 # from squid_py.ocean import Ocean
 # from squid_py.utils.web3_helper import convert_to_string
-
-
 
 def get_events(event_filter, max_iterations=100, pause_duration=0.1):
     events = event_filter.get_new_entries()
