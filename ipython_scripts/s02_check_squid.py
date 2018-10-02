@@ -1,5 +1,5 @@
 #%% Imports
-import subprocess
+
 import pathlib
 import squid_py.ocean as ocean
 import sys
