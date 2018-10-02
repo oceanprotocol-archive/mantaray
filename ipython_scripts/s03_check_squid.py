@@ -1,3 +1,8 @@
+"""
+With docker running, run this script to test the Ocean wrapper (squid-py).
+
+Instantiate the wrapper with the local config_local.ini.
+"""
 #%% Imports
 
 import pathlib

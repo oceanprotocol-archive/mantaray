@@ -1,3 +1,13 @@
+"""
+After confirming the connection to S3, use this script to manage datasets.
+
+A data catalogue .csv is maintained in the /catalog directory.
+
+The catalog is loaded in a Pandas Dataframe object.
+
+
+"""
+
 import osmosis_aws_driver.data_S3_plugin as ocean_s3
 # General imports
 import sys
@@ -6,7 +16,10 @@ import os
 import pandas as pd
 import hashlib
 
-# %% Logging
+#%% Constants
+S3_BUCKET_NAME = ""
+
+#%% Logging
 import logging
 
 loggers_dict = logging.Logger.manager.loggerDict
@@ -28,6 +41,7 @@ handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.critical("Logging started")
+
 
 #%%
 # The working directory is the repo root
@@ -62,14 +76,13 @@ df = df[0:5]
 #%% ## Create the connection via the wrapper
 
 # The `osmosis-aws-driver`, imported here as `ocean_s3` is a wrapper for Boto3.
-
 # config = dict()
 # config['region'] = 'eu-central-1'
-config = None
+
+config = None # No configuration needed
 ocn_s3 = ocean_s3.S3_Plugin(config)
 
 #%% List buckets
-
 for i,b in enumerate(ocn_s3.list_buckets()):
     print(i,b['Name'])
 
@@ -78,9 +91,7 @@ for i,b in enumerate(ocn_s3.list_buckets()):
 # ocn_s3.delete_bucket(bucketname)
 
 #%% Get the bucket
-bucketname ="data-catalogue-r00"
-#bucket = ocn_s3.s3_client.head_bucket(Bucket=bucketname)
-bucket = ocn_s3.s3_resource.Bucket(bucketname)
+bucket = ocn_s3.s3_resource.Bucket(S3_BUCKET_NAME)
 
 #%% Get the files
 s3files = {obj.key:obj for obj in  bucket.objects.all()}

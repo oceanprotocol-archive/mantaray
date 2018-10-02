@@ -1,3 +1,15 @@
+"""
+This script is used to check your local docker images.
+
+Two methods can be used - shell commands with subprocess.Popen, or
+use the docker SDK (docker-py) to manage and inspect local configuration and running images.
+
+A function is declared to wrap executing a command insider an image which retrieves the contract addresses
+from the contract artifact JSON files (ABIs). Use this to confirm that your local configuration (as
+specified in config_local.ini) matches the deployed images.
+"""
+
+
 #%% Imports
 import docker
 client = docker.from_env()
