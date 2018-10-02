@@ -5,10 +5,11 @@ Test functionality of squid-py wrapper.
 
 #%% Imports
 import pathlib
-import squid_py.ocean as ocean
+import squid_py.ocean as ocean_wrapper
 import sys
 import random
-
+import json
+from pprint import pprint
 # %% Logging
 import logging
 
@@ -40,7 +41,7 @@ logger.info("Logging started")
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-ocean = ocean.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
+ocean = ocean_wrapper.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
 
 logging.info("Ocean smart contract node connected at {}".format(ocean.node_uri))
 logging.info("{:>40} {}".format("Token contract address:", ocean.token.address))
@@ -49,10 +50,10 @@ logging.info("{:>40} {}".format("Market contract address:", ocean.market.address
 
 logging.info("Metadata store (provider) located at: {}".format(ocean.metadata.base_url))
 
-#%% Transfer fundsj
+#%% Get funds to users
 # By default, 10 wallet addresses are created in Ganache
 # A simple wrapper for each address is created to represent a user
-# A few users are instantiated and listed
+# Users are instantiated and listed
 
 class User():
     def __init__(self,num,ocean_obj):
@@ -73,6 +74,14 @@ class User():
     def request_dev_tokens(self,amount):
         """For development, a user can request free tokens"""
         self.ocean.market.request_tokens(amount, self.address)
+    def register_asset(self, dataset):
+        # Register this asset on the blockchain
+        asset_id = ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
+                                               dataset['base']['price'], self.address)
+        assert ocean.market.check_asset(asset_id)
+
+        logging.info("{} registered".format(asset_id.decode("").rstrip()))
+
 
 users = list()
 for i in range(len(ocean.helper.web3.eth.accounts)):
@@ -80,8 +89,20 @@ for i in range(len(ocean.helper.web3.eth.accounts)):
     user.request_dev_tokens(random.randint(0,100))
     users.append(user)
 
-#%%
+#%% List the users
 for u in users: print(u)
+
+#%% Register some assets
+
+# The sample asset metadata is stored in a .json file
+PATH_ASSET1 = pathlib.Path.cwd() / 'sample_assets' / 'sample1.json'
+assert PATH_ASSET1.exists()
+with open(PATH_ASSET1) as f:
+    dataset = json.load(f)
+
+logging.info("Asset metadata for {}: type={}, price={}".format(dataset['base']['name'],dataset['base']['type'],dataset['base']['price']))
+
+users[0].register_asset(dataset)
 
 #%%
 
