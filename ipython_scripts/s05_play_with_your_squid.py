@@ -6,10 +6,13 @@ Test functionality of squid-py wrapper.
 #%% Imports
 import pathlib
 import squid_py.ocean as ocean_wrapper
+from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text, Web3Helper
 import sys
 import random
 import json
 from pprint import pprint
+import squid_py.ocean as ocean
+
 # %% Logging
 import logging
 
@@ -41,14 +44,12 @@ logger.info("Logging started")
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-ocean = ocean_wrapper.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
+ocn = ocean.Ocean(keeper_url='http://0.0.0.0:8545', config_file='config_local.ini')
+logging.info("Ocean smart contract node connected ".format())
 
-logging.info("Ocean smart contract node connected at {}".format(ocean.node_uri))
-logging.info("{:>40} {}".format("Token contract address:", ocean.token.address))
-logging.info("{:>40} {}".format("Authentication contract atddress:", ocean.auth.address))
-logging.info("{:>40} {}".format("Market contract address:", ocean.market.address))
+#%% List the users
+ocn.helper.accounts
 
-logging.info("Metadata store (provider) located at: {}".format(ocean.metadata.base_url))
 
 #%% Get funds to users
 # By default, 10 wallet addresses are created in Ganache
@@ -59,7 +60,7 @@ class User():
     def __init__(self,num,ocean_obj):
         self.name = 'user' + str(num)
         self.ocean = ocean_obj
-        self.address = self.ocean.helper.web3.eth.accounts[num]
+        self.address = self.ocean.helper._web3.eth.accounts[num]
         self.balance = self.update_balance()
 
         logging.debug(self)
@@ -74,19 +75,20 @@ class User():
     def request_dev_tokens(self,amount):
         """For development, a user can request free tokens"""
         self.ocean.market.request_tokens(amount, self.address)
+
     def register_asset(self, dataset):
         # Register this asset on the blockchain
-        asset_id = ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
+        asset_id = self.ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
                                                dataset['base']['price'], self.address)
-        assert ocean.market.check_asset(asset_id)
+        assert self.ocean.market.check_asset(asset_id)
 
         # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
         logging.info("registered asset: {}".format(asset_id))
 
 
 users = list()
-for i in range(len(ocean.helper.web3.eth.accounts)):
-    user = User(i,ocean)
+for i in range(len(ocn.helper._web3.eth.accounts)):
+    user = User(i,ocn)
     user.request_dev_tokens(random.randint(0,100))
     users.append(user)
 
@@ -103,10 +105,15 @@ with open(PATH_ASSET1) as f:
 
 logging.info("Asset metadata for {}: type={}, price={}".format(dataset['base']['name'],dataset['base']['type'],dataset['base']['price']))
 
-users[0].register_asset(dataset)
+registered_asset = users[0].register_asset(dataset)
 
+asset = ocn.metadata.register_asset(dataset)
+assert ocean_provider.metadata.get_asset_ddo(asset['assetId'])['base']['name'] == asset['base']['name']
+ocean_provider.metadata.retire_asset(asset['assetId'])
 
-
+#%% List assets
+asset_ddo = ocn.metadata.get_asset_ddo(dataset['assetId'])
+assert ocn.metadata.get_asset_ddo(dataset['assetId'])['base']['name'] == dataset['base']['name']
 #%%
 
 # import time
