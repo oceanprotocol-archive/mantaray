@@ -60,6 +60,7 @@ for container in client.containers.list():
     print(container.image.tags)
     print(container.labels)
 # container.logs()
+
 #%% Get addresses from images
 def get_address(api_client, container_id,contract_name):
 

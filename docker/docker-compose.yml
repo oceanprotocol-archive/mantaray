@@ -13,7 +13,7 @@ services:
 
   keeper-contracts:
 #    image: oceanprotocol/keeper-contracts:develop
-    image: keeper-contracts:test001
+    image: oceanprotocol/keeper-contracts:latest
     ports:
     - 8545:8545
     networks:
