@@ -105,6 +105,8 @@ logging.info("Asset metadata for {}: type={}, price={}".format(dataset['base']['
 
 users[0].register_asset(dataset)
 
+
+
 #%%
 
 # import time
