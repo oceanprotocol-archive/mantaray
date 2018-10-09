@@ -4,7 +4,7 @@ With docker running, run this script to test the Ocean wrapper (squid-py).
 Instantiate the wrapper with the local config_local.ini.
 """
 
-#%% Imports
+# %% Imports
 
 import pathlib
 import squid_py.ocean as ocean
@@ -36,7 +36,7 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.debug("Logging started")
 
-#%% Instantiate the wrapper
+# %% Instantiate the wrapper
 
 # The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
@@ -61,6 +61,6 @@ logging.info("{:>40} {}".format("Market contract address:", ocn.market.address))
 
 logging.info("Metadata store (provider) located at: {}".format(ocn.metadata.base_url))
 
-#%%
+# %%
 ocn.helper.accounts
-#%%
+# %%

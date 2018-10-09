@@ -10,7 +10,7 @@ specified in config_local.ini) matches the deployed images.
 """
 
 
-#%% Imports
+# %% Imports
 import docker
 client = docker.from_env()
 import subprocess
@@ -19,7 +19,7 @@ import subprocess
 # import squid_py.ocean as ocean
 import sys
 from pprint import pprint
-#%% Logging
+# %% Logging
 import logging
 
 loggers_dict = logging.Logger.manager.loggerDict
@@ -43,25 +43,25 @@ handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.debug("Logging started")
-#%% Check running docker images from command line
+# %% Check running docker images from command line
 # s = subprocess.check_output('docker ps', shell=True).wait()
 s = subprocess.Popen("docker ps" + "", shell=True).wait()
 print(s)
 
-#%% Client, and low level API client
+# %% Client, and low level API client
 # High level client
 client = docker.from_env()
 # Get the APIClient for running commands
 low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
-#%% Check running docker images using SDK
+# %% Check running docker images using SDK
 for container in client.containers.list():
     print(container.name, container.status)
     print(container.image.tags)
     print(container.labels)
 # container.logs()
 
-#%% Get addresses from images
+# %% Get addresses from images
 def get_address(api_client, container_id,contract_name):
 
     # This is the python script to be executed in the running image

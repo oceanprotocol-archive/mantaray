@@ -1,4 +1,4 @@
-#%%
+# %%
 
 """
 
@@ -6,13 +6,13 @@ The Mantaray scripts provide a guided tour of Ocean Protocol in an interactive e
 
 The scripts are designed to be executed in an 'IPython' interactive console. The popular Jupyter Notebook format is
 supported. Alternatively, you can run the scripts in other IPython environments. The scripts are generated in two
-formats: .py scripts with the #%% cell demarcation convention, or the auto-converted .ipynb format for i.e. Jupyter Notebook.
+formats: .py scripts with the # %% cell demarcation convention, or the auto-converted .ipynb format for i.e. Jupyter Notebook.
 
 These scripts also serve as a catalog of building blocks for building more complex user stories and applications.
 
 """
 
-#%% Meanwhile, on the dry dock
+# %% Meanwhile, on the dry dock
 
 # Rank:
 # Ensign -
@@ -22,7 +22,7 @@ These scripts also serve as a catalog of building blocks for building more compl
 
 
 
-#%% Ready the sails!
+# %% Ready the sails!
 
 
-#%% Inspection
+# %% Inspection

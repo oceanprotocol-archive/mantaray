@@ -16,10 +16,10 @@ import os
 import pandas as pd
 import hashlib
 
-#%% Constants
+# %% Constants
 S3_BUCKET_NAME = ""
 
-#%% Logging
+# %% Logging
 import logging
 
 loggers_dict = logging.Logger.manager.loggerDict
@@ -43,7 +43,7 @@ logger.handlers = [handler]
 logger.critical("Logging started")
 
 
-#%%
+# %%
 # The working directory is the repo root
 logging.debug("Current working directory: {}".format(os.getcwd()))
 
@@ -56,7 +56,7 @@ PATH_CURRENT_CATALOGUE = os.path.join(os.getcwd(),'catalog', FNAME_CURRENT_CATAL
 assert os.path.exists(PATH_SOURCE_CATALOGUE), "{}".format(PATH_SOURCE_CATALOGUE)
 assert os.path.exists(PATH_CURRENT_CATALOGUE), "{}".format(PATH_CURRENT_CATALOGUE)
 
-#%% Load the data catalogue
+# %% Load the data catalogue
 df = pd.read_csv(PATH_CURRENT_CATALOGUE)
 
 total_GB = sum(df.loc[:,'SizeGB'])
@@ -73,7 +73,7 @@ res = df.head()
 df = df[0:5]
 
 
-#%% ## Create the connection via the wrapper
+# %% ## Create the connection via the wrapper
 
 # The `osmosis-aws-driver`, imported here as `ocean_s3` is a wrapper for Boto3.
 # config = dict()
@@ -82,33 +82,33 @@ df = df[0:5]
 config = None # No configuration needed
 ocn_s3 = ocean_s3.S3_Plugin(config)
 
-#%% List buckets
+# %% List buckets
 for i,b in enumerate(ocn_s3.list_buckets()):
     print(i,b['Name'])
 
-#%% Delete a bucket (WARNING!)
+# %% Delete a bucket (WARNING!)
 # bucketname="ocean-test-osmosis-data-plugin-1537444458"
 # ocn_s3.delete_bucket(bucketname)
 
-#%% Get the bucket
+# %% Get the bucket
 bucket = ocn_s3.s3_resource.Bucket(S3_BUCKET_NAME)
 
-#%% Get the files
+# %% Get the files
 s3files = {obj.key:obj for obj in  bucket.objects.all()}
 total_GB=sum([s3files[f].size for f in s3files])/1000/1000/1000
 logging.debug("{} files on {}, {:0.2f} GB".format(len(s3files),bucketname,total_GB))
 
-#%%
+# %%
 # Select a subset of files
 these_keys = list(s3files.keys())[:2]
 for f in these_keys:
     meta_data = s3files[f].Object().metadata
     print(f, meta_data)
-#%%
+# %%
 for row in df.iterrows():
     print(row)
 
-#%%
+# %%
 df['uploaded']
 
-#%% Register the dataset onto blockchain
+# %% Register the dataset onto blockchain

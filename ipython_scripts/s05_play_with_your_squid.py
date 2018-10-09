@@ -1,9 +1,9 @@
-#%%
+# %%
 """
 Test functionality of squid-py wrapper.
 """
 
-#%% Imports
+# %% Imports
 import pathlib
 import squid_py.ocean as ocean_wrapper
 from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text, Web3Helper
@@ -38,7 +38,7 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.info("Logging started")
 
-#%% Instantiate the wrapper
+# %% Instantiate the wrapper
 
 # The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
@@ -47,11 +47,11 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = ocean.Ocean(keeper_url='http://0.0.0.0:8545', config_file='config_local.ini')
 logging.info("Ocean smart contract node connected ".format())
 
-#%% List the users
+# %% List the users
 ocn.helper.accounts
 
 
-#%% Get funds to users
+# %% Get funds to users
 # By default, 10 wallet addresses are created in Ganache
 # A simple wrapper for each address is created to represent a user
 # Users are instantiated and listed
@@ -92,10 +92,10 @@ for i in range(len(ocn.helper._web3.eth.accounts)):
     user.request_dev_tokens(random.randint(0,100))
     users.append(user)
 
-#%% List the users
+# %% List the users
 for u in users: print(u)
 
-#%% Register some assets
+# %% Register some assets
 
 # The sample asset metadata is stored in a .json file
 PATH_ASSET1 = pathlib.Path.cwd() / 'sample_assets' / 'sample1.json'
@@ -111,10 +111,10 @@ asset = ocn.metadata.register_asset(dataset)
 assert ocean_provider.metadata.get_asset_ddo(asset['assetId'])['base']['name'] == asset['base']['name']
 ocean_provider.metadata.retire_asset(asset['assetId'])
 
-#%% List assets
+# %% List assets
 asset_ddo = ocn.metadata.get_asset_ddo(dataset['assetId'])
 assert ocn.metadata.get_asset_ddo(dataset['assetId'])['base']['name'] == dataset['base']['name']
-#%%
+# %%
 
 # import time
 
