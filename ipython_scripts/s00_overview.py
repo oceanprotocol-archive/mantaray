@@ -1,6 +1,6 @@
 # %% [markdown]
 # # MANTARAY
-# ## Data Science powered by *Ocean Protocol*
+# ## Data Science powered by **Ocean Protocol**
 
 # %% [markdown]
 # The **Mantaray** scripts provide a guided tour of Ocean Protocol in an interactive environment.
@@ -47,29 +47,30 @@ print("docker", docker.__version__)
 # Or, you can connect to the Ethereum test net
 # TODO: test net util check
 
-# squid-py is your main interface to Ocean Protocol
+# Metamask is used to access the Ethereum network
+# TODO: metamask util
+
+# squid-py is your friendly interface to **Ocean Protocol**
 import squid_py
 print("squid_py", squid_py.__version__)
 
 # %% [markdown]
-# ## Ship's manifest
-## <span style="color:blue">Ship's manifest</span>
-# <span style="color: red;"> H1 Title </span>
+## Ship's manifest
 
 # %% [markdown]
-# ### AWS S3 management
+# ### <span style="color:Aqua">AWS S3 management</span>
 # #### check_aws_s3
 # Test your connection to S3
 # #### process_catalogue
 # Using your AWS account, manage your data assets
 
 # %% [markdown]
-# ### Local docker verification
+# ### <span style="color:Aqua">Local docker verification</span>
 # #### check_docker
 # If using a local simulation of the blockchain and ocean protocol infrastructure, this script can help you verify your containers
 
 # %% [markdown]
-# ### Local docker verification
+# ### <span style="color:Aqua">Local docker verification</span>
 # #### check_squid
 # Got squid?
 # #### play_with_your_squid
@@ -77,7 +78,7 @@ print("squid_py", squid_py.__version__)
 
 
 #%% [markdown]
-# OLD
+# OLD ...
 # %%
 # Rank:
 # Ensign -

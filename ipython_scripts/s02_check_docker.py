@@ -59,6 +59,7 @@ for container in client.containers.list():
     print(container.name, container.status)
     print(container.image.tags)
     print(container.labels)
+    print("\n\n")
 # container.logs()
 
 # %% Get addresses from images
@@ -82,6 +83,7 @@ addresses['market.address'] = get_address(low_level_api_client,container_keeper_
 addresses['auth.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanToken').decode("utf-8").rstrip()
 addresses['token.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanAuth').decode("utf-8").rstrip()
 
+print("Artifact addresses retrieved:")
 pprint(addresses)
 
 

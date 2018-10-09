@@ -17,7 +17,9 @@ import pandas as pd
 import hashlib
 
 # %% Constants
-S3_BUCKET_NAME = ""
+S3_BUCKET_NAME = r'data-catalogue-r00'
+
+
 
 # %% Logging
 import logging
@@ -96,7 +98,7 @@ bucket = ocn_s3.s3_resource.Bucket(S3_BUCKET_NAME)
 # %% Get the files
 s3files = {obj.key:obj for obj in  bucket.objects.all()}
 total_GB=sum([s3files[f].size for f in s3files])/1000/1000/1000
-logging.debug("{} files on {}, {:0.2f} GB".format(len(s3files),bucketname,total_GB))
+logging.debug("{} files on {}, {:0.2f} GB".format(len(s3files),S3_BUCKET_NAME,total_GB))
 
 # %%
 # Select a subset of files
