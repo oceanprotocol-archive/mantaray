@@ -1,14 +1,13 @@
-"""
-This script is used to check your local docker images.
+# %% [markdown]
 
-Two methods can be used - shell commands with subprocess.Popen, or
-use the docker SDK (docker-py) to manage and inspect local configuration and running images.
+# This script is used to check your local docker images.
 
-A function is declared to wrap executing a command insider an image which retrieves the contract addresses
-from the contract artifact JSON files (ABIs). Use this to confirm that your local configuration (as
-specified in config_local.ini) matches the deployed images.
-"""
+# Two methods can be used - shell commands with subprocess. Popen, or
+# use the docker SDK (docker-py) to manage and inspect local configuration and running images.
 
+# A function is declared to wrap executing a command insider an image which retrieves the contract addresses
+# from the contract artifact JSON files (ABIs). Use this to confirm that your local configuration (as
+# specified in config_local.ini) matches the deployed images.
 
 # %% Imports
 import docker
@@ -19,6 +18,7 @@ import subprocess
 # import squid_py.ocean as ocean
 import sys
 from pprint import pprint
+
 # %% Logging
 import logging
 
@@ -43,6 +43,7 @@ handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.debug("Logging started")
+
 # %% Check running docker images from command line
 # s = subprocess.check_output('docker ps', shell=True).wait()
 s = subprocess.Popen("docker ps" + "", shell=True).wait()
