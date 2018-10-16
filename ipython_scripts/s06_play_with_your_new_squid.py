@@ -1,9 +1,12 @@
-# %%
+# %% [markdown]
+# ##
 """
 Test functionality of squid-py wrapper.
 """
 
-# %% Imports
+# %% [markdown]
+# ## Imports and logging setup
+#%%
 import pathlib
 import squid_py.ocean as ocean_wrapper
 from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text, Web3Helper
@@ -38,7 +41,9 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.info("Logging started")
 
-# %% Instantiate the wrapper
+# %% [markdown]
+# Instantiate the wrapper
+#TODO: What is the final configuration pattern for Trilobite?
 
 # The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
@@ -47,13 +52,23 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = ocean.Ocean(keeper_url='http://0.0.0.0:8545', config_file='config_local.ini')
 logging.info("Ocean smart contract node connected ".format())
 
-# %% List the users, 
+# %% [markdown]
+# ## User management
+
+# %%
+# List the users
+# A user is a simulated person in using Ocean Protocol to Publish or Consume datasets
+# Each user has an account
+
+#TODO:
 ocn.helper.accounts
 
 
-# %% Get funds to users
+# %%
+# Get funds to users
 # By default, 10 wallet addresses are created in Ganache
 # A simple wrapper for each address is created to represent a user
+# 5 users are defined
 # Users are instantiated and listed
 
 class User():
@@ -85,18 +100,32 @@ class User():
         # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
         logging.info("registered asset: {}".format(asset_id))
 
-
-users = list()
-for i in range(len(ocn.helper._web3.eth.accounts)):
+# Create 5 consumers (data scientists)
+users_consumer = list()
+for i in range(5):
     user = User(i,ocn)
     user.request_dev_tokens(random.randint(0,100))
-    users.append(user)
+    users_consumer.append(user)
 
-# %% List the users
-for u in users: print(u)
+# Create 5 publishers (data providers)
+users_publisher = list()
+for i in range(5):
+    user = User(i,ocn)
+    user.request_dev_tokens(random.randint(0,100))
+    users_publisher.append(user)
 
-# %% Register some assets
+# %%
+# List the users and their funds
+print("Data Scientists:")
+for u in users_consumer: print(u)
+print("Publishers:")
+for u in users_consumer: print(u)
 
+
+# %% [markdown]
+# ## Register some assets
+
+# %%
 # The sample asset metadata is stored in a .json file
 PATH_ASSET1 = pathlib.Path.cwd() / 'sample_assets' / 'sample1.json'
 assert PATH_ASSET1.exists()
