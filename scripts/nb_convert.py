@@ -7,9 +7,18 @@ Use this script to convert all *.py files to jupyter notebook format
 from py2jnb.tools import python_to_notebook
 import pathlib
 
-path_ipy_scripts=pathlib.Path.cwd().joinpath("../ipython_scripts")
+root_dir = pathlib.Path.cwd().joinpath("")
+path_ipy_root=root_dir.joinpath("../ipython_scripts")
+path_ipy_root=root_dir.joinpath("ipython_scripts")
+path_jupyter_root=root_dir.joinpath("jupyter_notebooks")
+list(path_ipy_scripts.glob('*'))
 
-path_jupyter_nbs=pathlib.Path.cwd().joinpath("../jupyter_notebooks")
+for script_dir in path_ipy_scripts.glob('*'):
+    dir_name = script_dir.parts[-1]
+
+    out_dir =
+    for script in script_dir.glob('*.py'):
+        print(script)
 
 for py_file in path_ipy_scripts.glob('*.py'):
     print(py_file)
