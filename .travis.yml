@@ -20,7 +20,7 @@ script:
 #script: tox
 
 # Generate PYPI package on tagged versions on master
-#deploy:
+#deploy.sh:
 #  provider: pypi
 #  distributions: sdist bdist_wheel
 #  user: ${PYPI_USER}
