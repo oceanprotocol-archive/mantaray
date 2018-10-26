@@ -104,3 +104,4 @@ ENV/
 sphinx
 .editorconfig
 /config_local.ini
+/config_k8s.ini
