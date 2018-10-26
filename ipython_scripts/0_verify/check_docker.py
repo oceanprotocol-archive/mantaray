@@ -11,7 +11,6 @@
 
 # %% Imports
 import docker
-client = docker.from_env()
 import subprocess
 # import subprocess
 # import pathlib
