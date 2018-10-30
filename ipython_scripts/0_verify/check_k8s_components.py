@@ -28,3 +28,5 @@ res.content
 #%%
 squid.ocean.Ocean()
 dir(squid)
+
+squid.__version__
