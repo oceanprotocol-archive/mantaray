@@ -1,7 +1,6 @@
 # %%
-import squid_py as squid
 import requests
-
+from squid_py import ocean
 #%%
 
 endpoints = {
@@ -26,7 +25,11 @@ res.content
 
 
 #%%
-squid.ocean.Ocean()
+ocean.Ocean('config_k8s.ini')
 dir(squid)
 
 squid.__version__
+
+
+import squid_py
+squid_py.

@@ -22,3 +22,5 @@ install_branch oceanprotocol osmosis-driver-interface develop
 install_branch oceanprotocol osmosis-aws-driver develop
 
 install_branch MarcusJones py2nb master
+
+install_branch oceanprotocol keeper-contracts develop
