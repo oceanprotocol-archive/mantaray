@@ -1,5 +1,5 @@
 # %%
-import squid_py as
+import squid_py as squid
 import requests
 
 #%%
@@ -11,4 +11,20 @@ endpoints = {
     'aquarius_doc': 'http://a0979d861d78611e89c320e965e714bc-1571806593.us-east-1.elb.amazonaws.com:5000/api/v1/docs'
 }
 
-requests.request('GET',endpoints['aquarius_doc'])
+res = requests.request('GET',endpoints['aquarius_doc'])
+res.status_code
+res.content
+
+
+res = requests.request('GET',endpoints['aquarius'])
+res.status_code
+res.content
+
+res = requests.request('GET',endpoints['keeper-contracts'])
+res.status_code
+res.content
+
+
+#%%
+squid.ocean.Ocean()
+dir(squid)
