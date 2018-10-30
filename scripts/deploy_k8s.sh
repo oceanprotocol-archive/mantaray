@@ -1,6 +1,6 @@
 #!/bin/bash -x
-CONF_TEMPLATE=config.ini
-CONF_FILE=config_local.ini
+CONF_TEMPLATE=config_k8s_template.ini
+CONF_FILE=config_k8s.ini
 cp $CONF_TEMPLATE $CONF_FILE
 
 
