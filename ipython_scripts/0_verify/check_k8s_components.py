@@ -20,7 +20,6 @@ logger.setLevel(logging.DEBUG)
 FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S"
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
 formatter = logging.Formatter(FORMAT, DATE_FMT)
 
 # Create handler and assign
@@ -28,6 +27,7 @@ handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.debug("Logging started")
+
 #%%
 
 endpoints_dict = {
@@ -50,6 +50,7 @@ check_endpoint('pleuston', endpoints_dict)
 
 #%%
 config_path = Path.cwd() / '..' / '..' / 'config_k8s.ini'
+config_path = Path.cwd() / 'config_k8s.ini'
 assert config_path.exists()
 ocn = ocean.Ocean(config_path)
 

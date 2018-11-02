@@ -4,9 +4,9 @@ Test functionality of squid-py wrapper.
 """
 
 # %% Imports
-import pathlib
+from pathlib import Path
 import squid_py.ocean as ocean_wrapper
-from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text, Web3Helper
+# from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text, Web3Helper
 import sys
 import random
 import json
@@ -15,23 +15,14 @@ import squid_py.ocean as ocean
 
 # %% Logging
 import logging
-
 loggers_dict = logging.Logger.manager.loggerDict
-
 logger = logging.getLogger()
 logger.handlers = []
-
 # Set level
 logger.setLevel(logging.INFO)
-
-# FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-# FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
 FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
 DATE_FMT = "%Y-%m-%d %H:%M:%S"
 formatter = logging.Formatter(FORMAT, DATE_FMT)
-
 # Create handler and assign
 handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
@@ -41,14 +32,17 @@ logger.info("Logging started")
 # %% Instantiate the wrapper
 
 # The contract addresses are loaded from file
-PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
+# CHOOSE YOUR CONFIGURATION METHOD
+# PATH_CONFIG = Path.cwd() / 'config_local.ini'
+PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
+PATH_CONFIG = Path.cwd() /  'config_k8s.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-ocn = ocean.Ocean(keeper_url='http://0.0.0.0:8545', config_file='config_local.ini')
+ocn = ocean.Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
 # %% List the users
-ocn.helper.accounts
+ocn.accounts
 
 
 # %% Get funds to users
