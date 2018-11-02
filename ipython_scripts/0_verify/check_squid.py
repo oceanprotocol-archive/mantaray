@@ -9,7 +9,7 @@ Instantiate the wrapper with the local config_local.ini.
 import pathlib
 import squid_py.ocean as ocean
 import sys
-from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text
+# from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text
 
 # %% Logging
 import logging
@@ -44,7 +44,7 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 #ocn = ocean.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
 
-ocn = ocean.Ocean(keeper_url='http://0.0.0.0:8545', config_file='config_local.ini')
+ocn = ocean.Ocean(config_file='config_local.ini')
 #config = Config('config_local.ini')
 #assert ocean.market.address == ocean.get_web3().toChecksumAddress(config.get(KEEPER_CONTRACTS, 'market.address'))
 
