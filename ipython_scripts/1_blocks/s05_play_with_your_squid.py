@@ -51,42 +51,47 @@ ocn.accounts
 # Users are instantiated and listed
 
 class User():
-    def __init__(self,num,ocean_obj):
+    def __init__(self,num,account_obj):
         self.name = 'user' + str(num)
-        self.ocean = ocean_obj
-        self.address = self.ocean.helper._web3.eth.accounts[num]
-        self.balance = self.update_balance()
+        self.account = account_obj
+        # self.address = self.ocean.helper._web3.eth.accounts[num]
+        # self.balance = self.update_balance()
 
         logging.debug(self)
 
     def __str__(self):
-        self.update_balance()
-        return "{} at {}... with {} token".format(self.name,self.address[0:6],self.balance)
+        # self.update_balance()
+        return "{}  {}".format(self.name,self.account)
 
-    def update_balance(self):
-        self.balance = self.ocean.token.get_token_balance(self.address)
 
-    def request_dev_tokens(self,amount):
-        """For development, a user can request free tokens"""
-        self.ocean.market.request_tokens(amount, self.address)
-
-    def register_asset(self, dataset):
-        # Register this asset on the blockchain
-        asset_id = self.ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
-                                               dataset['base']['price'], self.address)
-        assert self.ocean.market.check_asset(asset_id)
-
-        # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
-        logging.info("registered asset: {}".format(asset_id))
+    # def request_dev_tokens(self,amount):
+    #     """For development, a user can request free tokens"""
+    #     self.ocean.market.request_tokens(amount, self.address)
+    #
+    # def register_asset(self, dataset):
+    #     # Register this asset on the blockchain
+    #     asset_id = self.ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
+    #                                            dataset['base']['price'], self.address)
+    #     assert self.ocean.market.check_asset(asset_id)
+    #
+    #     # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
+    #     logging.info("registered asset: {}".format(asset_id))
 
 
 users = list()
-for i in range(len(ocn.helper._web3.eth.accounts)):
-    user = User(i,ocn)
-    user.request_dev_tokens(random.randint(0,100))
+for i, acct_address in enumerate(ocn.accounts):
+    user = User(i, ocn.accounts[acct_address])
+
+    # account_obj = ocn.accounts[acct_address]
+
+    # print(i, acct_address, account_obj.ocean, account_obj.ether)
+    # user.request_dev_tokens(random.randint(0,100))
+    # user.account.request_tokens(random.randint(0,100)))
     users.append(user)
 
-# %% List the users
+#%% List the users
+users[0].name = 'Data Scientist'
+users[1].name = 'Data Owner'
 for u in users: print(u)
 
 # %% Register some assets
