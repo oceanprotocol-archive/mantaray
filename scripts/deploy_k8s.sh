@@ -3,6 +3,7 @@ CONF_TEMPLATE=config_k8s_template.ini
 CONF_FILE=config_k8s.ini
 cp $CONF_TEMPLATE $CONF_FILE
 
+# TODO: Get contract addresses from ABI files!
 
 market=$(docker exec -it docker_keeper-contracts_1 python -c "import sys, json; print(json.load(open('/keeper-contracts/artifacts/OceanMarket.development.json', 'r'))['address'])")
 token=$(docker exec -it docker_keeper-contracts_1 python -c "import sys, json; print(json.load(open('/keeper-contracts/artifacts/OceanToken.development.json', 'r'))['address'])")

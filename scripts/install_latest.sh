@@ -10,7 +10,7 @@ install_branch() {
 	THIS_REPO=$2
 	THIS_BRANCH=$3
 	echo 
-	echo "Force-installing package from $THIS_BRANCH of $THIS_ORG/$THIS_REPO"
+	echo "Force-installing package from $THIS_BRANCH branch of $THIS_ORG/$THIS_REPO"
 	echo
 	pip install --upgrade --force-reinstall git+https://github.com/$THIS_ORG/$THIS_REPO.git@$THIS_BRANCH
 }
