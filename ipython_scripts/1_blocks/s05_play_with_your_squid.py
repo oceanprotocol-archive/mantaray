@@ -94,6 +94,12 @@ users[0].name = 'Data Scientist'
 users[1].name = 'Data Owner'
 for u in users: print(u)
 
+#%% Get some Ocean token
+for usr in users:
+    usr.account.request_tokens(random.randint(0,100))
+
+for u in users: print(u)
+
 # %% Register some assets
 
 # The sample asset metadata is stored in a .json file
