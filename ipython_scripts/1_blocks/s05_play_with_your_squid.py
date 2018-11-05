@@ -3,6 +3,7 @@
 Test functionality of squid-py wrapper.
 """
 
+
 # %% Imports
 from pathlib import Path
 import squid_py.ocean as ocean_wrapper
@@ -36,7 +37,7 @@ logger.info("Logging started")
 # PATH_CONFIG = Path.cwd() / 'config_local.ini'
 # PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
 PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
+# PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = ocean.Ocean(PATH_CONFIG)
