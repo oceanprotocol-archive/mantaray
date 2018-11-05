@@ -3,10 +3,11 @@
 Test functionality of squid-py wrapper.
 """
 
+
 # %% Imports
-import pathlib
+from pathlib import Path
 import squid_py.ocean as ocean_wrapper
-from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text, Web3Helper
+# from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text, Web3Helper
 import sys
 import random
 import json
@@ -15,23 +16,14 @@ import squid_py.ocean as ocean
 
 # %% Logging
 import logging
-
 loggers_dict = logging.Logger.manager.loggerDict
-
 logger = logging.getLogger()
 logger.handlers = []
-
 # Set level
 logger.setLevel(logging.INFO)
-
-# FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-# FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
 FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
 DATE_FMT = "%Y-%m-%d %H:%M:%S"
 formatter = logging.Formatter(FORMAT, DATE_FMT)
-
 # Create handler and assign
 handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
@@ -41,14 +33,18 @@ logger.info("Logging started")
 # %% Instantiate the wrapper
 
 # The contract addresses are loaded from file
-PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
+# CHOOSE YOUR CONFIGURATION METHOD
+# PATH_CONFIG = Path.cwd() / 'config_local.ini'
+# PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
+PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
+# PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-ocn = ocean.Ocean(keeper_url='http://0.0.0.0:8545', config_file='config_local.ini')
+ocn = ocean.Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
 # %% List the users
-ocn.helper.accounts
+ocn.accounts
 
 
 # %% Get funds to users
@@ -57,42 +53,34 @@ ocn.helper.accounts
 # Users are instantiated and listed
 
 class User():
-    def __init__(self,num,ocean_obj):
+    def __init__(self,num,account_obj):
         self.name = 'user' + str(num)
-        self.ocean = ocean_obj
-        self.address = self.ocean.helper._web3.eth.accounts[num]
-        self.balance = self.update_balance()
-
-        logging.debug(self)
+        self.account = account_obj
+        logging.info(self)
 
     def __str__(self):
-        self.update_balance()
-        return "{} at {}... with {} token".format(self.name,self.address[0:6],self.balance)
-
-    def update_balance(self):
-        self.balance = self.ocean.token.get_token_balance(self.address)
-
-    def request_dev_tokens(self,amount):
-        """For development, a user can request free tokens"""
-        self.ocean.market.request_tokens(amount, self.address)
-
-    def register_asset(self, dataset):
-        # Register this asset on the blockchain
-        asset_id = self.ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
-                                               dataset['base']['price'], self.address)
-        assert self.ocean.market.check_asset(asset_id)
-
-        # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
-        logging.info("registered asset: {}".format(asset_id))
-
+        # self.update_balance()
+        return "{}  {}".format(self.name,self.account)
 
 users = list()
-for i in range(len(ocn.helper._web3.eth.accounts)):
-    user = User(i,ocn)
-    user.request_dev_tokens(random.randint(0,100))
+for i, acct_address in enumerate(ocn.accounts):
+    user = User(i, ocn.accounts[acct_address])
+
+
+    # print(i, acct_address, account_obj.ocean, account_obj.ether)
+    # user.request_dev_tokens(random.randint(0,100))
+    # user.account.request_tokens(random.randint(0,100)))
     users.append(user)
 
-# %% List the users
+#%% List the users
+users[0].name = 'Data Scientist'
+users[1].name = 'Data Owner'
+for u in users: print(u)
+
+#%% Get some Ocean token
+for usr in users:
+    usr.account.request_tokens(random.randint(0,100))
+
 for u in users: print(u)
 
 # %% Register some assets
@@ -208,7 +196,24 @@ def test_keeper():
     ocean.metadata.retire_asset(convert_to_string(asset_id))
 
 
+#%%
     # events = get_events(filter_token_published)
     # assert events
     # assert events[0].args['_id'] == request_id
     # on_chain_enc_token = events[0].args["_encryptedAccessToken"]
+
+
+
+
+    # def request_dev_tokens(self,amount):
+    #     """For development, a user can request free tokens"""
+    #     self.ocean.market.request_tokens(amount, self.address)
+    #
+    # def register_asset(self, dataset):
+    #     # Register this asset on the blockchain
+    #     asset_id = self.ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
+    #                                            dataset['base']['price'], self.address)
+    #     assert self.ocean.market.check_asset(asset_id)
+    #
+    #     # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
+    #     logging.info("registered asset: {}".format(asset_id))

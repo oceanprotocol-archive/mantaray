@@ -56,10 +56,10 @@ low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
 # %% Check running docker images using SDK
 for container in client.containers.list():
-    print(container.name, container.status)
-    print(container.image.tags)
-    print(container.labels)
-    print("\n\n")
+    print(f"Docker container {container.name} is {container.status}")
+    print('\tTags:', container.image.tags)
+    # print(container.labels)
+    # print("\n")
 # container.logs()
 
 # %% Get addresses from images
@@ -82,6 +82,7 @@ addresses=dict()
 addresses['market.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanMarket').decode("utf-8").rstrip()
 addresses['auth.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanToken').decode("utf-8").rstrip()
 addresses['token.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanAuth').decode("utf-8").rstrip()
+addresses['didregistry.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'DIDRegistry').decode("utf-8").rstrip()
 
 print("Artifact addresses retrieved:")
 pprint(addresses)
