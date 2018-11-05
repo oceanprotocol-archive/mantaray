@@ -34,8 +34,9 @@ logger.info("Logging started")
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION METHOD
 # PATH_CONFIG = Path.cwd() / 'config_local.ini'
-PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
-PATH_CONFIG = Path.cwd() /  'config_k8s.ini'
+# PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
+PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
+PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = ocean.Ocean(PATH_CONFIG)
@@ -54,35 +55,16 @@ class User():
     def __init__(self,num,account_obj):
         self.name = 'user' + str(num)
         self.account = account_obj
-        # self.address = self.ocean.helper._web3.eth.accounts[num]
-        # self.balance = self.update_balance()
-
-        logging.debug(self)
+        logging.info(self)
 
     def __str__(self):
         # self.update_balance()
         return "{}  {}".format(self.name,self.account)
 
-
-    # def request_dev_tokens(self,amount):
-    #     """For development, a user can request free tokens"""
-    #     self.ocean.market.request_tokens(amount, self.address)
-    #
-    # def register_asset(self, dataset):
-    #     # Register this asset on the blockchain
-    #     asset_id = self.ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
-    #                                            dataset['base']['price'], self.address)
-    #     assert self.ocean.market.check_asset(asset_id)
-    #
-    #     # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
-    #     logging.info("registered asset: {}".format(asset_id))
-
-
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
     user = User(i, ocn.accounts[acct_address])
 
-    # account_obj = ocn.accounts[acct_address]
 
     # print(i, acct_address, account_obj.ocean, account_obj.ether)
     # user.request_dev_tokens(random.randint(0,100))
@@ -213,7 +195,24 @@ def test_keeper():
     ocean.metadata.retire_asset(convert_to_string(asset_id))
 
 
+#%%
     # events = get_events(filter_token_published)
     # assert events
     # assert events[0].args['_id'] == request_id
     # on_chain_enc_token = events[0].args["_encryptedAccessToken"]
+
+
+
+
+    # def request_dev_tokens(self,amount):
+    #     """For development, a user can request free tokens"""
+    #     self.ocean.market.request_tokens(amount, self.address)
+    #
+    # def register_asset(self, dataset):
+    #     # Register this asset on the blockchain
+    #     asset_id = self.ocean.market.register_asset(dataset['base']['name'], dataset['base']['description'],
+    #                                            dataset['base']['price'], self.address)
+    #     assert self.ocean.market.check_asset(asset_id)
+    #
+    #     # logging.info("{} registered".format(asset_id.decode("ascii").rstrip()))
+    #     logging.info("registered asset: {}".format(asset_id))

@@ -30,7 +30,7 @@
 
 Manage assets for data science in an interactive shell, as part of the
 typical data science workflow.
- - Register and upload datasets and metadata to;
+ - Register and upload datasets and their descriptive metadata to;
     - [ ] Local components and local ethereum blockchain (Ganache)
     - [ ] Cloud-hosted components and cloud ethereum blockchain (Ganache)
     - [ ] Cloud-hosted components and test-network ethereum blockchain (Kovan test network)
@@ -42,6 +42,29 @@ typical data science workflow.
 Designed to be used with an interactive Python shell, for example the IPython
 Read–Eval–Print Loop (REPL) found in [Jupyter Notebooks](http://jupyter.org/)
 and other editors.
+
+## Deployment
+
+On kubernetes:
+
+The Ocean library squid-py **version 0.2.1**
+
+Connects to keeper-contracts node **version develop tag Friday 2nd November**
+
+Connects to provider **version ???**
+
+On local development (`docker-compose`), latest status of components is:
+
+| component              | Date    | Github | PyPI   | Dockerhub | Kubernetes    | Note |
+|------------------------|---------|--------|--------|-----------|---------------|------|
+| squid-py               | Oct. 30 | v0.2.1 | 0.2.1  | N/A       | N/A           |      |
+| keeper-contracts       | Nov. 2  | 0.3.12 | 0.3.12 | v0.3.12   | ?? develop ?? |      |
+| aquarius               | Oct. 17 | v0.1.1 | N/A    | MISSING   | ??            |      |
+| brizo                  | ??      | ??     | ??     | ??        | ??            | Today   |
+| secret-store-client-py | ??      | ??     | ??     | ??        | ??            | ??   |
+
+
+Current endpoints:
 
 ## Examples
 [Test the components](/mantaray/ipython_scripts/m00_test_connections.py)
