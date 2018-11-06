@@ -44,9 +44,16 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = ocean.Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
+
 # %% List the accounts created in Ganache
-ocn.accounts
-ocn.accounts[list(ocn.accounts.keys())[0]].ocean
+ocn.update_accounts()
+for address in ocn.accounts:
+    print(ocn.accounts[address])
+
+# These accounts have a positive ETH balance
+for address, account in ocn.accounts.items():
+    assert account.ether >= 0
+    assert account.ocean >= 0
 
 # %% Get funds to users
 # By default, 10 wallet addresses are created in Ganache
@@ -66,7 +73,7 @@ class User():
             ocean_token = self.account.ocean
         except:
             ocean_token = 0
-        return "{:<20} {:<20} {}".format(self.name, self.role, ocean_token)
+        return "{:<20} {:<20} {} Ocean token".format(self.name, self.role, ocean_token)
 
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
@@ -85,9 +92,7 @@ for usr in users:
     ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
 for u in users: print(u)
-u.account.ocean
-ocn.keeper.token.get_ether_balance(u.account.address)
-ocn.keeper.token.get_ocean_balance(u.account.address)
+
 # %% Register some assets
 
 # The sample asset metadata is stored in a .json file
