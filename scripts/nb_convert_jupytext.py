@@ -17,6 +17,7 @@ for script_dir in path_ipy_root.glob('*'):
     out_dir = path_jupyter_root.joinpath(dir_name)
     out_dir.mkdir(parents=True, exist_ok=True)
     for script_path in script_dir.glob('*.py'):
+        print("Processing", script_path)
         script_fname = script_path.stem + '.ipynb'
         out_path = out_dir.joinpath(script_fname)
 
