@@ -55,11 +55,12 @@ Connects to provider **version ???**
 
 On local development (`docker-compose`), latest status of components is:
 
+
 | component              | Date    | Github | PyPI   | Dockerhub | Kubernetes    | Note |
 |------------------------|---------|--------|--------|-----------|---------------|------|
 | squid-py               | Oct. 30 | v0.2.1 | 0.2.1  | N/A       | N/A           |      |
 | keeper-contracts       | Nov. 2  | 0.3.12 | 0.3.12 | v0.3.12   | ?? develop ?? |      |
-| aquarius               | Oct. 17 | v0.1.1 | N/A    | MISSING   | ??            |      |
+| aquarius               | Nov. 5  | v0.1.2 | N/A    | v0.1.2    | ??            |      |
 | brizo                  | ??      | ??     | ??     | ??        | ??            | Today   |
 | secret-store-client-py | ??      | ??     | ??     | ??        | ??            | ??   |
 
