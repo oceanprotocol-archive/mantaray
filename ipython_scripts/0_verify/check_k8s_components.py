@@ -5,24 +5,19 @@ import sys
 from pathlib import Path
 
 # %% Logging
+""" 
+"""
 import logging
-
-loggers_dict = logging.Logger.manager.loggerDict
-
 logger = logging.getLogger()
-logger.handlers = []
 
 # Set level
 logger.setLevel(logging.DEBUG)
-
-# FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-# FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
 FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-
 DATE_FMT = "%Y-%m-%d %H:%M:%S"
 formatter = logging.Formatter(FORMAT, DATE_FMT)
 
 # Create handler and assign
+logger.handlers = []
 handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 logger.handlers = [handler]
@@ -53,4 +48,5 @@ config_path = Path.cwd() / '..' / '..' / 'config_k8s.ini'
 config_path = Path.cwd() / 'config_k8s.ini'
 assert config_path.exists()
 ocn = ocean.Ocean(config_path)
+
 

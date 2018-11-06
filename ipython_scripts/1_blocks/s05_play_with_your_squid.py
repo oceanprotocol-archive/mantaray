@@ -3,7 +3,6 @@
 Test functionality of squid-py wrapper.
 """
 
-
 # %% Imports
 from pathlib import Path
 import squid_py.ocean as ocean_wrapper
@@ -35,17 +34,17 @@ logger.info("Logging started")
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION METHOD
 # PATH_CONFIG = Path.cwd() / 'config_local.ini'
-# PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
-PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
+PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
+PATH_CONFIG = Path.cwd() /  'config_local.ini'
+# PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
 # PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = ocean.Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
-# %% List the users
+# %% List the accounts created in Ganache
 ocn.accounts
-
 
 # %% Get funds to users
 # By default, 10 wallet addresses are created in Ganache
@@ -59,17 +58,11 @@ class User():
         logging.info(self)
 
     def __str__(self):
-        # self.update_balance()
-        return "{}  {}".format(self.name,self.account)
+        return "{} {}".format(self.name, self.account.address)
 
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
     user = User(i, ocn.accounts[acct_address])
-
-
-    # print(i, acct_address, account_obj.ocean, account_obj.ether)
-    # user.request_dev_tokens(random.randint(0,100))
-    # user.account.request_tokens(random.randint(0,100)))
     users.append(user)
 
 #%% List the users
