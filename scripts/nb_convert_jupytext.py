@@ -4,7 +4,6 @@ Use this script to convert all *.py files to jupyter notebook format
 
 
 #%%
-# from py2jnb.tools import python_to_notebook
 import pathlib
 import jupytext
 
