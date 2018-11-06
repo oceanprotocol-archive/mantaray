@@ -93,6 +93,8 @@ for usr in users:
 
 for u in users: print(u)
 
+#%% List assets
+
 # %% Register some assets
 
 # The sample asset metadata is stored in a .json file
