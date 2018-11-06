@@ -12,6 +12,7 @@ import random
 import json
 from pprint import pprint
 import squid_py.ocean as ocean
+import names
 
 # %% Logging
 import logging
@@ -45,6 +46,7 @@ logging.info("Ocean smart contract node connected ".format())
 
 # %% List the accounts created in Ganache
 ocn.accounts
+ocn.accounts[list(ocn.accounts.keys())[0]].ocean
 
 # %% Get funds to users
 # By default, 10 wallet addresses are created in Ganache
@@ -52,30 +54,40 @@ ocn.accounts
 # Users are instantiated and listed
 
 class User():
-    def __init__(self,num,account_obj):
-        self.name = 'user' + str(num)
+    def __init__(self, name, role, account_obj):
+        self.name = name
+        self.role = role
         self.account = account_obj
+
         logging.info(self)
 
     def __str__(self):
-        return "{} {}".format(self.name, self.account.address)
+        try:
+            ocean_token = self.account.ocean
+        except:
+            ocean_token = 0
+        return "{:<20} {:<20} {}".format(self.name, self.role, ocean_token)
 
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
-    user = User(i, ocn.accounts[acct_address])
+    if i%2 == 0: role = 'Data Scientist'
+    else: role = 'Data Owner'
+    user = User(names.get_full_name(), role, ocn.accounts[acct_address])
     users.append(user)
 
 #%% List the users
-users[0].name = 'Data Scientist'
-users[1].name = 'Data Owner'
 for u in users: print(u)
+
 
 #%% Get some Ocean token
 for usr in users:
-    usr.account.request_tokens(random.randint(0,100))
+    rcpt = usr.account.request_tokens(random.randint(0,100))
+    ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
 for u in users: print(u)
-
+u.account.ocean
+ocn.keeper.token.get_ether_balance(u.account.address)
+ocn.keeper.token.get_ocean_balance(u.account.address)
 # %% Register some assets
 
 # The sample asset metadata is stored in a .json file
