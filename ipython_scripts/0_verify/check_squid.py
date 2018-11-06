@@ -49,18 +49,19 @@ ocn = ocean.Ocean(config_file='config_local.ini')
 #assert ocean.market.address == ocean.get_web3().toChecksumAddress(config.get(KEEPER_CONTRACTS, 'market.address'))
 
 # logging.info("Ocean smart contract node connected at {}".format(ocn.node_uri))
-logging.info("_keeper_url {}".format(ocn._keeper_url))
-logging.info("_keeper_path {}".format(ocn._keeper_path))
-logging.info("_gas_limit {}".format(ocn._gas_limit))
-logging.info("_provider_url {}".format(ocn._provider_url))
+# logging.info("_keeper_url {}".format(ocn.))
+# logging.info("_keeper_path {}".format(ocn.))
+# logging.info("_gas_limit {}".format(ocn.))
+# logging.info("_provider_url {}".format(ocn.))
 
 
-logging.info("{:>40} {}".format("Token contract address:", ocn.token.address))
-logging.info("{:>40} {}".format("Authentication contract atddress:", ocn.auth.address))
-logging.info("{:>40} {}".format("Market contract address:", ocn.market.address))
+logging.info("{:>40} {}".format("Token contract address:", ocn.keeper.token.address))
+logging.info("{:>40} {}".format("Authentication contract atddress:", ocn.keeper.auth.address))
+logging.info("{:>40} {}".format("Market contract address:", ocn.keeper.market.address))
+logging.info("{:>40} {}".format("DID Registry contract address:", ocn.keeper.didregistry.address))
 
-logging.info("Metadata store (provider) located at: {}".format(ocn.metadata.base_url))
+logging.info("Metadata store (provider) located at: {}".format(ocn.metadata._base_url))
 
 # %%
-ocn.helper.accounts
+
 # %%

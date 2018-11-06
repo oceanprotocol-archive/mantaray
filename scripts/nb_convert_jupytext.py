@@ -4,7 +4,6 @@ Use this script to convert all *.py files to jupyter notebook format
 
 
 #%%
-# from py2jnb.tools import python_to_notebook
 import pathlib
 import jupytext
 
@@ -18,6 +17,7 @@ for script_dir in path_ipy_root.glob('*'):
     out_dir = path_jupyter_root.joinpath(dir_name)
     out_dir.mkdir(parents=True, exist_ok=True)
     for script_path in script_dir.glob('*.py'):
+        print("Processing", script_path)
         script_fname = script_path.stem + '.ipynb'
         out_path = out_dir.joinpath(script_fname)
 
@@ -26,8 +26,12 @@ for script_dir in path_ipy_root.glob('*'):
             data = fin.read()
             parsed = jupytext.reads(data, ext='.py', format_name='percent')
 
+        # Delete the file if it exists
+        if out_path.exists():
+            out_path.unlink()
+
         jupytext.writef(parsed, out_path)
 
         print("Converted {} to .ipynb format".format(out_path.stem))
-
+        print("Saved to {}".format(out_path))
 
