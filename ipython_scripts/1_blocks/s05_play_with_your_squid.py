@@ -34,6 +34,7 @@ import json
 from pprint import pprint
 import squid_py.ocean as ocean
 import names
+from squid_py.ddo import DDO
 
 # %% [markdown]
 # Logging
@@ -113,6 +114,7 @@ for i, acct_address in enumerate(ocn.accounts):
 
 #%% [markdown]
 # List the users
+
 #%%
 for u in users: print(u)
 
@@ -128,12 +130,32 @@ for u in users: print(u)
 # %% [markdown]
 # ## Section 4: Find and publish assets
 #%% [markdown]
-# List assets
+# ### 4.1) DDO - An asset has a DDO, which in turn has Metadata
+# %%
+# Load a sample DDO
+SAMPLE_DDO_PATH = Path.cwd() / 'sample_assets' / 'ddo_sample_generated_1.json'
+assert SAMPLE_DDO_PATH.exists()
+with open(SAMPLE_DDO_PATH) as f:
+    SAMPLE_DDO_JSON_DICT = json.load(f)
 
-# %% Register some assets
+SAMPLE_DDO_JSON_STRING = json.dumps(SAMPLE_DDO_JSON_DICT)
 
+this_ddo = DDO(json_text=SAMPLE_DDO_JSON_STRING)
+assert this_ddo.validate()
+service = this_ddo.get_service('Metadata')
+values = service.get_values()
+assert values['metadata']
+this_ddo._did
+
+#%% [markdown]
+# ### 4.2) Publish - The Metadata Store (Aquarius) holds the DDO
+# %%
+
+#%% [markdown]
+# OLD
+#%%
 # The sample asset metadata is stored in a .json file
-PATH_ASSET1 = pathlib.Path.cwd() / 'sample_assets' / 'sample1.json'
+PATH_ASSET1 = Path.cwd() / 'sample_assets' / 'sample1.json'
 assert PATH_ASSET1.exists()
 with open(PATH_ASSET1) as f:
     dataset = json.load(f)
