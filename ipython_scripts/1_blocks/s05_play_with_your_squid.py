@@ -4,6 +4,7 @@
 # Trilobite release
 #
 # <img src="https://oceanprotocol.com/static/media/logo-white.7b65db16.png" alt="drawing" width="200"/
+# <img src="https://oceanprotocol.com/static/media/logo.75e257aa.png" alt="drawing" width="200"/
 
 # %% [markdown]
 # # Test functionality of squid-py wrapper.
