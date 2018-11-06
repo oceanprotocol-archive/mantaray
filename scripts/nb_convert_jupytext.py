@@ -25,8 +25,12 @@ for script_dir in path_ipy_root.glob('*'):
             data = fin.read()
             parsed = jupytext.reads(data, ext='.py', format_name='percent')
 
+        # Delete the file if it exists
+        if out_path.exists():
+            out_path.unlink()
+
         jupytext.writef(parsed, out_path)
 
         print("Converted {} to .ipynb format".format(out_path.stem))
-
+        print("Saved to {}".format(out_path))
 
