@@ -30,7 +30,7 @@ datasets =[
     ]
 
 path_data_root = Path.home() / "DATA"
-# %% Iterate over
+# %% Iterate over each DS
 dict_ds = dict()
 for dir_ds in datasets:
     path_ds = path_data_root / dir_ds
@@ -40,42 +40,33 @@ for dir_ds in datasets:
     dict_ds[dir_ds]['sample'] = path_ds / 'sample'
 
 # %%
-dict_ds["Humpback_identification"]["full"]
+
+# The full dataset zip file
 train_zip = dict_ds["Humpback_identification"]["full"] / 'train.zip'
 assert train_zip.exists()
+
+# The sample subset
 NUM_SAMPLES = 10
 SAMPLE_DIR = dict_ds["Humpback_identification"]["sample"]
 assert SAMPLE_DIR.exists()
 
-files = list()
-with zipfile.ZipFile(train_zip, "r") as zf:
-    files = zf.namelist()
+# Open the zip file
+with zipfile.ZipFile(train_zip) as z:
+    # Get all file names, select a subset
+    files = z.namelist()
     sample_files = [random.choice(files) for i in range(NUM_SAMPLES)]
     for sample_f in sample_files:
-        with zf.open(sample_f) as this_file:
-            print(this_file)
-            res = Path(this_file.name)
-            path_out = SAMPLE_DIR / (str(res.stem) + str(res.suffix))
-            with open(path_out, 'wb') as out_file:
-                print(out_file)
-                # out_file.write(zf.read(this_file))
-                # out_file.write(zf.read(this_file))
-                shutil.copy(this_file,path_out)
-
-            # k, open():j
-
+        # Create the target path
+        # print(sample_f)
+        res = Path(sample_f).name
+        print(res)
+        # path_out = SAMPLE_DIR / (str(res.stem) + str(res.suffix))
+        path_out = SAMPLE_DIR / res
+        # Open the specific sample file, and the target path
+        with z.open(sample_f) as zf, open(path_out, 'wb') as f:
+            print(zf, f)
+            shutil.copyfileobj(zf, f)
 logging.debug(f"Found {len(files)} files in {train_zip}")
 logging.debug(f"Extracted {len(sample_files)} images for sample".format())
-
-
-# %%
-with zipfile.ZipFile(train_zip) as z:
-    with z.open('train/f185b7aa.jpg') as zf, open('train/f185b7aa.jpg', 'wb') as f:
-        shutil.copyfileobj(zf, f)
-
-
-    # for name in f.namelist():
-    #     data = f.read(name)
-    #     print(name, len(data), repr(data[:10]))
 
 
