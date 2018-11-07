@@ -3,6 +3,7 @@ from pathlib import Path
 import zipfile
 import logging
 import random
+import pandas as pd
 # %%
 import logging
 loggers_dict = logging.Logger.manager.loggerDict
@@ -39,7 +40,7 @@ for dir_ds in datasets:
     dict_ds[dir_ds]['full'] = path_ds / 'full'
     dict_ds[dir_ds]['sample'] = path_ds / 'sample'
 
-# %%
+# %% Extract single images into /sample
 
 # The full dataset zip file
 train_zip = dict_ds["Humpback_identification"]["full"] / 'train.zip'
@@ -68,5 +69,11 @@ with zipfile.ZipFile(train_zip) as z:
             shutil.copyfileobj(zf, f)
 logging.debug(f"Found {len(files)} files in {train_zip}")
 logging.debug(f"Extracted {len(sample_files)} images for sample".format())
+
+
+# %% Apply the labels
+
+train_csv = dict_ds["Humpback_identification"]["full"] / 'train.csv'
+assert train_csv.exists()
 
 
