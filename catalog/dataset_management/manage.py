@@ -73,9 +73,8 @@ for name in metadata_dict:
             url = link['url']
             print(res.status_code,link)
             res = requests.head(url)
-            # print(res.status_code)
             assert res.status_code == 200
-            # logging.debug(f"{link}".format())
+
 # %%
 # Check all the content URLs
 for name in metadata_dict:
@@ -84,10 +83,3 @@ for name in metadata_dict:
         res = requests.head(link)
         print(res.status_code,link)
         assert res.status_code == 200
-            # logging.debug(f"{link}".format())
-
-
-#         res = requests.get(link)
-# requests.post('https://s3.eu-central-1.amazonaws.com/trilobite/World_Population/full/WPP2017_POP_F01_1_TOTAL_POPULATION_BOTH_SEXES.xlsx')
-# requests.get('https://s3.eu-central-1.amazonaws.com/trilobite/World_Population/full/WPP2017_POP_TOTAL_POPULATION_BOTH_SEXES.xlsx')
-# requests.head('https://s3.eu-central-1.amazonaws.com/trilobite/World_Population/full/WPP2017_POP_F01_1_TOTAL_POPULATION_BOTH_SEXES.xlsx')
