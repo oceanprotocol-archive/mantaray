@@ -25,4 +25,4 @@ install_branch oceanprotocol osmosis-driver-interface develop
 
 install_branch oceanprotocol osmosis-aws-driver develop
 
-install_branch oceanprotocol keeper-contracts develop
+install_branch oceanprotocol keeper-contracts v0.3.19
