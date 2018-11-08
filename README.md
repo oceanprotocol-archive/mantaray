@@ -45,27 +45,14 @@ and other editors.
 
 ## Deployment
 
-On kubernetes:
 
-The Ocean library squid-py **version 0.2.1**
-
-Connects to keeper-contracts node **version develop tag Friday 2nd November**
-
-Connects to provider **version ???**
-
-On local development (`docker-compose`), latest status of components is:
-
-
-| component              | Date    | Github | PyPI   | Dockerhub | Kubernetes    | Note |
+| component              | Date    | Github | PyPI   | Dockerhub | Kubernetes    | Notes |
 |------------------------|---------|--------|--------|-----------|---------------|------|
-| squid-py               | Oct. 30 | v0.2.1 | 0.2.1  | N/A       | N/A           |      |
-| keeper-contracts       | Nov. 2  | 0.3.12 | 0.3.12 | v0.3.12   | ?? develop ?? |      |
-| aquarius               | Nov. 5  | v0.1.2 | N/A    | v0.1.2    | ??            |      |
-| brizo                  | ??      | ??     | ??     | ??        | ??            | Today   |
-| secret-store-client-py | ??      | ??     | ??     | ??        | ??            | ??   |
-
-
-Current endpoints:
+| squid-py               | Nov. 8 | v0.2.2 | 0.2.1 (!) | (n/a)     | (n/a)     | (Failed travis PyPI deploy) |
+| keeper-contracts       | Nov. 2  | 0.3.19 | 0.3.19 | v0.3.19  | ?? |      |
+| aquarius               | Nov. 5  | v0.1.2 | (n/a) | v0.1.2    | ??            |      |
+| brizo                  | ??      | ??     | ??     | ??        | ??            |    |
+| secret-store-client-py | ??      | ??     | ??     | ??        | ??            |    |
 
 ## Examples
 [Test the components](/mantaray/ipython_scripts/m00_test_connections.py)
@@ -146,7 +133,7 @@ When you want to instantiate an Oceandb plugin you can provide the next environm
 
 The information about code style in python is documented in this two links [python-developer-guide](https://github.com/oceanprotocol/dev-ocean/blob/master/doc/development/python-developer-guide.md)
 and [python-style-guide](https://github.com/oceanprotocol/dev-ocean/blob/master/doc/development/python-style-guide.md).
-    
+​    
 ## Testing
 
 Automatic tests are setup via Travis, executing `tox`.
@@ -172,3 +159,5 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+```

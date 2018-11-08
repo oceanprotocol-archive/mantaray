@@ -15,12 +15,14 @@ install_branch() {
 	pip install --upgrade --force-reinstall git+https://github.com/$THIS_ORG/$THIS_REPO.git@$THIS_BRANCH
 }
 
-install_branch oceanprotocol squid-py develop
+
+#install_branch oceanprotocol squid-py develop
+install_branch oceanprotocol squid-py v0.2.2
+
+install_branch oceanprotocol aquarius v0.1.2
 
 install_branch oceanprotocol osmosis-driver-interface develop
 
 install_branch oceanprotocol osmosis-aws-driver develop
-
-install_branch MarcusJones py2nb master
 
 install_branch oceanprotocol keeper-contracts develop
