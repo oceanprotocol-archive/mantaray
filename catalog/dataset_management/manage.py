@@ -75,6 +75,9 @@ for name in metadata_dict:
             res = requests.head(url)
             assert res.status_code == 200
 
+
+
+
 # %%
 # Check all the content URLs
 for name in metadata_dict:
