@@ -32,7 +32,9 @@ import sys
 import random
 import json
 from pprint import pprint
-import squid_py.ocean as ocean
+# import squid_py.ocean as ocean
+from squid_py.ocean.ocean import Ocean
+from squid_py.ocean.asset import Asset
 import names
 from squid_py.ddo import DDO
 
@@ -60,13 +62,15 @@ logger.info("Logging started")
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION HERE
 # PATH_CONFIG = Path.cwd() / 'config_local.ini'
-# PATH_CONFIG = Path.cwd() / '..' / '..' / 'config_k8s.ini'
-PATH_CONFIG = Path.cwd() /  'config_local.ini'
+PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
+# PATH_CONFIG = Path.cwd() /  'config_local.ini'
 # PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
 # PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-ocn = ocean.Ocean(PATH_CONFIG)
+config_path = Path.cwd() / 'config_k8s.ini'
+assert config_path.exists()
+ocn = Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
 
