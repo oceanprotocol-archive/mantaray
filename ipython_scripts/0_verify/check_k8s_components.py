@@ -23,6 +23,15 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.debug("Logging started")
 
+
+class LoggerCritical:
+    def __enter__(self):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("CRITICAL")
+    def __exit__(self, type, value, traceback):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("DEBUG")
+
 #%%
 
 endpoints_dict = {
@@ -34,18 +43,23 @@ endpoints_dict = {
     'brizo_doc': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030/api/v1/docs/',
 }
 
-def check_endpoint(endpoint, this_endpoints_dict, verb='GET', ):
-    res = requests.request(verb, this_endpoints_dict[endpoint])
-    logging.debug("{} : returns {}".format(endpoint, res.status_code))
-    # res.content
+def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
+    res = requests.request(verb, endpoint_url)
+    logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
     return res.status_code
 
-check_endpoint('aquarius_doc', endpoints_dict)
-check_endpoint('aquarius', endpoints_dict)
-check_endpoint('keeper-contracts', endpoints_dict)
-check_endpoint('pleuston', endpoints_dict)
-check_endpoint('brizo', endpoints_dict)
-check_endpoint('brizo_doc', endpoints_dict)
+for endpoint in endpoints_dict:
+    with LoggerCritical():
+        status = check_endpoint(endpoint, endpoints_dict[endpoint])
+        print(endpoint, status)
+
+#
+# check_endpoint('aquarius_doc', endpoints_dict)
+# check_endpoint('aquarius', endpoints_dict)
+# check_endpoint('keeper-contracts', endpoints_dict)
+# check_endpoint('pleuston', endpoints_dict)
+# check_endpoint('brizo', endpoints_dict)
+# check_endpoint('brizo_doc', endpoints_dict)
 #%%
 config_path = Path.cwd() / '..' / '..' / 'config_k8s.ini'
 config_path = Path.cwd() / 'config_k8s.ini'
