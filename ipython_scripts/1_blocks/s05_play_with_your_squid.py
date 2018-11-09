@@ -68,8 +68,6 @@ PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
 # PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-config_path = Path.cwd() / 'config_k8s.ini'
-assert config_path.exists()
 ocn = Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
@@ -79,7 +77,7 @@ logging.info("Ocean smart contract node connected ".format())
 # %% [markdown]
 # List the accounts created in Ganache
 #%%
-ocn.update_accounts()
+ocn.get_accounts()
 for address in ocn.accounts:
     print(ocn.accounts[address])
 
