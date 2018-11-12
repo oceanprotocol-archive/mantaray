@@ -41,9 +41,11 @@ endpoints_dict = {
     'aquarius_doc': 'http://ac3195287e10911e89c320e965e714bc-1875844701.us-east-1.elb.amazonaws.com:5000/api/v1/docs/',
     'brizo': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030',
     'brizo_doc': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030/api/v1/docs/',
-    'secret_store_1' : "52.1.94.55",
-    'secret_store_2': "54.156.6.164",
-    'secret_store_3': "100.24.158.252",
+    # 'secret_store_1' : "http://52.1.94.55",
+    # 'secret_store_2': "http://54.156.6.164",
+    # 'secret_store_3': "http://100.24.158.252",
+    'empty' : "https://secret-store.dev-ocean-asdf.com",
+    'secret_store_dns' : "https://secret-store.dev-ocean.com",
 }
 
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
@@ -56,14 +58,13 @@ for endpoint in endpoints_dict:
         code, status = check_endpoint(endpoint, endpoints_dict[endpoint])
         print(endpoint, code, status)
 
-
-#
 # check_endpoint('aquarius_doc', endpoints_dict)
 # check_endpoint('aquarius', endpoints_dict)
 # check_endpoint('keeper-contracts', endpoints_dict)
 # check_endpoint('pleuston', endpoints_dict)
 # check_endpoint('brizo', endpoints_dict)
 # check_endpoint('brizo_doc', endpoints_dict)
+
 #%%
 config_path = Path.cwd() / '..' / '..' / 'config_k8s.ini'
 config_path = Path.cwd() / 'config_k8s.ini'
