@@ -46,13 +46,14 @@ and other editors.
 ## Deployment
 
 
-| component              	| Date    	| Github  	| PyPI     	| Dockerhub 	| Kubernetes        	| Note                   	|
-|------------------------	|---------	|---------	|----------	|-----------	|-------------------	|------------------------	|
-| squid-py               	| Nov. 09 	| v0.2.4  	| 0.2.1    	| N/A       	| N/A               	| OK                     	|
-| keeper-contracts       	| Nov. 8  	| 0.3.19  	| 0.3.19   	| v0.3.19   	| v0.3.19           	| OK                     	|
-| aquarius               	| Nov. 5  	| v0.1.12 	| N/A      	| v0.1.12   	| v0.1.12           	| OK                     	|
-| brizo                  	| latest  	| latest  	| missing! 	| latest    	| latest            	| Update soon, need tag! 	|
-| secret-store-client-py 	| latest  	| ??      	| ??       	| ??        	| (Running on EC2!) 	| ??                     	|
+| component              	| Date       	| Github  	| PyPI     	| Dockerhub 	| Kubernetes        	| Note                   	|
+|------------------------	|------------	|---------	|----------	|-----------	|-------------------	|------------------------	|
+| squid-py               	| Nov. 09    	| v0.2.4  	| 0.2.1    	| N/A       	| N/A               	| OK                     	|
+| keeper-contracts       	| Nov. 8     	| 0.3.19  	| 0.3.19   	| v0.3.19   	| v0.3.19           	| OK                     	|
+| aquarius               	| Nov. 5     	| v0.1.12 	| N/A      	| v0.1.12   	| v0.1.12           	| OK                     	|
+| brizo                  	| latest     	| latest  	| missing! 	| latest    	| latest            	| Update soon, need tag! 	|
+| secret-store-client-py 	| latest     	| ??      	| ??       	| ??        	| (Running on EC2!) 	| ??                     	|
+| pleuston               	| October... 	| latest  	| N/A      	| latest    	| latest            	| Need tag? Update?      	|
 
 ## Examples
 [Test the components](/mantaray/ipython_scripts/m00_test_connections.py)
