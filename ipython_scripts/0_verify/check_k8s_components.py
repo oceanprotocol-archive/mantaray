@@ -41,17 +41,21 @@ endpoints_dict = {
     'aquarius_doc': 'http://ac3195287e10911e89c320e965e714bc-1875844701.us-east-1.elb.amazonaws.com:5000/api/v1/docs/',
     'brizo': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030',
     'brizo_doc': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030/api/v1/docs/',
+    'secret_store_1' : "52.1.94.55",
+    'secret_store_2': "54.156.6.164",
+    'secret_store_3': "100.24.158.252",
 }
 
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     res = requests.request(verb, endpoint_url)
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
-    return res.status_code
+    return res.status_code, res.content
 
 for endpoint in endpoints_dict:
     with LoggerCritical():
-        status = check_endpoint(endpoint, endpoints_dict[endpoint])
-        print(endpoint, status)
+        code, status = check_endpoint(endpoint, endpoints_dict[endpoint])
+        print(endpoint, code, status)
+
 
 #
 # check_endpoint('aquarius_doc', endpoints_dict)
