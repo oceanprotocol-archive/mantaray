@@ -15,6 +15,7 @@ class LoggerCritical:
     def __exit__(self, type, value, traceback):
         my_logger = logging.getLogger()
         my_logger.setLevel("DEBUG")
+
 TEMP_DDO2 = {
   "@context": "https://w3id.org/future-method/v1",
   "id": "did:op:3597a39818d598e5d60b83eabe29e337d37d9ed5af218b4af5e94df9f7d9783a",
@@ -246,7 +247,7 @@ TEMP_DDO = {
 }
 # print(squid)
 # %% Instantiate Ocean
-config_path = Path.cwd() / 'config_k8s.ini'
+config_path = Path.cwd() / 'config_k8s_deployed.ini'
 assert config_path.exists()
 ocn = Ocean(config_path)
 # %%
