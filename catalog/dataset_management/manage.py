@@ -7,6 +7,8 @@ import pandas as pd
 import json
 import pandas as pd
 import requests
+from pprint import pprint
+from urllib.parse import urlparse
 
 # %%
 import logging
@@ -24,6 +26,14 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.info("Logging started")
 
+class LoggerCritical:
+    def __enter__(self):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("CRITICAL")
+    def __exit__(self, type, value, traceback):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("DEBUG")
+
 # %%
 path_data_root = Path.home() / 'DATA'
 
@@ -39,6 +49,7 @@ for ds in data_paths:
             #TODO: Assert valid structure!
         metadata_dict[meta['base']['name']] = meta
         logging.debug(f"Metadata loaded for {meta['base']['name']}".format())
+# pprint(metadata_dict)
 
 #%%
 # Build a summary table
@@ -71,8 +82,10 @@ for name in metadata_dict:
     if 'links' in meta['base']:
         for link in meta['base']['links']:
             url = link['url']
-            print(res.status_code,link)
-            res = requests.head(url)
+            with LoggerCritical():
+                res = requests.head(url)
+            fname = urlparse(url).path.split('/')[-1]
+            print(res.status_code,fname)
             assert res.status_code == 200
 
 
@@ -83,6 +96,8 @@ for name in metadata_dict:
 for name in metadata_dict:
     meta = metadata_dict[name]
     for link in meta['base']['contentUrls']:
-        res = requests.head(link)
-        print(res.status_code,link)
+        with LoggerCritical():
+            res = requests.head(link)
+        fname = urlparse(link).path.split('/')[-1]
+        print(res.status_code,fname )
         assert res.status_code == 200
