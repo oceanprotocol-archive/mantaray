@@ -102,10 +102,7 @@ class User():
         logging.info(self)
 
     def __str__(self):
-        try:
-            ocean_token = self.account.ocean
-        except:
-            ocean_token = 0
+        ocean_token = self.account.ocean_balance
         return "{:<20} {:<20} {} Ocean token".format(self.name, self.role, ocean_token)
 
 users = list()
@@ -125,11 +122,9 @@ for u in users: print(u)
 # Get some Ocean token
 #%%
 for usr in users:
-    # usr.account.balance.ocn
-    res = usr.account.get_balance()
-res = usr.account.balance
-    rcpt = usr.account.request_tokens(random.randint(0,100))
-    ocn._web3.eth.waitForTransactionReceipt(rcpt)
+    if usr.account.ocean_balance == 0:
+        rcpt = usr.account.request_tokens(random.randint(0,100))
+        ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
 for u in users: print(u)
 
