@@ -16,8 +16,8 @@ install_branch() {
 }
 
 
-#install_branch oceanprotocol squid-py develop
-install_branch oceanprotocol squid-py v0.2.5
+install_branch oceanprotocol squid-py develop
+#install_branch oceanprotocol squid-py v0.2.5
 
 install_branch oceanprotocol aquarius v0.1.2
 
