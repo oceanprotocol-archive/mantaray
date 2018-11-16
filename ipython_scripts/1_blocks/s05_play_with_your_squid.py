@@ -61,11 +61,7 @@ logger.info("Logging started")
 #%%
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION HERE
-# PATH_CONFIG = Path.cwd() / 'config_local.ini'
-PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
-# PATH_CONFIG = Path.cwd() /  'config_local.ini'
-# PATH_CONFIG = Path.cwd() / 'config_k8s.ini'
-# PATH_CONFIG = Path.cwd() / 'config_local.ini'
+PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(PATH_CONFIG)
