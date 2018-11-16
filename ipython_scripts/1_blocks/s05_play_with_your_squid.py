@@ -38,6 +38,9 @@ from squid_py.ocean.asset import Asset
 import names
 from squid_py.ddo import DDO
 
+import squid_py
+print(squid_py.__version__)
+
 # %% [markdown]
 # Logging
 # %%
@@ -61,7 +64,7 @@ logger.info("Logging started")
 #%%
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION HERE
-PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
+PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(PATH_CONFIG)
@@ -73,14 +76,16 @@ logging.info("Ocean smart contract node connected ".format())
 # %% [markdown]
 # List the accounts created in Ganache
 #%%
-ocn.get_accounts()
-for address in ocn.accounts:
-    print(ocn.accounts[address])
 
+# ocn.accounts is a {address: Account} dict
+for address in ocn.accounts:
+    acct = ocn.accounts[address]
+    print(acct.address)
+#%%
 # These accounts have a positive ETH balance
 for address, account in ocn.accounts.items():
-    assert account.ether >= 0
-    assert account.ocean >= 0
+    assert account.balance.eth >= 0
+    assert account.balance.ocn >= 0
 
 # %% [markdown]
 # Get funds to users
@@ -120,6 +125,9 @@ for u in users: print(u)
 # Get some Ocean token
 #%%
 for usr in users:
+    # usr.account.balance.ocn
+    res = usr.account.get_balance()
+res = usr.account.balance
     rcpt = usr.account.request_tokens(random.randint(0,100))
     ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
