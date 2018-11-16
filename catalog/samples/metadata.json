@@ -1,0 +1,24 @@
+{"base": {
+  "name": "World Population Prospects: The 2017 Revision",
+  "type": "dataset",
+  "description": "File POP/1-1: Total population (both sexes combined) by region, subregion and country, annually for 1950-2100 (thousands). ",
+  "size": "2.5mb",
+  "dateCreated": "2017-06-01T00:00:000Z",
+  "author": "2017 by United Nations. All rights reserved",
+  "license": "None",
+  "copyrightHolder": "United Nations",
+  "compression": "zip",
+  "contentType": "xlsx",
+  "workExample": "",
+  "contentUrls": [
+    "https://s3.eu-central-1.amazonaws.com/trilobite/World_Population/full/WPP2017_POP_F01_1_TOTAL_POPULATION_BOTH_SEXES.xlsx"
+  ],
+  "inLanguage": "en",
+  "tags": "image data, animals",
+  "price": 0
+},
+"curation": {
+  "rating": 0,
+  "numVotes": 0,
+  "schema": "Binary Voting"
+}}

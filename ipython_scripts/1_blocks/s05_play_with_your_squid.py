@@ -31,11 +31,13 @@ import squid_py.ocean as ocean_wrapper
 import sys
 import random
 import json
+import os
 from pprint import pprint
 # import squid_py.ocean as ocean
 from squid_py.ocean.ocean import Ocean
 from squid_py.ocean.asset import Asset
 import names
+import secrets
 from squid_py.ddo import DDO
 
 import squid_py
@@ -130,8 +132,78 @@ for u in users: print(u)
 
 # %% [markdown]
 # ## Section 4: Find and publish assets
+#%%
+data_owner = [usr for usr in users if usr.role == 'Data Owner'].pop(0)
+print("Data Owner:\n", data_owner)
+data_consumer = [usr for usr in users if usr.role == 'Data Scientist'].pop(0)
+print("Data Consumer:\n", data_consumer)
+
 #%% [markdown]
-# ### 4.1) DDO - An asset has a DDO, which in turn has Metadata
+# ### 4.1) Metadata - An asset has Metadata, which describes the asset
+#%%
+path_md = Path(os.path.abspath(__file__)) / '..' / 'catalog/samples/metadata.json'
+path_md = path_md.resolve()
+assert path_md.exists()
+with open(path_md) as f:
+    metadata = json.load(f)
+
+asset_price = 50
+service_descriptors = [squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor(asset_price, '/purchaseEndpoint', '/serviceEndpoint', 600)]
+ocn.register_asset(metadata,)
+#%% [markdown]
+# ### 4.2) DID - An Asset has a single unique identifier (DID)
+#%%
+did_id = secrets.token_hex(32)
+did = squid_py.did.did_generate(did_id)
+
+#%% [markdown]
+# ### 4.3) DDO - A DDO is a document which describes the services offered on the Asset
+#%%
+ddo = squid_py.ddo.DDO(did)
+
+#%% [markdown]
+# #### 4.3.1 - Build DDO / private, public keys
+#%%
+if 0: # DISABLE FOR NOW
+    # Add a signature
+    private_key = ddo.add_signature()
+
+    # add a proof signed with the private key
+    ddo.add_proof(0, private_key)
+
+    # Add the metadata store as a 'service' on the asset
+    # The URL of the metadata store is on the Ocean class
+    ddo.add_service("Metadata", ocn.metadata_store._base_url, values={ 'metadata': metadata})
+    assert ddo.validate()
+
+    # set public key
+    public_key_value = squid_py.utils.utilities.get_publickey_from_address(ocn._web3, data_owner.account.address)
+    pub_key = squid_py.ddo.public_key_base.PublicKeyBase('keys-1', **{'value': public_key_value, 'owner': data_owner.account.address, 'type': squid_py.ddo.PUBLIC_KEY_STORE_TYPE_HEX})
+    pub_key.assign_did(did)
+    ddo.add_public_key(pub_key)
+
+    # set authentication
+    auth = squid_py.ddo.authentication.Authentication(pub_key, squid_py.ddo.public_key_rsa.PUBLIC_KEY_TYPE_RSA)
+    ddo.add_authentication(auth, squid_py.ddo.public_key_rsa.PUBLIC_KEY_TYPE_RSA)
+
+#%% [markdown]
+# #### 4.3.2 - Build DDO / Encrypt the content URLs
+#%%
+if 0:
+    assert metadata['base']['contentUrls'], 'contentUrls is required in the metadata base attributes.'
+    content_urls_encrypted = self.encrypt_metadata_content_urls(did, json.dumps(metadata['base']['contentUrls']))
+    # only assign if the encryption worked
+    if content_urls_encrypted:
+        metadata['base']['contentUrls'] = content_urls_encrypted
+
+#%% [markdown]
+# ### 4.4) Finally, the asset can be instantiated, using our first Data Owner
+#%%
+
+this_asset = squid_py.ocean.asset.Asset(ddo,usr.account.address)
+
+print("Asset:\n",this_asset)
+
 # %%
 # Load a sample DDO
 SAMPLE_DDO_PATH = Path.cwd() / 'sample_assets' / 'ddo_sample_generated_1.json'
