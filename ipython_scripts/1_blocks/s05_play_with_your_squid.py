@@ -39,10 +39,10 @@ from squid_py.ocean.asset import Asset
 import names
 import secrets
 from squid_py.ddo import DDO
-
+from unittest.mock import Mock
 import squid_py
 print(squid_py.__version__)
-
+import unittest
 # %% [markdown]
 # Logging
 # %%
@@ -149,7 +149,9 @@ with open(path_md) as f:
 
 asset_price = 50
 service_descriptors = [squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor(asset_price, '/purchaseEndpoint', '/serviceEndpoint', 600)]
-ocn.register_asset(metadata,)
+ocn.Client = unittest.mock.Mock({'publish_document': '!encrypted_message!'})
+ocn.register_asset(metadata, data_owner.account.address, service_descriptors)
+
 #%% [markdown]
 # ### 4.2) DID - An Asset has a single unique identifier (DID)
 #%%
