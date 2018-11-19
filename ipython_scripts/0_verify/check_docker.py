@@ -52,7 +52,7 @@ print(s)
 # High level client
 client = docker.from_env()
 # Get the APIClient for running commands
-low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
+# low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
 # %% Check running docker images using SDK
 for container in client.containers.list():
@@ -77,7 +77,7 @@ def get_address(api_client, container_id,contract_name):
     return api_client.exec_start(ex)
 
 # Get the docker image running the smart contracts
-container_keeper_contracts = client.containers.get('docker_keeper-contracts_1')
+container_keeper_contracts = client.containers.get('docker_keeper-contracts_1_dc88320af3c4')
 addresses=dict()
 addresses['market.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanMarket').decode("utf-8").rstrip()
 addresses['auth.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanAuth').decode("utf-8").rstrip()

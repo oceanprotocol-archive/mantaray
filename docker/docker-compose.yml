@@ -27,7 +27,7 @@ services:
     - artifacts:/keeper-contracts/artifacts/
 
   aquarius:
-    image: oceanprotocol/aquarius:v0.1.3
+    image: oceanprotocol/aquarius:develop
 
     ports:
     - 5000:5000
