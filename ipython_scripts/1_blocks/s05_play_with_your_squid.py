@@ -72,6 +72,7 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
+# ocn.config.keeper_path
 
 # %% [markdown]
 # ## Section 3: Users and accounts
