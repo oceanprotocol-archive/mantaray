@@ -67,6 +67,7 @@ logger.info("Logging started")
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION HERE
 PATH_CONFIG = Path.cwd() / 'config_local.ini'
+# PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(PATH_CONFIG)
@@ -142,7 +143,7 @@ print("Data Consumer:\n", data_consumer)
 #%% [markdown]
 # ### 4.1) Metadata - An asset has Metadata, which describes the asset
 #%%
-path_md = Path(os.path.abspath(__file__)) / '..' / 'catalog/samples/metadata.json'
+path_md = Path.cwd() / 'catalog/samples/metadata.json'
 path_md = path_md.resolve()
 assert path_md.exists()
 with open(path_md) as f:
