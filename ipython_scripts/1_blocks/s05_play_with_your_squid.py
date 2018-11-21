@@ -148,6 +148,8 @@ assert path_md.exists()
 with open(path_md) as f:
     metadata = json.load(f)
 
+# ocn.metadata_store.retire_asset_metadata(asset1.did)
+
 asset_price = 50
 service_descriptors = [squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor(asset_price, '/purchaseEndpoint', '/serviceEndpoint', 600)]
 ocn.Client = unittest.mock.Mock({'publish_document': '!encrypted_message!'})

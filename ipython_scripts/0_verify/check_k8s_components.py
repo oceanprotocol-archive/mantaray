@@ -40,11 +40,11 @@ endpoints_dict = {
     'aquarius': "http://ac3195287e10911e89c320e965e714bc-1875844701.us-east-1.elb.amazonaws.com:5000",
     'aquarius_doc': 'http://ac3195287e10911e89c320e965e714bc-1875844701.us-east-1.elb.amazonaws.com:5000/api/v1/docs/',
     'brizo': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030',
-    'brizo_doc': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030/api/v1/docs/',
+    # 'brizo_doc': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030/api/v1/docs/',
     # 'secret_store_1' : "http://52.1.94.55",
     # 'secret_store_2': "http://54.156.6.164",
     # 'secret_store_3': "http://100.24.158.252",
-    'empty' : "https://secret-store.dev-ocean-asdf.com",
+    # 'empty' : "https://secret-store.dev-ocean-asdf.com",
     'secret_store_dns' : "https://secret-store.dev-ocean.com",
 }
 
