@@ -155,7 +155,6 @@ class User():
 
     def __str__(self):
         if self.locked:
-            status = 'LOCKED'
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
         else:
             ocean_token = self.account.ocean_balance
