@@ -126,6 +126,11 @@ class User():
             acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
             self.account = acct_dict_lower[self.address.lower()]
 
+            cleanup=True # Delete this temporary INI
+            if cleanup:
+                config_path.unlink()
+
+
         logging.info(self)
 
     def unlock(self, password):
