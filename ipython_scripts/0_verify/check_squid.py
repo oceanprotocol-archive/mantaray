@@ -59,7 +59,7 @@ ocn = Ocean(config_file=PATH_CONFIG)
 
 
 logging.info("{:>40} {}".format("Token contract address:", ocn.keeper.token.address))
-logging.info("{:>40} {}".format("Authentication contract atddress:", ocn.keeper.auth.address))
+logging.info("{:>40} {}".format("Authentication contract at address:", ocn.keeper.auth.address))
 logging.info("{:>40} {}".format("Market contract address:", ocn.keeper.market.address))
 logging.info("{:>40} {}".format("DID Registry contract address:", ocn.keeper.didregistry.address))
 
