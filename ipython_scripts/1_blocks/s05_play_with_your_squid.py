@@ -97,30 +97,27 @@ for address, account in ocn.accounts.items():
 # A simple wrapper for each address is created to represent a user
 #
 # Users are instantiated and listed
-PASSWORD_MAP = {
-    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
-    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
-    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
-}
-
 
 #%%
 class User():
     def __init__(self, name, role, address):
         self.name = name
-        self.address = address.lower()
+        self.address = address
         self.role = role
 
         # If the account is unlocked, instantiate Ocean and the Account classes
-        if self.address in PASSWORD_MAP:
-            self.password = PASSWORD_MAP[self.address]
+        if self.address.lower() in PASSWORD_MAP:
+            self.locked = False
+            self.password = PASSWORD_MAP[self.address.lower()]
             self.config_fname = "{}_{}_config.ini".format(self.name,self.role).replace(' ', '_')
             config_path = self.create_config()
             self.ocn = Ocean(config_path)
             acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
-            self.account = acct_dict_lower[self.address]
+            self.account = acct_dict_lower[self.address.lower()]
         # Otherwise, pass
-        else: self.password = None
+        else:
+            self.locked = True
+            self.password = None
 
         # self.account = account_obj
         logging.info(self)
@@ -144,6 +141,14 @@ class User():
             ocean_token = self.account.ocean_balance
             return "{:<20} {:<20} with {} Ocean token".format(self.name, self.role, ocean_token)
 
+    def __repr__(self):
+        return self.__str__()
+
+PASSWORD_MAP = {
+    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
+    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
+    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
+}
 
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
@@ -152,12 +157,16 @@ for i, acct_address in enumerate(ocn.accounts):
     user = User(names.get_full_name(), role, acct_address)
     users.append(user)
 
+# Select only unlocked accounts
+users = [u for u in users if not u.locked]
+
+
 #%% [markdown]
 # List the users
 
 #%%
 for u in users: print(u)
-u.password
+for u in users: print(u.ocn)
 
 #%% [markdown]
 # Get some Ocean token
@@ -165,10 +174,23 @@ u.password
 for usr in users:
     if usr.account.ocean_balance == 0:
         rcpt = usr.account.request_tokens(random.randint(0,100))
-        ocn._web3.eth.waitForTransactionReceipt(rcpt)
+        usr.ocn._web3.eth.waitForTransactionReceipt(rcpt)
+
+u1 = users[0]
+u2 = users[1]
+u3 = users[2]
+
+rcpt = u1.ocn.keeper.market.request_tokens(10, u1.address)
+u1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
+
+
+rcpt = u2.ocn.keeper.market.request_tokens(10, u2.address)
+u2.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
 for u in users: print(u)
 
+#%%
+"""
 # %% [markdown]
 # ## Section 4: Find and publish assets
 #%%
@@ -288,3 +310,5 @@ ocean_provider.metadata.retire_asset(asset['assetId'])
 asset_ddo = ocn.metadata.get_asset_ddo(dataset['assetId'])
 assert ocn.metadata.get_asset_ddo(dataset['assetId'])['base']['name'] == dataset['base']['name']
 
+
+"""
