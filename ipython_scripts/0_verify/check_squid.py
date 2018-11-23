@@ -50,11 +50,10 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = Ocean(config_file=PATH_CONFIG)
 #config = Config('config_local.ini')
 #assert ocean.market.address == ocean.get_web3().toChecksumAddress(config.get(KEEPER_CONTRACTS, 'market.address'))
-
-print()
+#%%
+print("***OCEAN***")
 print("{} accounts".format(len(ocn.accounts)))
-
-print("KEEPER NODE")
+print("\n***KEEPER NODE***")
 print("Keeper node connected at {}".format(ocn.config.keeper_url))
 print("Using ABI files from {}".format(ocn.config.keeper_path))
 print("{:>40} {}".format("Token contract address:", ocn.keeper.token.address))
@@ -62,11 +61,12 @@ print("{:>40} {}".format("Authentication contract at address:", ocn.keeper.auth.
 print("{:>40} {}".format("Market contract address:", ocn.keeper.market.address))
 print("{:>40} {}".format("DID Registry contract address:", ocn.keeper.didregistry.address))
 
-print("METADATA STORE (Aquarius)")
-print("Metadata store (provider) located at: {}".format(ocn.metadata_store._base_url))
+print("\n***METADATA STORE (aquarius)***")
+print("Connect at: {}".format(ocn.metadata_store._base_url))
 
-print("SECRET STORE")
+print("\n***SECRET STORE***")
 
+print("\n***SERVICE HANDLER (brizo)***")
 # %%
 
 # %%
