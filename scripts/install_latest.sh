@@ -12,15 +12,17 @@ install_branch() {
 	echo 
 	echo "Force-installing package from $THIS_BRANCH branch of $THIS_ORG/$THIS_REPO"
 	echo
-	pip install --upgrade --force-reinstall git+https://github.com/$THIS_ORG/$THIS_REPO.git@$THIS_BRANCH
+	pip install --upgrade --force-reinstall --ignore-installed git+https://github.com/$THIS_ORG/$THIS_REPO.git@$THIS_BRANCH
 }
 
+
 install_branch oceanprotocol squid-py develop
+#install_branch oceanprotocol squid-py v0.2.5
+
+install_branch oceanprotocol aquarius v0.1.2
 
 install_branch oceanprotocol osmosis-driver-interface develop
 
 install_branch oceanprotocol osmosis-aws-driver develop
-
-install_branch MarcusJones py2nb master
 
 install_branch oceanprotocol keeper-contracts develop

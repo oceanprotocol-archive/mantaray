@@ -44,6 +44,13 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.critical("Logging started")
 
+class LoggerCritical:
+    def __enter__(self):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("CRITICAL")
+    def __exit__(self, type, value, traceback):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("DEBUG")
 
 # %%
 # The working directory is the repo root
@@ -106,6 +113,7 @@ these_keys = list(s3files.keys())[:2]
 for f in these_keys:
     meta_data = s3files[f].Object().metadata
     print(f, meta_data)
+
 # %%
 for row in df.iterrows():
     print(row)

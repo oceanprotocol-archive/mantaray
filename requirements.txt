@@ -1,5 +1,5 @@
-squid_py
+squid_py==0.2.8
+jupytext
 coloredlogs
 web3
 pyyaml
-names
