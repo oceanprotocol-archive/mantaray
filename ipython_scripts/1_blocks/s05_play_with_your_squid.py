@@ -107,11 +107,7 @@ PASSWORD_MAP = {
 
 # path_config_file = PATH_CONFIG
 def make_config(user, )
-    conf = configparser.ConfigParser()
-    conf.read(PATH_CONFIG)
-    conf['keeper-contracts']['parity.address']
-    conf['keeper-contracts']['parity.password']
-    config_template.sections()
+
 
 #%%
 class User():
@@ -121,13 +117,23 @@ class User():
         self.role = role
         if self.address in PASSWORD_MAP:
             self.password = PASSWORD_MAP[self.address]
-            self.config_fname = "config_{}_{}.ini".format(self.name,self.role).replace(' ', '_')
+            self.config_fname = "{}_{}_config.ini".format(self.name,self.role).replace(' ', '_')
+            self.create_config()
             # self.ocn = Ocean()
         else: self.password = None
 
         # self.account = account_obj
-
         logging.info(self)
+
+    def create_config(self):
+        conf = configparser.ConfigParser()
+        conf.read(PATH_CONFIG)
+        conf['keeper-contracts']['parity.address'] = self.address
+        conf['keeper-contracts']['parity.password'] = self.password
+        out_path = Path.cwd() / 'user_configurations' / self.config_fname
+        print(out_path)
+        with open(out_path, 'w') as fp:
+            conf.write(fp)
 
     def __str__(self):
         if not self.password:
