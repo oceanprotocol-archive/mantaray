@@ -86,8 +86,6 @@ for address in ocn.accounts:
     acct = ocn.accounts[address]
     print(acct.address)
 
-
-
 #%%
 # These accounts have a positive ETH balance
 for address, account in ocn.accounts.items():
@@ -105,9 +103,6 @@ PASSWORD_MAP = {
     '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
 }
 
-# path_config_file = PATH_CONFIG
-def make_config(user, )
-
 
 #%%
 class User():
@@ -115,11 +110,16 @@ class User():
         self.name = name
         self.address = address.lower()
         self.role = role
+
+        # If the account is unlocked, instantiate Ocean and the Account classes
         if self.address in PASSWORD_MAP:
             self.password = PASSWORD_MAP[self.address]
             self.config_fname = "{}_{}_config.ini".format(self.name,self.role).replace(' ', '_')
-            self.create_config()
-            # self.ocn = Ocean()
+            config_path = self.create_config()
+            self.ocn = Ocean(config_path)
+            acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
+            self.account = acct_dict_lower[self.address]
+        # Otherwise, pass
         else: self.password = None
 
         # self.account = account_obj
@@ -134,14 +134,15 @@ class User():
         print(out_path)
         with open(out_path, 'w') as fp:
             conf.write(fp)
+        return out_path
 
     def __str__(self):
         if not self.password:
             status = 'LOCKED'
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
         else:
-            # ocean_token = self.account.ocean_balance
-            return "{:<20} {:<20}".format(self.name, self.role)
+            ocean_token = self.account.ocean_balance
+            return "{:<20} {:<20} with {} Ocean token".format(self.name, self.role, ocean_token)
 
 
 users = list()
