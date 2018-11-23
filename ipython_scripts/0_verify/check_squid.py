@@ -41,7 +41,7 @@ logger.debug("Logging started")
 
 # The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
-PATH_CONFIG = pathlib.Path.cwd() / 'config_k8s_deployed.ini'
+# PATH_CONFIG = pathlib.Path.cwd() / 'config_k8s_deployed.ini'
 
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
@@ -51,19 +51,21 @@ ocn = Ocean(config_file=PATH_CONFIG)
 #config = Config('config_local.ini')
 #assert ocean.market.address == ocean.get_web3().toChecksumAddress(config.get(KEEPER_CONTRACTS, 'market.address'))
 
-# logging.info("Ocean smart contract node connected at {}".format(ocn.node_uri))
-# logging.info("_keeper_url {}".format(ocn.))
-# logging.info("_keeper_path {}".format(ocn.))
-# logging.info("_gas_limit {}".format(ocn.))
-# logging.info("_provider_url {}".format(ocn.))
+print()
+print("{} accounts".format(len(ocn.accounts)))
 
+print("KEEPER NODE")
+print("Keeper node connected at {}".format(ocn.config.keeper_url))
+print("Using ABI files from {}".format(ocn.config.keeper_path))
+print("{:>40} {}".format("Token contract address:", ocn.keeper.token.address))
+print("{:>40} {}".format("Authentication contract at address:", ocn.keeper.auth.address))
+print("{:>40} {}".format("Market contract address:", ocn.keeper.market.address))
+print("{:>40} {}".format("DID Registry contract address:", ocn.keeper.didregistry.address))
 
-logging.info("{:>40} {}".format("Token contract address:", ocn.keeper.token.address))
-logging.info("{:>40} {}".format("Authentication contract at address:", ocn.keeper.auth.address))
-logging.info("{:>40} {}".format("Market contract address:", ocn.keeper.market.address))
-logging.info("{:>40} {}".format("DID Registry contract address:", ocn.keeper.didregistry.address))
+print("METADATA STORE (Aquarius)")
+print("Metadata store (provider) located at: {}".format(ocn.metadata_store._base_url))
 
-logging.info("Metadata store (provider) located at: {}".format(ocn.metadata._base_url))
+print("SECRET STORE")
 
 # %%
 
