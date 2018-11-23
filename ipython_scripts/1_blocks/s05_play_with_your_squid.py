@@ -99,31 +99,50 @@ for address, account in ocn.accounts.items():
 # A simple wrapper for each address is created to represent a user
 #
 # Users are instantiated and listed
-r = copy.copy(ocn)
+PASSWORD_MAP = {
+    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
+    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
+    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
+}
 
 # path_config_file = PATH_CONFIG
-config_template = configparser.ConfigParser().read(PATH_CONFIG)
+def make_config(user, )
+    conf = configparser.ConfigParser()
+    conf.read(PATH_CONFIG)
+    conf['keeper-contracts']['parity.address']
+    conf['keeper-contracts']['parity.password']
+    config_template.sections()
 
-config_template.sections()
 #%%
 class User():
-    def __init__(self, name, role, account_obj):
-        self.ocn =
+    def __init__(self, name, role, address):
         self.name = name
+        self.address = address.lower()
         self.role = role
-        self.account = account_obj
+        if self.address in PASSWORD_MAP:
+            self.password = PASSWORD_MAP[self.address]
+            self.config_fname = "config_{}_{}.ini".format(self.name,self.role).replace(' ', '_')
+            # self.ocn = Ocean()
+        else: self.password = None
+
+        # self.account = account_obj
 
         logging.info(self)
 
     def __str__(self):
-        ocean_token = self.account.ocean_balance
-        return "{:<20} {:<20} {} Ocean token".format(self.name, self.role, ocean_token)
+        if not self.password:
+            status = 'LOCKED'
+            return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
+        else:
+            # ocean_token = self.account.ocean_balance
+            return "{:<20} {:<20}".format(self.name, self.role)
+
 
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
     if i%2 == 0: role = 'Data Scientist'
     else: role = 'Data Owner'
-    user = User(names.get_full_name(), role, ocn.accounts[acct_address])
+    user = User(names.get_full_name(), role, acct_address)
     users.append(user)
 
 #%% [markdown]
@@ -131,6 +150,7 @@ for i, acct_address in enumerate(ocn.accounts):
 
 #%%
 for u in users: print(u)
+u.password
 
 #%% [markdown]
 # Get some Ocean token
