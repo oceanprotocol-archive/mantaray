@@ -33,6 +33,7 @@ import random
 import json
 import os
 from pprint import pprint
+import configparser
 # import squid_py.ocean as ocean
 from squid_py.ocean.ocean import Ocean
 from squid_py.ocean.asset import Asset
@@ -84,6 +85,9 @@ logging.info("Ocean smart contract node connected ".format())
 for address in ocn.accounts:
     acct = ocn.accounts[address]
     print(acct.address)
+
+
+
 #%%
 # These accounts have a positive ETH balance
 for address, account in ocn.accounts.items():
@@ -92,12 +96,19 @@ for address, account in ocn.accounts.items():
 
 # %% [markdown]
 # Get funds to users
-# By default, 10 wallet addresses are created in Ganache
 # A simple wrapper for each address is created to represent a user
+#
 # Users are instantiated and listed
+r = copy.copy(ocn)
+
+# path_config_file = PATH_CONFIG
+config_template = configparser.ConfigParser().read(PATH_CONFIG)
+
+config_template.sections()
 #%%
 class User():
     def __init__(self, name, role, account_obj):
+        self.ocn =
         self.name = name
         self.role = role
         self.account = account_obj
