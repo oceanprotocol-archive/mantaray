@@ -39,7 +39,7 @@ endpoints_dict = {
     'pleuston': 'http://ac98d76bade8d11e89c320e965e714bc-981020006.us-east-1.elb.amazonaws.com:3000/',
     'aquarius': "http://ac3195287e10911e89c320e965e714bc-1875844701.us-east-1.elb.amazonaws.com:5000",
     'aquarius_doc': 'http://ac3195287e10911e89c320e965e714bc-1875844701.us-east-1.elb.amazonaws.com:5000/api/v1/docs/',
-    'brizo': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030',
+    'brizo': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030/',
     # 'brizo_doc': 'http://a3c6e8416e40b11e88a360a98afc4587-44361392.us-east-1.elb.amazonaws.com:8030/api/v1/docs/',
     # 'secret_store_1' : "http://52.1.94.55",
     # 'secret_store_2': "http://54.156.6.164",
@@ -55,8 +55,9 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
 
 for endpoint in endpoints_dict:
     with LoggerCritical():
+        print("Checking {}".format(endpoint))
         code, status = check_endpoint(endpoint, endpoints_dict[endpoint])
-        print(endpoint, code, status)
+        print('\t', endpoint, code, status)
 
 # check_endpoint('aquarius_doc', endpoints_dict)
 # check_endpoint('aquarius', endpoints_dict)
