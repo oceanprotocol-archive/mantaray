@@ -74,12 +74,17 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
-# ocn.config.keeper_path
+# Passwords for simulated accounts can be hardcoded here
+PASSWORD_MAP = {
+    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
+    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
+    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
+}
 
 # %% [markdown]
 # ## Section 3: Users and accounts
 # %% [markdown]
-# List the accounts created in Ganache
+# List the accounts created
 #%%
 
 # ocn.accounts is a {address: Account} dict
@@ -88,14 +93,15 @@ for address in ocn.accounts:
     print(acct.address)
 
 #%%
-# These accounts have a positive ETH balance
+# These accounts have a positive or 0 balance
 for address, account in ocn.accounts.items():
     assert account.balance.eth >= 0
     assert account.balance.ocn >= 0
 
 # %% [markdown]
 # Get funds to users
-# A simple wrapper for each address is created to represent a user
+# A simple wrapper for each address is created to represent a User
+# A User has a Name, a Role, and an address
 #
 # Users are instantiated and listed
 
@@ -130,7 +136,6 @@ class User():
             if cleanup:
                 config_path.unlink()
 
-
         logging.info(self)
 
     def unlock(self, password):
@@ -159,18 +164,8 @@ class User():
     def __repr__(self):
         return self.__str__()
 
-PASSWORD_MAP = {
-    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
-    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
-    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
-}
 
-# # Clean up this dir
-# user_config_path = Path.cwd() / 'user_configurations'/'*.ini'
-# for f in user_config_path.glob(user_config_path.__str__()):
-#     f.unlink()
-
-
+#%% Create the users, one per simulated address
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
     if i%2 == 0: role = 'Data Scientist'
@@ -178,7 +173,7 @@ for i, acct_address in enumerate(ocn.accounts):
     user = User(names.get_full_name(), role, acct_address)
     users.append(user)
 
-# Select only unlocked accounts
+# Select only unlocked accounts going forward
 users = [u for u in users if not u.locked]
 
 
@@ -196,144 +191,4 @@ for usr in users:
         rcpt = usr.account.request_tokens(random.randint(0,100))
         usr.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
-#%%
-# u1 = users[0]
-# u2 = users[1]
-# u3 = users[2]
-#
-# rcpt = u1.ocn.keeper.market.request_tokens(10, u1.address)
-# u1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
-#
-# rcpt = u2.ocn.keeper.market.request_tokens(10, u2.address)
-# u2.ocn._web3.eth.waitForTransactionReceipt(rcpt)
-#
-#
-# this_ocn = Ocean(Path.cwd() / 'user_configurations'/ 'Jake_Rutledge_Data_Scientist_config.ini')
-# this_ocn.keeper.market.request_tokens(10, '0x068Ed00cF0441e4829D9784fCBe7b9e26D4BD8d0')
-# for u in users: print(u)
-
-
-
-#%%
-"""
-# %% [markdown]
-# ## Section 4: Find and publish assets
-#%%
-data_owner = [usr for usr in users if usr.role == 'Data Owner'].pop(0)
-print("Data Owner:\n", data_owner)
-data_consumer = [usr for usr in users if usr.role == 'Data Scientist'].pop(0)
-print("Data Consumer:\n", data_consumer)
-
-#%% [markdown]
-# ### 4.1) Metadata - An asset has Metadata, which describes the asset
-#%%
-path_md = Path(os.path.abspath(__file__)) / '..' / 'catalog/samples/metadata.json'
-path_md = path_md.resolve()
-assert path_md.exists()
-with open(path_md) as f:
-    metadata = json.load(f)
-
-# ocn.metadata_store.retire_asset_metadata(asset1.did)
-
-asset_price = 50
-service_descriptors = [squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor(asset_price, '/purchaseEndpoint', '/serviceEndpoint', 600)]
-ocn.Client = unittest.mock.Mock({'publish_document': '!encrypted_message!'})
-ocn.register_asset(metadata, data_owner.account.address, service_descriptors)
-
-#%% [markdown]
-# ### 4.2) DID - An Asset has a single unique identifier (DID)
-#%%
-did_id = secrets.token_hex(32)
-did = squid_py.did.did_generate(did_id)
-
-#%% [markdown]
-# ### 4.3) DDO - A DDO is a document which describes the services offered on the Asset
-#%%
-ddo = squid_py.ddo.DDO(did)
-
-#%% [markdown]
-# #### 4.3.1 - Build DDO / private, public keys
-#%%
-if 0: # DISABLE FOR NOW
-    # Add a signature
-    private_key = ddo.add_signature()
-
-    # add a proof signed with the private key
-    ddo.add_proof(0, private_key)
-
-    # Add the metadata store as a 'service' on the asset
-    # The URL of the metadata store is on the Ocean class
-    ddo.add_service("Metadata", ocn.metadata_store._base_url, values={ 'metadata': metadata})
-    assert ddo.validate()
-
-    # set public key
-    public_key_value = squid_py.utils.utilities.get_publickey_from_address(ocn._web3, data_owner.account.address)
-    pub_key = squid_py.ddo.public_key_base.PublicKeyBase('keys-1', **{'value': public_key_value, 'owner': data_owner.account.address, 'type': squid_py.ddo.PUBLIC_KEY_STORE_TYPE_HEX})
-    pub_key.assign_did(did)
-    ddo.add_public_key(pub_key)
-
-    # set authentication
-    auth = squid_py.ddo.authentication.Authentication(pub_key, squid_py.ddo.public_key_rsa.PUBLIC_KEY_TYPE_RSA)
-    ddo.add_authentication(auth, squid_py.ddo.public_key_rsa.PUBLIC_KEY_TYPE_RSA)
-
-#%% [markdown]
-# #### 4.3.2 - Build DDO / Encrypt the content URLs
-#%%
-if 0:
-    assert metadata['base']['contentUrls'], 'contentUrls is required in the metadata base attributes.'
-    content_urls_encrypted = self.encrypt_metadata_content_urls(did, json.dumps(metadata['base']['contentUrls']))
-    # only assign if the encryption worked
-    if content_urls_encrypted:
-        metadata['base']['contentUrls'] = content_urls_encrypted
-
-#%% [markdown]
-# ### 4.4) Finally, the asset can be instantiated, using our first Data Owner
-#%%
-
-this_asset = squid_py.ocean.asset.Asset(ddo,usr.account.address)
-
-print("Asset:\n",this_asset)
-
-# %%
-# Load a sample DDO
-SAMPLE_DDO_PATH = Path.cwd() / 'sample_assets' / 'ddo_sample_generated_1.json'
-assert SAMPLE_DDO_PATH.exists()
-with open(SAMPLE_DDO_PATH) as f:
-    SAMPLE_DDO_JSON_DICT = json.load(f)
-
-SAMPLE_DDO_JSON_STRING = json.dumps(SAMPLE_DDO_JSON_DICT)
-
-this_ddo = DDO(json_text=SAMPLE_DDO_JSON_STRING)
-assert this_ddo.validate()
-service = this_ddo.get_service('Metadata')
-values = service.get_values()
-assert values['metadata']
-this_ddo._did
-
-#%% [markdown]
-# ### 4.2) Publish - The Metadata Store (Aquarius) holds the DDO
-# %%
-
-#%% [markdown]
-# OLD
-#%%
-# The sample asset metadata is stored in a .json file
-PATH_ASSET1 = Path.cwd() / 'sample_assets' / 'sample1.json'
-assert PATH_ASSET1.exists()
-with open(PATH_ASSET1) as f:
-    dataset = json.load(f)
-
-logging.info("Asset metadata for {}: type={}, price={}".format(dataset['base']['name'],dataset['base']['type'],dataset['base']['price']))
-
-registered_asset = users[0].register_asset(dataset)
-
-asset = ocn.metadata.register_asset(dataset)
-assert ocean_provider.metadata.get_asset_ddo(asset['assetId'])['base']['name'] == asset['base']['name']
-ocean_provider.metadata.retire_asset(asset['assetId'])
-
-# %% List assets
-asset_ddo = ocn.metadata.get_asset_ddo(dataset['assetId'])
-assert ocn.metadata.get_asset_ddo(dataset['assetId'])['base']['name'] == dataset['base']['name']
-
-
-"""
+for u in users: print(u)
