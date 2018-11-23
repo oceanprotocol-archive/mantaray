@@ -44,6 +44,7 @@ from unittest.mock import Mock
 import squid_py
 print(squid_py.__version__)
 import unittest
+
 # %% [markdown]
 # Logging
 # %%
@@ -107,26 +108,31 @@ class User():
 
         # If the account is unlocked, instantiate Ocean and the Account classes
         if self.address.lower() in PASSWORD_MAP:
-            self.locked = False
-            self.password = PASSWORD_MAP[self.address.lower()]
+            password = PASSWORD_MAP[self.address.lower()]
             self.config_fname = "{}_{}_config.ini".format(self.name,self.role).replace(' ', '_')
-            config_path = self.create_config()
+            config_path = self.create_config(password) # Create configuration file for this user
             self.ocn = Ocean(config_path)
+            self.unlock(password)
+            self.locked = False
             acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
             self.account = acct_dict_lower[self.address.lower()]
+
         # Otherwise, pass
         else:
             self.locked = True
-            self.password = None
 
         # self.account = account_obj
         logging.info(self)
 
-    def create_config(self):
+    def unlock(self, password):
+        self.ocn._web3.personal.unlockAccount(self.address, password)
+
+
+    def create_config(self,password):
         conf = configparser.ConfigParser()
         conf.read(PATH_CONFIG)
         conf['keeper-contracts']['parity.address'] = self.address
-        conf['keeper-contracts']['parity.password'] = self.password
+        conf['keeper-contracts']['parity.password'] = password
         out_path = Path.cwd() / 'user_configurations' / self.config_fname
         print(out_path)
         with open(out_path, 'w') as fp:
@@ -134,7 +140,7 @@ class User():
         return out_path
 
     def __str__(self):
-        if not self.password:
+        if self.locked:
             status = 'LOCKED'
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
         else:
@@ -149,6 +155,12 @@ PASSWORD_MAP = {
     '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
     '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
 }
+
+# # Clean up this dir
+# user_config_path = Path.cwd() / 'user_configurations'/'*.ini'
+# for f in user_config_path.glob(user_config_path.__str__()):
+#     f.unlink()
+
 
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
@@ -183,11 +195,15 @@ u3 = users[2]
 rcpt = u1.ocn.keeper.market.request_tokens(10, u1.address)
 u1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
-
 rcpt = u2.ocn.keeper.market.request_tokens(10, u2.address)
 u2.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
+
+this_ocn = Ocean(Path.cwd() / 'user_configurations'/ 'Jake_Rutledge_Data_Scientist_config.ini')
+this_ocn.keeper.market.request_tokens(10, '0x068Ed00cF0441e4829D9784fCBe7b9e26D4BD8d0')
 for u in users: print(u)
+
+
 
 #%%
 """
