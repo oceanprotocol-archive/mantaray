@@ -3,29 +3,40 @@ matrix:
   include:
     - python: 3.7
       dist: xenial
-      sudo: true
-
-# before_script:
-#   - sleep 15
+      sudo: false
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+before_install:
+  - echo "Travis lifecycle 3) before_install"
+  - docker-compose -f docker/docker-compose.yml up -d
+
 install:
-  - pip install -r requirements_dev.txt
+  - echo "Travis lifecycle 4) install"
+#  - pip install -r requirements_dev.txt
+  - pip install -U tox-travis
+
+before_script:
+  - echo "Travis lifecycle 5) before_script [empty]"
 
 script:
-  - pytest
+  - echo "Travis lifecycle 6) script"
+  - tox
 
+after_success:
+  - echo "Travis lifecycle 8) after_success [empty]"
 
-# Command to run tests, e.g. python setup.py test
-#script: tox
+before_deploy:
+  - echo "Travis lifecycle 9) before_deploy [empty]"
 
+# TODO: Test the deployment
 # Generate PYPI package on tagged versions on master
-#deploy.sh:
-#  provider: pypi
-#  distributions: sdist bdist_wheel
-#  user: ${PYPI_USER}
-#  password: ${PYPI_PASSWORD}
-#  on:
-#    tags: true
-#    repo: oceanprotocol/mantaray
-#    python: 3.6
+deploy:
+#  echo "Travis lifecycle 10) deploy [empty]"
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: ${PYPI_USER}
+  password: ${PYPI_PASSWORD}
+  on:
+    tags: true
+    repo: oceanprotocol/mantaray
+    python: 3.7

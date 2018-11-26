@@ -26,7 +26,7 @@
 ---
 
 ## Features
-![manta](manta_small.jpg)
+![manta](doc/img/manta_small.jpg)
 
 Manage assets for data science in an interactive shell, as part of the
 typical data science workflow.
