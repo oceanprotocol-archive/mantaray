@@ -59,14 +59,60 @@ and other editors.
 | pleuston               	| October... 	| latest     	| N/A      	| latest        	| latest            	| Need tag? Update?                                    	|
 
 
-## Local testing
+## Local usage
+
+###  Setup local environment and packages
 Create a new virtual environment. 
 
 A conda environment can also be used, it may cause a conflict in certain conda env packages (certifi, etc.?). 
 
-pip install squid-py 0.2.9
 
-pip install  
+Activate the environment and install the ocean stack API for python, called **squid-py**. 
+The latest version is installed with `pip install squid-py 0.2.9`. 
+
+The **mantaray** project has several other dependencies which are *currently* listed in the `setup.py` script. 
+
+For end users, no other packages are required. 
+
+For developers, the `jupytext` package can be used to export an IPython script the Jupyter Lab format.
+
+### Start the simulated Ocean Protocol local components
+
+Next, clone the [docker images](https://github.com/oceanprotocol/docker-images) github repository. 
+
+This repository holds 
+
+The recommended configuration is `./start_ocean.sh --latest --no-pleuston --local-parity-node`
+
+This will run the following components:
+ - Backend database: `mongo`
+ - The parity-node: `oceanprotocol/parity-ethereum:beta`
+ - The secret-store:`oceanprotocol/parity-ethereum:master`
+ - A secret store proxy for CORS: `nginx:alpine` 
+ - The smart contracts deployed into Ganache: `oceanprotocol/keeper-contracts:latest`
+ - The Metadata Store: `oceanprotocol/aquarius:latest`
+ - The services provider: `oceanprotocol/brizo:latest`
+
+The parity node is deployed with accounts which are LOCKED. These must be UNLOCKED in the script to use. 
+
+### Copy the config.ini file
+Copy the `config.ini` file to `config_local.ini`. This configuration file is passed into the main entrypoint of the library
+the **Ocean** class. This configuration file should have the necessary configuration information to instantiate the class. 
+
+### Extract the smart contract ABI's
+Execute the script in your *project directory* i.e. `~/git/mantaray`.
+
+`. ./scripts/wait_for_migration_and_extract_keeper_artifacts.sh`
+
+This script will copy the ABI (Application Binary Interface) files from the currently running 
+docker container (keeper-contracts) into your *project directory*. 
+
+### Check your installation
+
+The above steps should be sufficient to start testing the latest status of the Ocean Protocol stack in a local environment. 
+The API can be explored in IPython, Jupyter Lab, or your preferred Python environment;
+
+`from squid-py.ocean.ocean import Ocean`
 
 
 ## Examples
