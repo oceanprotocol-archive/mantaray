@@ -19,7 +19,7 @@ services:
       - ./parity/authorities/validator0.pwd:/parity/validator.pwd:ro
       - ./parity/node0.network.key:/root/.local/share/io.parity.ethereum/network/key:ro
     ports:
-      - 12000:12000
+      - 8545:8545
     networks:
       my_net:
         ipv4_address: 172.16.0.10
