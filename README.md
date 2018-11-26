@@ -107,13 +107,12 @@ Execute the script in your *project directory* i.e. `~/git/mantaray`.
 This script will copy the ABI (Application Binary Interface) files from the currently running 
 docker container (keeper-contracts) into your *project directory*. 
 
-
-
 ### Check your installation
 
 The above steps should be sufficient to start testing the latest status of the Ocean Protocol stack in a local environment. 
 The API can be explored in IPython, Jupyter Lab, or your preferred Python environment;
-`from squid-py.ocean import `
+
+`from squid-py.ocean.ocean import Ocean`
 
 
 ## Examples
