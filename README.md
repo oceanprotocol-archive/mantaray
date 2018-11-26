@@ -58,6 +58,17 @@ and other editors.
 | secret-store-client-py 	| latest     	| ??         	| ??       	| ??            	| (Running on EC2!) 	| ??                                                   	|
 | pleuston               	| October... 	| latest     	| N/A      	| latest        	| latest            	| Need tag? Update?                                    	|
 
+
+## Local testing
+Create a new virtual environment. 
+
+A conda environment can also be used, it may cause a conflict in certain conda env packages (certifi, etc.?). 
+
+pip install squid-py 0.2.9
+
+pip install  
+
+
 ## Examples
 [Test the components](/mantaray/ipython_scripts/m00_test_connections.py)
 
