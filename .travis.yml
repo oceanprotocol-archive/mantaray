@@ -18,9 +18,16 @@ before_script:
 script:
   - echo "Travis lifecycle 6) script [empty]"
 
+after_success:
+  - echo "Travis lifecycle 8) after_success [empty]"
+
+before_deploy:
+  - echo "Travis lifecycle 9) before_deploy [empty]"
+
 # TODO: Test the deployment
 # Generate PYPI package on tagged versions on master
 deploy:
+  - echo "Travis lifecycle 10) deploy [empty]"
   provider: pypi
   distributions: sdist bdist_wheel
   user: ${PYPI_USER}
