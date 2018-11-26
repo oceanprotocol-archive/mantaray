@@ -18,6 +18,7 @@ requirements = [
 
 # Required packages for developers
 dev_requirements = [
+    'jupytext==0.8.5', # For conversion of IPython scripts to Jupyter
     'bumpversion',
     #'pkginfo',
     'twine',
