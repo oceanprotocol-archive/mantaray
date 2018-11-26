@@ -29,7 +29,7 @@ before_deploy:
 # TODO: Test the deployment
 # Generate PYPI package on tagged versions on master
 deploy:
-  - echo "Travis lifecycle 10) deploy [empty]"
+#  echo "Travis lifecycle 10) deploy [empty]"
   provider: pypi
   distributions: sdist bdist_wheel
   user: ${PYPI_USER}
