@@ -5,27 +5,20 @@ matrix:
       dist: xenial
       sudo: true
 
-# before_script:
-#   - sleep 15
-
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - pip install -r requirements_dev.txt
 
-script:
-  - pytest
-
-
-# Command to run tests, e.g. python setup.py test
-#script: tox
+# TODO: Test the deployment
+script: tox
 
 # Generate PYPI package on tagged versions on master
-#deploy.sh:
-#  provider: pypi
-#  distributions: sdist bdist_wheel
-#  user: ${PYPI_USER}
-#  password: ${PYPI_PASSWORD}
-#  on:
-#    tags: true
-#    repo: oceanprotocol/mantaray
-#    python: 3.6
+deploy.sh:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: ${PYPI_USER}
+  password: ${PYPI_PASSWORD}
+  on:
+    tags: true
+    repo: oceanprotocol/mantaray
+    python: 3.6
