@@ -29,7 +29,10 @@ dev_requirements = [
 setup_requirements = []
 
 # Requirements for testing
-test_requirements = []
+test_requirements = [
+    'tox',
+    'pytest',
+]
 
 docs_requirements = [
     'Sphinx',
