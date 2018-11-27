@@ -23,7 +23,8 @@ script:
   - tox
 
 after_success:
-  - echo "Travis lifecycle 8) after_success [empty]"
+  - echo "Travis lifecycle 8) after_success"
+  - python ./scripts/nb_convert_jupytext.py
 
 before_deploy:
   - echo "Travis lifecycle 9) before_deploy [empty]"
