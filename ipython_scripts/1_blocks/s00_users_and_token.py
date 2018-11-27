@@ -97,14 +97,13 @@ for address, account in ocn.accounts.items():
 # %% [markdown]
 # Get funds to users
 # A simple wrapper for each address is created to represent a user
-#
-# Users are instantiated and listed
+
 
 #%%
 class User():
     def __init__(self, name, role, address, config_path=None):
         """
-        A simple class to represent a User of Ocean Protocol.
+        A class to represent a User of Ocean Protocol.
         A User's account can be *locked*. To unlock an account, provide the password to the .unlock() method.
 
         :param name: Just to keep track and personalize the simulation
@@ -155,7 +154,6 @@ class User():
 
     def __str__(self):
         if self.locked:
-            status = 'LOCKED'
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
         else:
             ocean_token = self.account.ocean_balance
@@ -164,18 +162,19 @@ class User():
     def __repr__(self):
         return self.__str__()
 
+#%% [markdown]
+# Users are instantiated and listed
+#%%
+# Selected accounts are unlocked via password
 PASSWORD_MAP = {
     '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
     '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
     '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
 }
 
-# # Clean up this dir
-# user_config_path = Path.cwd() / 'user_configurations'/'*.ini'
-# for f in user_config_path.glob(user_config_path.__str__()):
-#     f.unlink()
-
-
+# Create some simulated users of Ocean Protocol
+# Alternate between Data Scientists (Consumers)
+# and Data Owners (providers)
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
     if i%2 == 0: role = 'Data Scientist'
@@ -184,22 +183,30 @@ for i, acct_address in enumerate(ocn.accounts):
     users.append(user)
 
 # Select only unlocked accounts
-users = [u for u in users if not u.locked]
+unlocked_users = [u for u in users if not u.locked]
 logging.info("Selected {} unlocked accounts for simulation.".format(len(users)))
 
+#%%
+# (Optional)
+# Delete the configuration files in the /user_configurations folder
+user_config_path = Path.cwd() / 'user_configurations'/'*.ini'
+for f in user_config_path.glob(user_config_path.__str__()):
+    f.unlink()
 
 #%% [markdown]
 # List the users
 #%%
-for u in users: print(u)
+for u in unlocked_users: print(u)
 
 #%% [markdown]
 # Get some Ocean token
 #%%
-for usr in users:
+for usr in unlocked_users:
     if usr.account.ocean_balance == 0:
         rcpt = usr.account.request_tokens(random.randint(0,100))
         usr.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
+#%% [markdown]
+# List the users, and notice the updated balance
 #%%
-for u in users: print(u)
+for u in unlocked_users: print(u)
