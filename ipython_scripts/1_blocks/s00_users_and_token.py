@@ -14,7 +14,7 @@
 # <img src="https://oceanprotocol.com/static/media/logo.75e257aa.png" alt="drawing" width="200"/>
 #
 # %% [markdown]
-# # Test functionality of squid-py wrapper.
+# # Building Blocks: Getting tokens to your users
 
 # %% [markdown]
 # <img src="https://3c1703fe8d.site.internapcdn.net/newman/gfx/news/hires/2017/mismatchedey.jpg" alt="drawing" width="200" align="center"/>
