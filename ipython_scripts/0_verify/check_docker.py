@@ -62,7 +62,7 @@ print(s)
 # High level client
 client = docker.from_env()
 # Get the APIClient for running commands
-# low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
+low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
 # %% Check running docker images using SDK
 with LoggerCritical():
@@ -75,9 +75,9 @@ with LoggerCritical():
 
 # %% Get addresses from images
 def get_address(api_client, container_id,contract_name):
-
+    network_name = 'ocean_poa_net_local'
     # This is the python script to be executed in the running image
-    python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/{}.development.json', 'r'))['address'])".format(contract_name)
+    python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/{}.{}.json', 'r'))['address'])".format(contract_name,network_name)
 
     # Wrap the script in quotes (string) and add the python shell command
     command = r"python -c " + '"' + python_script + '"'
@@ -87,8 +87,8 @@ def get_address(api_client, container_id,contract_name):
 
     return api_client.exec_start(ex)
 
-# Get the docker image running the smart contracts
-container_keeper_contracts = client.containers.get('docker_keeper-contracts_1_dc88320af3c4')
+# Get the docker image running the smart contracts, by searching on the name
+container_keeper_contracts = [c for c in client.containers.list() if 'keeper-contracts' in c.name][0]
 
 addresses=dict()
 addresses['market.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'OceanMarket').decode("utf-8").rstrip()
