@@ -43,6 +43,16 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.debug("Logging started")
 
+
+class LoggerCritical:
+    def __enter__(self):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("CRITICAL")
+
+    def __exit__(self, type, value, traceback):
+        my_logger = logging.getLogger()
+        my_logger.setLevel("DEBUG")
+
 # %% Check running docker images from command line
 # s = subprocess.check_output('docker ps', shell=True).wait()
 s = subprocess.Popen("docker ps" + "", shell=True).wait()
@@ -52,21 +62,22 @@ print(s)
 # High level client
 client = docker.from_env()
 # Get the APIClient for running commands
-# low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
+low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
 # %% Check running docker images using SDK
-for container in client.containers.list():
-    print(f"Docker container {container.name} is {container.status}")
-    print('\tTags:', container.image.tags)
-    # print(container.labels)
-    # print("\n")
-# container.logs()
+with LoggerCritical():
+    for container in client.containers.list():
+        print(f"Docker container {container.name} is {container.status}")
+        print('\tTags:', container.image.tags)
+        # print(container.labels)
+        # print("\n")
+    # container.logs()
 
 # %% Get addresses from images
 def get_address(api_client, container_id,contract_name):
-
+    network_name = 'ocean_poa_net_local'
     # This is the python script to be executed in the running image
-    python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/{}.development.json', 'r'))['address'])".format(contract_name)
+    python_script = r"import sys, json; print(json.load(open('/keeper-contracts/artifacts/{}.{}.json', 'r'))['address'])".format(contract_name,network_name)
 
     # Wrap the script in quotes (string) and add the python shell command
     command = r"python -c " + '"' + python_script + '"'
@@ -76,13 +87,14 @@ def get_address(api_client, container_id,contract_name):
 
     return api_client.exec_start(ex)
 
-# Get the docker image running the smart contracts
-container_keeper_contracts = client.containers.get('docker_keeper-contracts_1_dc88320af3c4')
+# Get the docker image running the smart contracts, by searching on the name
+container_keeper_contracts = [c for c in client.containers.list() if 'keeper-contracts' in c.name][0]
+
 addresses=dict()
-addresses['market.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanMarket').decode("utf-8").rstrip()
-addresses['auth.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanAuth').decode("utf-8").rstrip()
-addresses['token.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'OceanToken').decode("utf-8").rstrip()
-addresses['didregistry.address'] = get_address(low_level_api_client,container_keeper_contracts.id,'DIDRegistry').decode("utf-8").rstrip()
+addresses['market.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'OceanMarket').decode("utf-8").rstrip()
+addresses['auth.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'OceanAuth').decode("utf-8").rstrip()
+addresses['token.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'OceanToken').decode("utf-8").rstrip()
+addresses['didregistry.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'DIDRegistry').decode("utf-8").rstrip()
 
 print("Artifact addresses retrieved:")
 pprint(addresses)
