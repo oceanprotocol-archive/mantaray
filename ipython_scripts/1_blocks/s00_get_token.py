@@ -42,7 +42,7 @@ import secrets
 from squid_py.ddo import DDO
 from unittest.mock import Mock
 import squid_py
-print(squid_py.__version__)
+print("Squid API version:", squid_py.__version__)
 import unittest
 
 # %% [markdown]
@@ -69,45 +69,49 @@ logger.info("Logging started")
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION HERE
 PATH_CONFIG = Path.cwd() / 'config_local.ini'
+# PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
-# Passwords for simulated accounts can be hardcoded here
-PASSWORD_MAP = {
-    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
-    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
-    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
-}
+# ocn.config.keeper_path
 
 # %% [markdown]
 # ## Section 3: Users and accounts
 # %% [markdown]
-# List the accounts created
+# List the accounts created in Ganache
 #%%
-
 # ocn.accounts is a {address: Account} dict
+print("Ocean accounts:")
 for address in ocn.accounts:
     acct = ocn.accounts[address]
     print(acct.address)
 
 #%%
-# These accounts have a positive or 0 balance
+# These accounts have a balance of ETH and Ocean Token
 for address, account in ocn.accounts.items():
     assert account.balance.eth >= 0
     assert account.balance.ocn >= 0
 
 # %% [markdown]
 # Get funds to users
-# A simple wrapper for each address is created to represent a User
-# A User has a Name, a Role, and an address
+# A simple wrapper for each address is created to represent a user
 #
 # Users are instantiated and listed
 
 #%%
 class User():
     def __init__(self, name, role, address, config_path=None):
+        """
+        A simple class to represent a User of Ocean Protocol.
+        A User's account can be *locked*. To unlock an account, provide the password to the .unlock() method.
+
+        :param name: Just to keep track and personalize the simulation
+        :param role: Also just for personalizing
+        :param address: This the account address
+        :param config_path: The Ocean() library class *requires* a config file
+        """
         self.name = name
         self.address = address
         self.role = role
@@ -132,10 +136,6 @@ class User():
             acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
             self.account = acct_dict_lower[self.address.lower()]
 
-            cleanup=True # Delete this temporary INI
-            if cleanup:
-                config_path.unlink()
-
         logging.info(self)
 
     def unlock(self, password):
@@ -148,13 +148,14 @@ class User():
         conf['keeper-contracts']['parity.address'] = self.address
         conf['keeper-contracts']['parity.password'] = password
         out_path = Path.cwd() / 'user_configurations' / self.config_fname
-        print(out_path)
+        logging.info("Create a new configuration file for {}.".format(self.name))
         with open(out_path, 'w') as fp:
             conf.write(fp)
         return out_path
 
     def __str__(self):
         if self.locked:
+            status = 'LOCKED'
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
         else:
             ocean_token = self.account.ocean_balance
@@ -163,8 +164,18 @@ class User():
     def __repr__(self):
         return self.__str__()
 
+PASSWORD_MAP = {
+    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
+    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
+    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
+}
 
-#%% Create the users, one per simulated address
+# # Clean up this dir
+# user_config_path = Path.cwd() / 'user_configurations'/'*.ini'
+# for f in user_config_path.glob(user_config_path.__str__()):
+#     f.unlink()
+
+
 users = list()
 for i, acct_address in enumerate(ocn.accounts):
     if i%2 == 0: role = 'Data Scientist'
@@ -172,13 +183,13 @@ for i, acct_address in enumerate(ocn.accounts):
     user = User(names.get_full_name(), role, acct_address)
     users.append(user)
 
-# Select only unlocked accounts going forward
+# Select only unlocked accounts
 users = [u for u in users if not u.locked]
+logging.info("Selected {} unlocked accounts for simulation.".format(len(users)))
 
 
 #%% [markdown]
 # List the users
-
 #%%
 for u in users: print(u)
 
@@ -190,4 +201,5 @@ for usr in users:
         rcpt = usr.account.request_tokens(random.randint(0,100))
         usr.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
+#%%
 for u in users: print(u)
