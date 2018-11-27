@@ -1,5 +1,0 @@
-squid_py==0.2.7
-coloredlogs
-pyyaml
-names
-docker
