@@ -1,13 +1,24 @@
-import pathlib
-import sys
+from pathlib import Path
 import logging
-import time
+import os
+import sys
 
-from squid_py.ocean.asset import Asset
 from squid_py.ocean.ocean import Ocean
 from squid_py.service_agreement.service_agreement import ServiceAgreement
 from squid_py.service_agreement.service_factory import ServiceDescriptor
 from squid_py.service_agreement.service_types import ServiceTypes
+
+
+utilities_path = Path('.') / 'script_fixtures'
+utilities_path = str(utilities_path.absolute())
+if utilities_path not in sys.path:
+    sys.path.append(utilities_path)
+
+import fixtures as utilities
+f.test_imported_name
+
+#%%
+
 
 loggers_dict = logging.Logger.manager.loggerDict
 
@@ -30,14 +41,7 @@ PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)
-
-print(ocn.accounts)
-unlocked_account_name = '0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e'
-if unlocked_account_name in ocn.accounts:
-    unlocked_account = ocn.accounts.get(unlocked_account_name)
-else:
-    unlocked_account = next(iter(ocn.accounts.values()))
-# %% Test the accounts
+#%%
 
 TEST_DDO = {
   "@context": "https://w3id.org/future-method/v1",
