@@ -31,6 +31,7 @@ import random
 import configparser
 from squid_py.ocean.ocean import Ocean
 import names
+import glob
 import secrets
 from squid_py.ddo import DDO
 from unittest.mock import Mock
@@ -182,8 +183,7 @@ logging.info("Selected {} unlocked accounts for simulation.".format(len(users)))
 #%%
 # (Optional)
 # Delete the configuration files in the /user_configurations folder
-user_config_path = Path.cwd() / 'user_configurations'/'*.ini'
-for f in user_config_path.glob(user_config_path.__str__()):
+for f in Path('.').glob('user_configurations/*.ini'):
     f.unlink()
 
 #%% [markdown]

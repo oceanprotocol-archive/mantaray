@@ -50,6 +50,7 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = Ocean(config_file=PATH_CONFIG)
 #config = Config('config_local.ini')
 #assert ocean.market.address == ocean.get_web3().toChecksumAddress(config.get(KEEPER_CONTRACTS, 'market.address'))
+
 #%%
 print("***OCEAN***")
 print("{} accounts".format(len(ocn.accounts)))
