@@ -45,7 +45,9 @@ utilities_path = Path('.') / 'script_fixtures'
 utilities_path = str(utilities_path.absolute())
 if utilities_path not in sys.path:
     sys.path.append(utilities_path)
+
 import script_fixtures.logging as util_logging
+
 # %% [markdown]
 # ## Section 2: Instantiate the Ocean Protocol interface
 
