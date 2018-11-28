@@ -31,6 +31,7 @@ import random
 import configparser
 from squid_py.ocean.ocean import Ocean
 import names
+import logging
 import glob
 import secrets
 from squid_py.ddo import DDO
@@ -39,23 +40,12 @@ import squid_py
 print("Squid API version:", squid_py.__version__)
 import unittest
 
-# %% [markdown]
-# Logging
-# %%
-import logging
-loggers_dict = logging.Logger.manager.loggerDict
-logger = logging.getLogger()
-logger.handlers = []
-# Set level
-logger.setLevel(logging.INFO)
-FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-formatter = logging.Formatter(FORMAT, DATE_FMT)
-# Create handler and assign
-handler = logging.StreamHandler(sys.stderr)
-handler.setFormatter(formatter)
-logger.handlers = [handler]
-logger.info("Logging started")
+# Add the local utilities package
+utilities_path = Path('.') / 'script_fixtures'
+utilities_path = str(utilities_path.absolute())
+if utilities_path not in sys.path:
+    sys.path.append(utilities_path)
+import script_fixtures.logging as util_logging
 # %% [markdown]
 # ## Section 2: Instantiate the Ocean Protocol interface
 
@@ -90,8 +80,10 @@ for address, account in ocn.accounts.items():
 
 # %% [markdown]
 # Get funds to users
+#
 # A simple wrapper for each address is created to represent a user
-
+# This wrapper is presented below, and later used as a fixture,
+# See: ./script_fixtures/user.py
 
 #%%
 class User():

@@ -12,8 +12,6 @@ from squid_py.ocean.ocean import Ocean
 import sys
 # from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text
 
-
-
 # %% Instantiate the wrapper
 
 # The contract addresses are loaded from file
@@ -45,6 +43,7 @@ print("Connect at: {}".format(ocn.metadata_store._base_url))
 print("\n***SECRET STORE***")
 
 print("\n***SERVICE HANDLER (brizo)***")
+
 # %%
 
 # %%

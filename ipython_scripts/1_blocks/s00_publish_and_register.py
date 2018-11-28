@@ -8,33 +8,14 @@ from squid_py.service_agreement.service_agreement import ServiceAgreement
 from squid_py.service_agreement.service_factory import ServiceDescriptor
 from squid_py.service_agreement.service_types import ServiceTypes
 
-
+# Add the local utilities package
 utilities_path = Path('.') / 'script_fixtures'
 utilities_path = str(utilities_path.absolute())
 if utilities_path not in sys.path:
     sys.path.append(utilities_path)
-
-import fixtures as utilities
-utilities.test_imported_name
+import script_fixtures.logging as util_logging
 
 #%%
-
-
-loggers_dict = logging.Logger.manager.loggerDict
-
-logger = logging.getLogger()
-logger.handlers = []
-
-# Set level
-logger.setLevel(logging.INFO)
-
-FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-formatter = logging.Formatter(FORMAT, DATE_FMT)
-handler = logging.StreamHandler(sys.stderr)
-handler.setFormatter(formatter)
-logger.handlers = [handler]
-logger.debug("Logging started")
 
 # The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'

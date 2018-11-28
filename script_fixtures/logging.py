@@ -1,4 +1,5 @@
-# %% Logging
+# Logging
+import sys
 import logging
 
 loggers_dict = logging.Logger.manager.loggerDict
