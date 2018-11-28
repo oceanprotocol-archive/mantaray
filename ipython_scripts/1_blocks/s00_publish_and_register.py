@@ -1,21 +1,21 @@
-from pathlib import Path
-import logging
-import os
-import sys
-
-from squid_py.ocean.ocean import Ocean
-from squid_py.service_agreement.service_agreement import ServiceAgreement
-from squid_py.service_agreement.service_factory import ServiceDescriptor
-from squid_py.service_agreement.service_types import ServiceTypes
-
-
-utilities_path = Path('.') / 'script_fixtures'
-utilities_path = str(utilities_path.absolute())
-if utilities_path not in sys.path:
-    sys.path.append(utilities_path)
-
-import fixtures as utilities
-f.test_imported_name
+# from pathlib import Path
+# import logging
+# import os
+# import sys
+#
+# from squid_py.ocean.ocean import Ocean
+# from squid_py.service_agreement.service_agreement import ServiceAgreement
+# from squid_py.service_agreement.service_factory import ServiceDescriptor
+# from squid_py.service_agreement.service_types import ServiceTypes
+#
+#
+# utilities_path = Path('.') / 'script_fixtures'
+# utilities_path = str(utilities_path.absolute())
+# if utilities_path not in sys.path:
+#     sys.path.append(utilities_path)
+#
+# import fixtures as utilities
+# f.test_imported_name
 
 #%%
 

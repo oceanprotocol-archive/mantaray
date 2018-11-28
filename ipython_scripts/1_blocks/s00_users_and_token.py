@@ -108,7 +108,7 @@ class User():
         self.name = name
         self.address = address
         self.role = role
-        self.locked = True
+        self.credentials = False # Does this config file have a user address and pasword?
         self.config_path = config_path
 
         self.ocn = None
@@ -125,17 +125,16 @@ class User():
 
             # Instantiate Ocean and Account for this User
             self.ocn = Ocean(config_path)
-            self.unlock(password)
+            if self.ocn.main_account: # If this attribute exists, the password is stored
+                self.credentials = True
+            # self.unlock(password)
             acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
             self.account = acct_dict_lower[self.address.lower()]
 
         logging.info(self)
 
-    def unlock(self, password):
-        self.ocn._web3.personal.unlockAccount(self.address, password)
-        self.locked = False
-
     def create_config(self,password):
+        """Fow now, a new config.ini file must be created and passed into Ocean for instantiation"""
         conf = configparser.ConfigParser()
         conf.read(PATH_CONFIG)
         conf['keeper-contracts']['parity.address'] = self.address
@@ -147,7 +146,7 @@ class User():
         return out_path
 
     def __str__(self):
-        if self.locked:
+        if not self.credentials:
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
         else:
             ocean_token = self.account.ocean_balance
@@ -177,7 +176,7 @@ for i, acct_address in enumerate(ocn.accounts):
     users.append(user)
 
 # Select only unlocked accounts
-unlocked_users = [u for u in users if not u.locked]
+unlocked_users = [u for u in users if u.credentials]
 logging.info("Selected {} unlocked accounts for simulation.".format(len(users)))
 
 #%%
