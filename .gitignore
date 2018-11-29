@@ -108,3 +108,4 @@ sphinx
 /config_k8s_template.ini
 /**/artifacts/
 /user_configurations/*.ini
+/jupyter_notebooks/**/*.*
