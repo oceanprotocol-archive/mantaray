@@ -3,7 +3,7 @@
 # In this notebook, TODO: description
 
 # %% [markdown]
-# ### Section 1: Import modules, and setup logging
+# ### Section 0: Housekeeping, import modules, and setup logging
 #%%
 import pathlib
 import sys
@@ -32,27 +32,25 @@ util_logging.logger.setLevel('INFO')
 import script_fixtures.user as user
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
-#%%
-# get_registered_ddo -> register_service_agreement_template -> get_conditions_data_from_keeper_contracts
-# The data:
-# contract_addresses
-# fingerprints
-# fulfillment_indices
-# conditions_keys
-
 # %% [markdown]
 # ### Section 1: Instantiate a simulated User
+# A 'User' in an abstract class representing a user of Ocean Protocol
+#
+# Follow the most notorious pirate Edward Teach (Blackbeard) as he tries to register an asset into Ocean Protocol
+
 #%%
 # The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)
+#%%
 print("HTTP Client:")
 print(ocn._http_client)
 print("Secret Store Client:")
 print(ocn._secret_store_client)
 
+#%%
 # This utility function gets all simulated accounts
 users = user.get_all_users(ocn.accounts)
 
@@ -92,6 +90,7 @@ template_id = squid_py.service_agreement.utils.register_service_agreement_templa
     publisher1.ocn.main_account,
     squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
 )
+print(template_id)
 
 #%% [markdown]
 # ### Section X: Confirm your service endpoints with Brizo (services handler for Publishers)
@@ -111,8 +110,11 @@ this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
 
 # %% [markdown]
 # In this case, the service will have a type of:
+#
 # `ServiceTypes.ASSET_ACCESS`
+#
 # And needs to be instantiated with the following attributes:
+#
 # `price, purchase_endpoint, service_endpoint, timeout, template_id`
 
 #%%
@@ -123,7 +125,7 @@ ddo = publisher1.ocn.register_asset(
 )
 print("DDO created and registered!")
 #%%
-# Inspect your new DDO
+# Inspect the new DDO
 print("did:", ddo.did)
 print("Services:")
 for svc in ddo.services:
