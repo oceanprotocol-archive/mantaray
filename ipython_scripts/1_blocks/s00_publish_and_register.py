@@ -11,7 +11,6 @@ import logging
 from pathlib import Path
 import squid_py
 from squid_py.ocean.ocean import Ocean
-from squid_py.service_agreement.service_factory import ServiceDescriptor
 
 # Add the local utilities package
 utilities_path = Path('.') / 'script_fixtures'
@@ -66,6 +65,37 @@ publisher1.name = "Edward Teach"
 publisher1.role = "Publisher"
 print(publisher1)
 
+assert publisher1.ocn._http_client.__name__ == 'requests'
+assert publisher1.ocn._secret_store_client.__name__ == 'Client'
+
+ddo = get_registered_ddo(publisher1.ocn)
+
+#%% [markdown]
+# ### Section 2: Get the template of the Service Execution Agreement
+#%%
+# First, get the template ID
+SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
+
+template_id = squid_py.service_agreement.utils.register_service_agreement_template(
+    publisher1.ocn.keeper.service_agreement,
+    publisher1.ocn.keeper.contract_path,
+    publisher1.ocn.main_account,
+    squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
+)
 
 #%%
 
+# Get a simple example of a Metadata object
+metadata = squid_py.ddo.metadata.Metadata.get_example()
+
+brizo_url = 'http://localhost:8030' # For now, this is hardcoded
+# TODO: Discussion on whether Squid should have an API to Brizo?
+
+brizo_base_url = '/api/v1/brizo'
+purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)
+service_endpoint = '{}{}/services/consume'.format(brizo_url, brizo_base_url)
+
+ddo = publisher1.ocn.register_asset(
+    metadata, publisher1.ocn.main_account.address,
+    [ServiceDescriptor.access_service_descriptor(7, purchase_endpoint, service_endpoint, 360, template_id)]
+)
