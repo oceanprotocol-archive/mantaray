@@ -32,6 +32,13 @@ util_logging.logger.setLevel('INFO')
 
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
+#%%
+# get_registered_ddo -> register_service_agreement_template -> get_conditions_data_from_keeper_contracts
+# The data:
+# contract_addresses
+# fingerprints
+# fulfillment_indices
+# conditions_keys
 
 # %% [markdown]
 # ### Section 2: Instantiate Ocean()
@@ -41,11 +48,12 @@ PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)
+ocn._http_client
+ocn._secret_store_client
 
 # %% [markdown]
 # ### Section 3.1: Get a Service Execution Agreement for *access*
 #%%
-
 # Get the asset type
 SEA_type=squid_py.service_agreement.service_types.ServiceTypes.ASSET_ACCESS
 SEA_type_name='access_sla_template.json'
@@ -55,7 +63,7 @@ SEA_type_name='access_sla_template.json'
 # Get the path of the .json template
 SEA_template_json_path = pathlib.Path('.') / 'assets' / 'SEA_templates' / SEA_type_name
 assert SEA_template_json_path.exists()
-
+SEA_template_json_path = SEA_template_json_path.absolute()
 # Instantiate the template
 SEA_template = squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_json_path.absolute())
 
@@ -65,13 +73,12 @@ print(SEA_template.description)
 # %% [markdown]
 # ### Section 3.3: Get conditions data
 #%%
-#
 _network_name = squid_py.utils.get_network_name(ocn._web3)
 logging.info("Network name: {}".format(_network_name))
 
-names = {cond.contract_name for cond in conditions}
+names = {cond.contract_name for cond in SEA_template.conditions}
 name_to_contract_abi_n_address = {
-  name: get_contract_abi_and_address(web3, contract_path, name, _network_name)
+  name: squid_py.keeper.utils.get_contract_abi_and_address(ocn._web3, SEA_template_json_path, name, _network_name)
   for name in names
 }
 contract_addresses = [
