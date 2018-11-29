@@ -68,19 +68,19 @@ print(publisher1)
 assert publisher1.ocn._http_client.__name__ == 'requests'
 assert publisher1.ocn._secret_store_client.__name__ == 'Client'
 
-ddo = get_registered_ddo(publisher1.ocn)
-
 #%% [markdown]
-# ### Section X: MetaData
-#%%
-
-# Get a simple example of a Metadata object
+# ### Section 2: Create your MetaData for your asset
+# A more complex use case is to manually generate your metadata conforming to Ocean standard
 # Metadata is a dictionary, as follows:
+
+#%%
+# Get a simple example of a Metadata object from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
 print('Name of asset:',metadata['base']['name'])
 
 #%% [markdown]
-# ### Section X: Service Execution Agreement template
+# ### Section X: Get the Service Execution Agreement (SEA) template for an Asset
+# (An asset is consumed by simple download of files, such as datasets)
 #%%
 # Get the path of the SEA
 SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
@@ -94,7 +94,7 @@ template_id = squid_py.service_agreement.utils.register_service_agreement_templa
 )
 
 #%% [markdown]
-# ### Section X:
+# ### Section X: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
 brizo_url = 'http://localhost:8030' # For now, this is hardcoded
 # TODO: Discussion on whether Squid should have an API to Brizo?
@@ -103,16 +103,23 @@ brizo_base_url = '/api/v1/brizo'
 purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)
 service_endpoint = '{}{}/services/consume'.format(brizo_url, brizo_base_url)
 print("Endpoints:")
-print("purchase_endpoint:",purchase_endpoint)
-print("service_endpoint:",service_endpoint)
+print("purchase_endpoint:", purchase_endpoint)
+print("service_endpoint:", service_endpoint)
 
-this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
+# A service descriptor function is used to build a service
+this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor
+
+# %% [markdown]
+# In this case, the service will have a type of:
+# `ServiceTypes.ASSET_ACCESS`
+# And needs to be instantiated with the following attributes:
+# `price, purchase_endpoint, service_endpoint, timeout, template_id`
 
 #%%
 # Register this asset into Ocean
 ddo = publisher1.ocn.register_asset(
     metadata, publisher1.ocn.main_account.address,
-    [this_service_desc.access_service_descriptor(7, purchase_endpoint, service_endpoint, 360, template_id)]
+    [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)]
 )
 print("DDO created and registered!")
 #%%
