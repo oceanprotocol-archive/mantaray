@@ -1,26 +1,8 @@
 # %% [markdown]
-
-# <p><center>Ocean Protocol</p>
-# <p><center>Trilobite pre-release 0.1</center></p>
-# <img src="https://oceanprotocol.com/static/media/logo-white.7b65db16.png" alt="drawing" width="200" align="center"/>
-# </center>
-
-# %%
-# Ocean Protocol
-#
-# Trilobite release
-#
-# <img src="https://oceanprotocol.com/static/media/logo-white.7b65db16.png" alt="drawing" width="200"/>
-# <img src="https://oceanprotocol.com/static/media/logo.75e257aa.png" alt="drawing" width="200"/>
-#
-# %% [markdown]
-# # Building Blocks: Getting tokens to your users
+# ## Building Blocks: Getting tokens to your users
 
 # %% [markdown]
-# <img src="https://3c1703fe8d.site.internapcdn.net/newman/gfx/news/hires/2017/mismatchedey.jpg" alt="drawing" width="200" align="center"/>
-
-# %% [markdown]
-# ## Section 1: Import modules, and setup logging
+# ### Section 1: Import modules, and setup logging
 
 # %% [markdown]
 # Imports
@@ -31,6 +13,8 @@ import random
 import configparser
 from squid_py.ocean.ocean import Ocean
 import names
+import logging
+import glob
 import secrets
 from squid_py.ddo import DDO
 from unittest.mock import Mock
@@ -38,23 +22,14 @@ import squid_py
 print("Squid API version:", squid_py.__version__)
 import unittest
 
-# %% [markdown]
-# Logging
-# %%
-import logging
-loggers_dict = logging.Logger.manager.loggerDict
-logger = logging.getLogger()
-logger.handlers = []
-# Set level
-logger.setLevel(logging.INFO)
-FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-formatter = logging.Formatter(FORMAT, DATE_FMT)
-# Create handler and assign
-handler = logging.StreamHandler(sys.stderr)
-handler.setFormatter(formatter)
-logger.handlers = [handler]
-logger.info("Logging started")
+# Add the local utilities package
+utilities_path = Path('.') / 'script_fixtures'
+utilities_path = str(utilities_path.absolute())
+if utilities_path not in sys.path:
+    sys.path.append(utilities_path)
+
+import script_fixtures.logging as util_logging
+
 # %% [markdown]
 # ## Section 2: Instantiate the Ocean Protocol interface
 
@@ -89,8 +64,10 @@ for address, account in ocn.accounts.items():
 
 # %% [markdown]
 # Get funds to users
+#
 # A simple wrapper for each address is created to represent a user
-
+# This wrapper is presented below, and later used as a fixture,
+# See: ./script_fixtures/user.py
 
 #%%
 class User():
@@ -107,7 +84,7 @@ class User():
         self.name = name
         self.address = address
         self.role = role
-        self.locked = True
+        self.credentials = False # Does this config file have a user address and pasword?
         self.config_path = config_path
 
         self.ocn = None
@@ -124,17 +101,16 @@ class User():
 
             # Instantiate Ocean and Account for this User
             self.ocn = Ocean(config_path)
-            self.unlock(password)
+            if self.ocn.main_account: # If this attribute exists, the password is stored
+                self.credentials = True
+            # self.unlock(password)
             acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
             self.account = acct_dict_lower[self.address.lower()]
 
         logging.info(self)
 
-    def unlock(self, password):
-        self.ocn._web3.personal.unlockAccount(self.address, password)
-        self.locked = False
-
     def create_config(self,password):
+        """Fow now, a new config.ini file must be created and passed into Ocean for instantiation"""
         conf = configparser.ConfigParser()
         conf.read(PATH_CONFIG)
         conf['keeper-contracts']['parity.address'] = self.address
@@ -146,7 +122,7 @@ class User():
         return out_path
 
     def __str__(self):
-        if self.locked:
+        if not self.credentials:
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
         else:
             ocean_token = self.account.ocean_balance
@@ -176,14 +152,13 @@ for i, acct_address in enumerate(ocn.accounts):
     users.append(user)
 
 # Select only unlocked accounts
-unlocked_users = [u for u in users if not u.locked]
+unlocked_users = [u for u in users if u.credentials]
 logging.info("Selected {} unlocked accounts for simulation.".format(len(users)))
 
 #%%
 # (Optional)
 # Delete the configuration files in the /user_configurations folder
-user_config_path = Path.cwd() / 'user_configurations'/'*.ini'
-for f in user_config_path.glob(user_config_path.__str__()):
+for f in Path('.').glob('user_configurations/*.ini'):
     f.unlink()
 
 #%% [markdown]

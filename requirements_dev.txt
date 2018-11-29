@@ -7,5 +7,8 @@
 # install all the Python packages listed
 # in the install_requires list of setup.py
 # and also the 'dev' list in the extras_require dict
+-r requirements.txt
+jinja2
 
+# Use this directive to pull in the requirements from setup.py
 -e .[dev]
