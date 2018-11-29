@@ -63,10 +63,31 @@ print("Service template created: {}".format(SEA_template.name))
 print(SEA_template.description)
 
 # %% [markdown]
-# ### Section 3.2: Register the SEA
-
+# ### Section 3.3: Get conditions data
 #%%
-# A Service Execution Agreement
+#
+_network_name = squid_py.utils.get_network_name(ocn._web3)
+logging.info("Network name: {}".format(_network_name))
+
+names = {cond.contract_name for cond in conditions}
+name_to_contract_abi_n_address = {
+  name: get_contract_abi_and_address(web3, contract_path, name, _network_name)
+  for name in names
+}
+contract_addresses = [
+  web3.toChecksumAddress(name_to_contract_abi_n_address[cond.contract_name][1])
+  for cond in conditions
+]
+fingerprints = [
+  hexstr_to_bytes(web3, get_fingerprint_by_name(
+    name_to_contract_abi_n_address[cond.contract_name][0],
+    cond.function_name
+  ))
+  for i, cond in enumerate(conditions)
+]
+fulfillment_indices = [i for i, cond in enumerate(conditions) if cond.is_terminal]
+conditions_keys = build_conditions_keys(web3, contract_addresses, fingerprints, sla_template_id)
+return contract_addresses, fingerprints, fulfillment_indices, conditions_keys
 
 
 
