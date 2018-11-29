@@ -54,8 +54,10 @@ print(ocn._http_client)
 print("Secret Store Client:")
 print(ocn._secret_store_client)
 
-user.User()
-ocn.accounts
+# user.User()
+users = user.get_all_users(ocn.accounts)
+u for u in users if u.
+# ocn.accounts
 
 # %% [markdown]
 # ### Section 3.1: Get a Service Execution Agreement for *access*
