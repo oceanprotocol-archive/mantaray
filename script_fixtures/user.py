@@ -1,6 +1,20 @@
 """
 The User() class, a helper class for simulating users of Ocean Protocol.
 """
+import logging
+import configparser
+import logging
+from squid_py.ocean.ocean import Ocean
+from pathlib import Path
+PATH_CONFIG = Path.cwd() / 'config_local.ini'
+assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
+
+PASSWORD_MAP = {
+    '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
+    '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
+    '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
+}
+
 
 class User():
     def __init__(self, name, role, address, config_path=None):
@@ -36,7 +50,7 @@ class User():
             if self.ocn.main_account: # If this attribute exists, the password is stored
                 self.credentials = True
             # self.unlock(password)
-            acct_dict_lower = {k.lower(): v for k, v in ocn.accounts.items()}
+            acct_dict_lower = {k.lower(): v for k, v in self.ocn.accounts.items()}
             self.account = acct_dict_lower[self.address.lower()]
 
         logging.info(self)
@@ -53,6 +67,13 @@ class User():
             conf.write(fp)
         return out_path
 
+    @property
+    def locked(self):
+        if self.credentials:
+            return False
+        else:
+            return True
+
     def __str__(self):
         if not self.credentials:
             return "{:<20} {:<20} LOCKED ACCOUNT".format(self.name, self.role)
@@ -62,3 +83,14 @@ class User():
 
     def __repr__(self):
         return self.__str__()
+
+def get_all_users(addresses):
+    users = list()
+    for i, acct_address in enumerate(addresses):
+        user_name = "User_"+str(i)
+        user = User(user_name, "Role", acct_address)
+        users.append(user)
+    return users
+
+def get_user(role = 'Data Owner'):
+    return User

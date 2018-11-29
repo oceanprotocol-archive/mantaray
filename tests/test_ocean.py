@@ -15,5 +15,4 @@ def test_ocean_instance():
     assert ocn.keeper.market.web3 is ocn.keeper.auth.web3 is ocn.keeper.token.web3
     assert ocn._web3 is ocn.keeper.web3
 
-    ocn.print_config()
 

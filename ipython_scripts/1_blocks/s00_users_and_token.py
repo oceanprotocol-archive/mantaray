@@ -1,34 +1,42 @@
 # %% [markdown]
 # ## Building Blocks: Getting tokens to your users
+# In this notebook, we will work with a class which represents a
+# User of Ocean Protocol.
+# To use Ocean, a User requires
+# - A wallet address
+# - A password
+#
+# With this information, the Ocean instance can be instantiated with the Ocean.main_account attribute.
+# This attribute enables the User to unlock event calls in the networks.
+# This class will be used in later scripts to simulate behaviour of actors on the network.
+# See the /script_fixtures directory for utilities such as the User() class
 
 # %% [markdown]
 # ### Section 1: Import modules, and setup logging
 
-# %% [markdown]
-# Imports
 #%%
 from pathlib import Path
 import sys
 import random
 import configparser
-from squid_py.ocean.ocean import Ocean
 import names
 import logging
-import glob
-import secrets
-from squid_py.ddo import DDO
-from unittest.mock import Mock
 import squid_py
-print("Squid API version:", squid_py.__version__)
-import unittest
+from squid_py.ocean.ocean import Ocean
 
 # Add the local utilities package
 utilities_path = Path('.') / 'script_fixtures'
+if not utilities_path.exists():
+    utilities_path = Path('.') / '..' / '..' / 'script_fixtures'
+assert utilities_path.exists()
 utilities_path = str(utilities_path.absolute())
 if utilities_path not in sys.path:
     sys.path.append(utilities_path)
 
 import script_fixtures.logging as util_logging
+util_logging.logger.setLevel('INFO')
+
+logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
 # ## Section 2: Instantiate the Ocean Protocol interface
@@ -43,14 +51,11 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 ocn = Ocean(PATH_CONFIG)
 logging.info("Ocean smart contract node connected ".format())
 
-# ocn.config.keeper_path
+ocn.config.keeper_path
 
-# %% [markdown]
-# ## Section 3: Users and accounts
-# %% [markdown]
 # List the accounts created in Ganache
-#%%
 # ocn.accounts is a {address: Account} dict
+
 print("Ocean accounts:")
 for address in ocn.accounts:
     acct = ocn.accounts[address]
@@ -63,7 +68,7 @@ for address, account in ocn.accounts.items():
     assert account.balance.ocn >= 0
 
 # %% [markdown]
-# Get funds to users
+# From accounts -> Users
 #
 # A simple wrapper for each address is created to represent a user
 # This wrapper is presented below, and later used as a fixture,
