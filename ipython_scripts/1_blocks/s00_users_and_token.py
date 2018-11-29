@@ -6,6 +6,8 @@
 # - A wallet address
 # - A password
 #
+# With this information, the Ocean instance can be instantiated with the Ocean.main_account attribute.
+# This attribute enables the User to unlock event calls in the networks.
 # This class will be used in later scripts to simulate behaviour of actors on the network.
 # See the /script_fixtures directory for utilities such as the User() class
 
