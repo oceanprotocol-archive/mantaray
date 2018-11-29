@@ -7,10 +7,27 @@ Use this script to convert all *.py files to jupyter notebook format
 import pathlib
 import jupytext
 
+# Get the IPython script root dir
 root_dir = pathlib.Path.cwd().joinpath("")
-path_ipy_root=root_dir.joinpath("../ipython_scripts")
 path_ipy_root=root_dir.joinpath("ipython_scripts")
 path_jupyter_root=root_dir.joinpath("jupyter_notebooks")
+
+notebook_folders = ['0_verify','1_blocks','2_uses','3_stories']
+
+for item in path_ipy_root.iterdir():
+    if not item.is_dir():
+        continue
+    if not item.parts[-1] in notebook_folders:
+        continue
+    for script_path in item.glob('*.py'):
+        print(script_path)
+    print(item)
+    item.iterdir()
+    item.is_dir()
+    # if item.is_dir() and item.parts[-1]
+    #     print(item)
+
+
 
 for script_dir in path_ipy_root.glob('*'):
     dir_name = script_dir.parts[-1]
