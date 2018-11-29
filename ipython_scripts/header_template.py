@@ -1,23 +1,17 @@
 # %% [markdown]
 
-# <p><center>Ocean Protocol</p>
-# <p><center>Trilobite pre-release 0.1</center></p>
-# <img src="https://oceanprotocol.com/static/media/logo-white.7b65db16.png" alt="drawing" width="200" align="center"/>
-# </center>
-
-# %%
-# Ocean Protocol
-#
-# Trilobite release
-#
-# <img src="https://oceanprotocol.com/static/media/logo-white.7b65db16.png" alt="drawing" width="200"/>
-# <img src="https://oceanprotocol.com/static/media/logo.75e257aa.png" alt="drawing" width="200"/>
-#
-# %% [markdown]
-# # Building Blocks: Getting tokens to your users
+# <p><img src="https://oceanprotocol.com/static/media/banner-ocean-03@2x.b7272597.png" alt="drawing" width="800" align="center"/>
 
 # %% [markdown]
-# <img src="https://3c1703fe8d.site.internapcdn.net/newman/gfx/news/hires/2017/mismatchedey.jpg" alt="drawing" width="200" align="center"/>
 
-# %% [markdown]
-# <img src="https://github.com/oceanprotocol/art/blob/master/mantaray/mantaray-back-fill.svg" alt="drawing" width="400" align="center"/>
+# <h1><center>Ocean Protocol - Manta Ray project</center></h1>
+# <h3><center>Decentralized Data Science and Engineering, powered by Ocean Protocol</center></h3>
+# <p>Version 0.2 - Trilobite preview</p>
+# <p><a href="https://github.com/oceanprotocol/mantaray">mantaray on Github</a></p>
+# <p>
+
+#%% [markdown]
+# 🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🐬🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🐬🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+
+#%% [markdown]
+# <p>
