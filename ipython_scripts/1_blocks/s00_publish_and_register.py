@@ -71,11 +71,21 @@ assert publisher1.ocn._secret_store_client.__name__ == 'Client'
 ddo = get_registered_ddo(publisher1.ocn)
 
 #%% [markdown]
-# ### Section 2: Get the template of the Service Execution Agreement
+# ### Section X: MetaData
 #%%
-# First, get the template ID
+
+# Get a simple example of a Metadata object
+# Metadata is a dictionary, as follows:
+metadata = squid_py.ddo.metadata.Metadata.get_example()
+print('Name of asset:',metadata['base']['name'])
+
+#%% [markdown]
+# ### Section X: Service Execution Agreement template
+#%%
+# Get the path of the SEA
 SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
 
+# Get the ID of this SEA
 template_id = squid_py.service_agreement.utils.register_service_agreement_template(
     publisher1.ocn.keeper.service_agreement,
     publisher1.ocn.keeper.contract_path,
@@ -83,19 +93,36 @@ template_id = squid_py.service_agreement.utils.register_service_agreement_templa
     squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
 )
 
+#%% [markdown]
+# ### Section X:
 #%%
-
-# Get a simple example of a Metadata object
-metadata = squid_py.ddo.metadata.Metadata.get_example()
-
 brizo_url = 'http://localhost:8030' # For now, this is hardcoded
 # TODO: Discussion on whether Squid should have an API to Brizo?
 
 brizo_base_url = '/api/v1/brizo'
 purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)
 service_endpoint = '{}{}/services/consume'.format(brizo_url, brizo_base_url)
+print("Endpoints:")
+print("purchase_endpoint:",purchase_endpoint)
+print("service_endpoint:",service_endpoint)
 
+this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
+
+#%%
+# Register this asset into Ocean
 ddo = publisher1.ocn.register_asset(
     metadata, publisher1.ocn.main_account.address,
-    [ServiceDescriptor.access_service_descriptor(7, purchase_endpoint, service_endpoint, 360, template_id)]
+    [this_service_desc.access_service_descriptor(7, purchase_endpoint, service_endpoint, 360, template_id)]
 )
+print("DDO created and registered!")
+#%%
+# Inspect your new DDO
+print("did:", ddo.did)
+print("Services:")
+for svc in ddo.services:
+    print("\t{}".format(svc._type))
+    if 'conditions' in svc._values:
+        for condition in svc._values['conditions']:
+            print("\t\t",condition.contract_name)
+
+
