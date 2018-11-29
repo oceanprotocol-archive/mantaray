@@ -62,3 +62,9 @@ class User():
 
     def __repr__(self):
         return self.__str__()
+
+def get_unlocked_account():
+    pass
+
+def get_user(role = 'Data Owner'):
+    return User
