@@ -82,7 +82,7 @@ Next, clone the [docker images](https://github.com/oceanprotocol/docker-images) 
 
 This repository holds 
 
-The recommended configuration is `./start_ocean.sh --latest --no-pleuston --local-parity-node`
+The recommended configuration is `./start_ocean.sh --latest --local-parity-node`
 
 This will run the following components:
  - Backend database: `mongo`
