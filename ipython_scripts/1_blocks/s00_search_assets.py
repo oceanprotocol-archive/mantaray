@@ -42,5 +42,15 @@ assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)
 #%%
-ocn.search_assets()
+sample_meta_data = squid_py.ddo.metadata.Metadata.get_example()
+ocn.search_assets('Random Text')
+ocn.search_assets('asdfasdfasdf')
+ocn.search_assets('Hello do not give me csv')
+ocn.search_assets('Ocean')
+ocn.search_assets('id')
+ocn.search_assets('compression')
+ocn.search_assets('contenttype = csv')
+
+for asset in ocn.search_assets('Ocean'):
+    print(asset)
 
