@@ -29,7 +29,8 @@ if utilities_path_str not in sys.path:
 import script_fixtures.logging as util_logging
 util_logging.logger.setLevel('INFO')
 
-import script_fixtures.user as user
+import script_fixtures.asset_pretty_print as util_pprint
+
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
@@ -52,5 +53,10 @@ ocn.search_assets('compression')
 ocn.search_assets('contenttype = csv')
 
 for asset in ocn.search_assets('Ocean'):
-    print(asset)
+    print("\nASSET FOUND:", asset)
+    print('Asset:')
+    util_pprint.print_asset(asset)
+    print('DDO:')
+    util_pprint.print_ddo(asset.ddo)
+
 
