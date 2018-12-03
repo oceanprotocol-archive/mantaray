@@ -11,6 +11,8 @@ import logging
 from pathlib import Path
 import squid_py
 from squid_py.ocean.ocean import Ocean
+import requests
+import json
 
 # Add the local utilities package
 utilities_path = Path('.') / 'script_fixtures'
@@ -65,3 +67,11 @@ print(consumer1)
 assert consumer1.ocn._http_client.__name__ == 'requests'
 assert consumer1.ocn._secret_store_client.__name__ == 'Client'
 
+#%% [markdown]
+# ### Section 2: Find an asset
+#%%
+result = requests.get(ocn.metadata_store._base_url).content
+all_dids = json.loads(result)['ids']
+
+#%% [markdown]
+#
