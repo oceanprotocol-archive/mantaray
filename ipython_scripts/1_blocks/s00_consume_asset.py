@@ -84,6 +84,9 @@ first_did = all_dids[0]
 
 this_ddo = consumer1.ocn.resolve_did(first_did)
 
+this_ddo
+#%%
+# TODO: Remove this in final publication
 # The asset can also be retreieved direct from the REST endpoint
 # this_asset_endpoint = consumer1.ocn.metadata_store._base_url  + '/ddo/' + first_did
 # result = requests.get(this_asset_endpoint).content
@@ -92,3 +95,12 @@ this_ddo = consumer1.ocn.resolve_did(first_did)
 
 #%% [markdown]
 #
+#%%
+
+# Get the service agreement for consuming (downloading)
+service_types = squid_py.service_agreement.service_types.ServiceTypes
+service = this_ddo.get_service(service_type=service_types.ASSET_ACCESS)
+assert squid_py.service_agreement.service_agreement.ServiceAgreement.SERVICE_DEFINITION_ID_KEY in service.as_dictionary()
+sa = squid_py.service_agreement.service_agreement.ServiceAgreement.from_service_dict(service.as_dictionary())
+
+
