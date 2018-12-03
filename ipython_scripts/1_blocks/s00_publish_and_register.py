@@ -95,8 +95,11 @@ print(template_id)
 #%% [markdown]
 # ### Section X: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
-brizo_url = 'http://localhost:8030' # For now, this is hardcoded
+# brizo_url = 'http://172.15.0.17:8030' # For now, this is hardcoded
+brizo_url = publisher1.ocn.config.get('resources','brizo.url')
 # TODO: Discussion on whether Squid should have an API to Brizo?
+
+
 
 brizo_base_url = '/api/v1/brizo'
 purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)

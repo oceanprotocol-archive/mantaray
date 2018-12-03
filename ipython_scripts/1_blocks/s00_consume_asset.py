@@ -79,7 +79,7 @@ all_dids = json.loads(result)['ids']
 assert len(all_dids) > 0
 
 # Get the first DID for testing
-first_did = all_dids[0]
+first_did = all_dids[-1]
 
 #%% From this DID, get the DDO
 # TODO: This is broken, wait for patch in squid_py to point to correct method (resolve_did())
@@ -104,6 +104,8 @@ this_ddo
 service_types = squid_py.service_agreement.service_types.ServiceTypes
 service = this_ddo.get_service(service_type=service_types.ASSET_ACCESS)
 assert squid_py.service_agreement.service_agreement.ServiceAgreement.SERVICE_DEFINITION_ID_KEY in service.as_dictionary()
+
+# This is the Service Agreement for downloading the Asset, contains conditions
 sa = squid_py.service_agreement.service_agreement.ServiceAgreement.from_service_dict(service.as_dictionary())
 
 consumer_address = consumer1.ocn.main_account.address

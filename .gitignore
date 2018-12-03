@@ -110,3 +110,4 @@ sphinx
 /user_configurations/*.ini
 /jupyter_notebooks/**/*.*
 squid_py.db
+/consume-downloads/**/*.*
