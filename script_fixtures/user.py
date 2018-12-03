@@ -58,7 +58,7 @@ class User():
     def create_config(self,password):
         """Fow now, a new config.ini file must be created and passed into Ocean for instantiation"""
         conf = configparser.ConfigParser()
-        conf.read(PATH_CONFIG)
+        conf.read(str(PATH_CONFIG))
         conf['keeper-contracts']['parity.address'] = self.address
         conf['keeper-contracts']['parity.password'] = password
         out_path = Path.cwd() / 'user_configurations' / self.config_fname

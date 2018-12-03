@@ -82,7 +82,7 @@ Next, clone the [docker images](https://github.com/oceanprotocol/docker-images) 
 
 This repository holds 
 
-The recommended configuration is `./start_ocean.sh --latest --no-pleuston --local-parity-node`
+The recommended configuration is `./start_ocean.sh --latest --local-parity-node`
 
 This will run the following components:
  - Backend database: `mongo`
@@ -135,11 +135,11 @@ management and PyPi directly (via requirements.txt).
 
 - The Ocean Protocol interface, [squid-py](https://github.com/oceanprotocol/squid-py), 
 - Which in turn interfaces with the following docker images, running locally (using docker-compose);
-	 - Offline blockchain smart-contracts [oceanprotocol/keeper-contracts:0.1](https://hub.docker.com/r/oceanprotocol/keeper-contracts/)
-	 - Metadata Store interface [oceanprotocol/provider:0.1](https://hub.docker.com/r/oceanprotocol/provider/), which depends on; 
-		- mongo:3.6
-		- bigchaindb/bigchaindb:2.0.0-beta
-		- tendermint/tendermint:0.19.9
+	 - Offline blockchain smart-contracts [oceanprotocol/keeper-contracts](https://hub.docker.com/r/oceanprotocol/keeper-contracts/)
+	 - Metadata Store interface [oceanprotocol/aquarius](https://hub.docker.com/r/oceanprotocol/aquarius/), which depends on (by default) : 
+		- [mongodb](https://github.com/mongodb/)
+		- [bigchaindb](https://github.com/bigchaindb/bigchaindb)
+		- [tendermint](https://github.com/tendermint/tendermint)
 
 ## Quickstart: Publishing data on local components
 To publish data, the following steps are performed;
