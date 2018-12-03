@@ -25,7 +25,20 @@ script:
 after_success:
   - echo "Travis lifecycle 8) after_success"
   - pip install jupytext
+  # Convert to Jupyter format
   - python ./scripts/nb_convert_jupytext.py
+  # Pull the mantaray_jupyter repo
+  - git clone https://github.com/oceanprotocol/mantaray_jupyter.git ~/git/mantaray_jupyter
+  # Copy the jupyter files into this repo
+  - ls
+  - cp -R ./jupyter_notebooks ~/git/mantaray_jupyter
+  # Go into the repo, add, commit, push
+  - cd ~/git/mantaray_jupyter
+  - ls
+  - git add -A
+  - git commit -m "deploy Travis build job, mantaray IPython to Jupyter format"
+  - git push
+
 
 before_deploy:
   - echo "Travis lifecycle 9) before_deploy [empty]"
