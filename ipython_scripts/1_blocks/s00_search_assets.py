@@ -89,7 +89,6 @@ ocn.search_assets('compression')
 ocn.search_assets('contenttype = csv')
 
 
-
 for asset in ocn.search_assets('Ocean'):
     print("\nASSET FOUND:", asset)
     print('Asset:')
