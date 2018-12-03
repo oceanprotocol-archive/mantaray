@@ -26,6 +26,7 @@ after_success:
   - echo "Travis lifecycle 8) after_success"
   - pip install jupytext
   # Convert to Jupyter format
+  - mkdir ./jupyter_notebooks
   - python ./scripts/nb_convert_jupytext.py
   # Pull the mantaray_jupyter repo
   - git clone https://github.com/oceanprotocol/mantaray_jupyter.git ~/git/mantaray_jupyter
