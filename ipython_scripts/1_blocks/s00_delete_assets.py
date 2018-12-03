@@ -42,23 +42,9 @@ PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)
-
-#%% [markdown]
-# The Metadata store is a database wrapped with a REST API
-# For all the functionality, see the Swagger documentation
 #%%
 
-print("REST API base URL:",ocn.metadata_store._base_url)
-print("REST API base URL:{}{}".format(ocn.metadata_store._base_url))
 
-# %% [markdown]
-# All stored assets can be listed;
-#%%
-requests.get().content
-
-# %% [markdown]
-# The Asset class is returned from a search
-#%% A full text search is implemented
 sample_meta_data = squid_py.ddo.metadata.Metadata.get_example()
 ocn.search_assets('Random Text')
 ocn.search_assets('')
