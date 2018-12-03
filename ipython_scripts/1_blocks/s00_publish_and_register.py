@@ -37,7 +37,7 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # A 'User' in an abstract class representing a user of Ocean Protocol
 #
 # Follow the most notorious pirate Edward Teach (Blackbeard) as he tries to register an asset into Ocean Protocol
-
+# <a title="Engraved by Benjamin Cole (1695–1766) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Bbeard_Sword.jpg"><img width="256" alt="Bbeard Sword" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bbeard_Sword.jpg/256px-Bbeard_Sword.jpg"></a>
 #%%
 # The contract addresses are loaded from file
 PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
@@ -95,8 +95,11 @@ print(template_id)
 #%% [markdown]
 # ### Section X: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
-brizo_url = 'http://localhost:8030' # For now, this is hardcoded
+# brizo_url = 'http://172.15.0.17:8030' # For now, this is hardcoded
+brizo_url = publisher1.ocn.config.get('resources','brizo.url')
 # TODO: Discussion on whether Squid should have an API to Brizo?
+
+
 
 brizo_base_url = '/api/v1/brizo'
 purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)
