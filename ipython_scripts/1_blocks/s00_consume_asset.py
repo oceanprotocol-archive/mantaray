@@ -13,6 +13,9 @@ import squid_py
 from squid_py.ocean.ocean import Ocean
 import requests
 import json
+import time
+
+from web3 import Web3
 
 # Add the local utilities package
 utilities_path = Path('.') / 'script_fixtures'
@@ -94,7 +97,7 @@ this_ddo
 
 
 #%% [markdown]
-#
+# ### Section 3: Get ready for purchase
 #%%
 
 # Get the service agreement for consuming (downloading)
@@ -103,4 +106,41 @@ service = this_ddo.get_service(service_type=service_types.ASSET_ACCESS)
 assert squid_py.service_agreement.service_agreement.ServiceAgreement.SERVICE_DEFINITION_ID_KEY in service.as_dictionary()
 sa = squid_py.service_agreement.service_agreement.ServiceAgreement.from_service_dict(service.as_dictionary())
 
+consumer_address = consumer1.ocn.main_account.address
 
+# The purchase (sign) command will fail unless the account has some Ocean Token to spend!
+if consumer1.account.ocean_balance == 0:
+    rcpt = consumer1.account.request_tokens(10)
+    consumer1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
+
+
+#%% [markdown]
+# ### Section 3: Execute the agreement (purchase!)
+#%%
+# This will send the purchase request to Brizo which in turn will execute the agreement on-chain
+service_agreement_id = consumer1.ocn.sign_service_agreement(this_ddo.did, sa.sa_definition_id, consumer_address)
+print('got new service agreement id:', service_agreement_id)
+
+
+#%%
+# We will now watch on-chain to ensure that the service is 1) Executed and 2) Granted
+
+def wait_for_event(event, arg_filter, wait_iterations=20):
+    _filter = event.createFilter(fromBlock=0 , argument_filters=arg_filter)
+    for check in range(wait_iterations):
+        events = _filter.get_all_entries()
+        if events:
+            return events[0]
+        time.sleep(0.5)
+
+
+filter1 = {'serviceAgreementId': Web3.toBytes(hexstr=service_agreement_id)}
+filter_2 = {'serviceId': Web3.toBytes(hexstr=service_agreement_id)}
+
+executed = wait_for_event(consumer1.ocn.keeper.service_agreement.events.ExecuteAgreement, filter1)
+assert executed
+granted = wait_for_event(consumer1.ocn.keeper.access_conditions.events.AccessGranted, filter_2)
+assert granted
+fulfilled = wait_for_event(consumer1.ocn.keeper.service_agreement.events.AgreementFulfilled, filter1)
+assert fulfilled
+time.sleep(3)
