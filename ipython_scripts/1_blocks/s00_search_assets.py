@@ -11,7 +11,8 @@ import logging
 from pathlib import Path
 import squid_py
 from squid_py.ocean.ocean import Ocean
-
+import requests
+import json
 # Add the local utilities package
 utilities_path = Path('.') / 'script_fixtures'
 if not utilities_path.exists():
@@ -49,15 +50,30 @@ ocn = Ocean(config_file=PATH_CONFIG)
 #%%
 
 print("REST API base URL:",ocn.metadata_store._base_url)
-print("REST API base URL:{}{}".format(ocn.metadata_store._base_url))
+print("Swagger API documentation: {}{}".format(ocn.metadata_store._base_url,"/docs/"))
 
 # %% [markdown]
-# All stored assets can be listed;
+# All stored assets can be listed. This is typically not done in production, as the list would be too large.
+# For demonstration purposes, we can access the REST API directly, first retrieve their ID string;
 #%%
-requests.get().content
+result = requests.get(ocn.metadata_store._base_url).content
+all_ids = json.loads(result)['ids']
+for i, id in enumerate(all_ids):
+    print(i, id)
+
 
 # %% [markdown]
-# The Asset class is returned from a search
+# Then, the assets can be retrieved;
+#%%
+# TODO: Fix
+ocn.get_asset('did:ocn:0x93db076c9cfa42f290d4e7d1e0b34271e0e67d6484004a0888b6eac6775213af')
+
+this_asset_endpoint = ocn.metadata_store._base_url  + '/' + id
+this_asset_endpoint = ocn.metadata_store._base_url  + '/' + '0x93db076c9cfa42f290d4e7d1e0b34271e0e67d6484004a0888b6eac6775213af'
+result = requests.get(this_asset_endpoint).content
+
+# %% [markdown]
+# These assets can also be searched, the Asset class is returned from a search
 #%% A full text search is implemented
 sample_meta_data = squid_py.ddo.metadata.Metadata.get_example()
 ocn.search_assets('Random Text')
@@ -79,3 +95,8 @@ for asset in ocn.search_assets('Ocean'):
     util_pprint.print_ddo(asset.ddo)
 
 
+
+# %% [markdown]
+# Finally, assets can be deleted from the store
+
+retire_asset_metadata
