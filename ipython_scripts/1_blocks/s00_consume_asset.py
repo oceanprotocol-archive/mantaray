@@ -70,8 +70,17 @@ assert consumer1.ocn._secret_store_client.__name__ == 'Client'
 #%% [markdown]
 # ### Section 2: Find an asset
 #%%
-result = requests.get(ocn.metadata_store._base_url).content
+result = requests.get(consumer1.ocn.metadata_store._base_url).content
 all_dids = json.loads(result)['ids']
+assert len(all_dids) > 0
+first_did = all_dids[0]
 
+# TODO: This is broken, wait for patch in squid_py
+# consumer1.ocn.get_asset(first_did)
+
+# Get the asset directly from the endpoint
+this_asset_endpoint = consumer1.ocn.metadata_store._base_url  + '/ddo/' + first_did
+result = requests.get(this_asset_endpoint).content
+ddo_dict = json.loads(result)
 #%% [markdown]
 #

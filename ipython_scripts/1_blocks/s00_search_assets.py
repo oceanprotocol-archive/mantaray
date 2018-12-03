@@ -68,8 +68,8 @@ first_id_int = int(first_id,16)
 # Then, the assets can be retrieved;
 #%%
 # TODO: Fix!
-ocn.get_asset(first_id_int)
-this_asset_endpoint = ocn.metadata_store._base_url  + '/' + first_id
+ocn.get_asset(first_did)
+this_asset_endpoint = ocn.metadata_store._base_url  + '/' + first_did
 result = requests.get(this_asset_endpoint).content
 
 # %% [markdown]
