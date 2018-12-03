@@ -54,22 +54,22 @@ print("Swagger API documentation: {}{}".format(ocn.metadata_store._base_url,"/do
 
 # %% [markdown]
 # All stored assets can be listed. This is typically not done in production, as the list would be too large.
-# For demonstration purposes, we can access the REST API directly, first retrieve their ID string;
+# For demonstration purposes, we can access the REST API directly, first retrieve their DID string;
 #%%
 result = requests.get(ocn.metadata_store._base_url).content
-all_ids = json.loads(result)['ids']
-for i, id in enumerate(all_ids):
+all_dids = json.loads(result)['ids']
+for i, id in enumerate(all_dids):
     print(i, id)
 
-
+first_did = all_dids[0]
+first_id = first_did.split(':')[-1]
+first_id_int = int(first_id,16)
 # %% [markdown]
 # Then, the assets can be retrieved;
 #%%
-# TODO: Fix
-ocn.get_asset('did:ocn:0x93db076c9cfa42f290d4e7d1e0b34271e0e67d6484004a0888b6eac6775213af')
-
-this_asset_endpoint = ocn.metadata_store._base_url  + '/' + id
-this_asset_endpoint = ocn.metadata_store._base_url  + '/' + '0x93db076c9cfa42f290d4e7d1e0b34271e0e67d6484004a0888b6eac6775213af'
+# TODO: Fix!
+ocn.get_asset(first_id_int)
+this_asset_endpoint = ocn.metadata_store._base_url  + '/' + first_id
 result = requests.get(this_asset_endpoint).content
 
 # %% [markdown]
@@ -79,7 +79,10 @@ sample_meta_data = squid_py.ddo.metadata.Metadata.get_example()
 ocn.search_assets('Random Text')
 ocn.search_assets('')
 ocn.search_assets('asdfasdfasdf')
-ocn.search_assets('Hello do not give me csv')
+res = ocn.search_assets('Hello do not give me csv')
+this = res[0]
+this.asset_id
+this.did
 ocn.search_assets('Ocean')
 ocn.search_assets('id')
 ocn.search_assets('compression')
@@ -98,5 +101,8 @@ for asset in ocn.search_assets('Ocean'):
 
 # %% [markdown]
 # Finally, assets can be deleted from the store
-
-retire_asset_metadata
+result = requests.get(ocn.metadata_store._base_url).content
+all_dids = json.loads(result)['ids']
+for i, id in enumerate(all_dids):
+    print("Deleting",id)
+    ocn.metadata_store.retire_asset_metadata(id)
