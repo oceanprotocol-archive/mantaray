@@ -4,11 +4,18 @@
 
 # %% [markdown]
 # ### Section 0: Housekeeping, import modules, and setup logging
+
 #%%
-import pathlib
+# When running in IPython, ensure the path is obtained
+# This may vary according to your environment
+from pathlib import Path
+if not 'PATH_PROJECT' in locals():
+    PATH_PROJECT = Path.cwd()
+print("Project root path:", PATH_PROJECT)
+
+#%%
 import sys
 import logging
-from pathlib import Path
 import squid_py
 from squid_py.ocean.ocean import Ocean
 import requests
@@ -44,7 +51,7 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # Follow Anne Bonny as she purchases an asset which has been registered in Ocean Protocol
 #%%
 # The contract addresses are loaded from file
-PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
+PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)

@@ -1,34 +1,29 @@
-"""
-With docker running, run this script to test the Ocean wrapper (squid-py).
+# %% [markdown]
+# With docker running, run this script to test the Ocean wrapper (squid-py).
+# Instantiate the wrapper with the local config_local.ini.
+#%%
+# When running in IPython, ensure the path is obtained
+# This may vary according to your environment
+from pathlib import Path
+if not 'PATH_PROJECT' in locals():
+    PATH_PROJECT = Path.cwd()
+print("Project root path:", PATH_PROJECT)
 
-Instantiate the wrapper with the local config_local.ini.
-"""
-
-# %% Imports
-
-import pathlib
-# import squid_py.ocean.ocean as ocean
 from squid_py.ocean.ocean import Ocean
-import sys
-# from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text
 
-# %% Instantiate the wrapper
-
-# The contract addresses are loaded from file
-PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
-# PATH_CONFIG = pathlib.Path.cwd() / 'config_k8s_deployed.ini'
+PATH_CONFIG = PATH_PROJECT / 'config_local.ini'
+# Change the PATH_CONFIG below to your config.ini file
+# PATH_CONFIG = PATH_PROJECT / 'config_k8s_deployed.ini'
 
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-#ocn = ocean.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
-
 ocn = Ocean(config_file=PATH_CONFIG)
-#config = Config('config_local.ini')
-#assert ocean.market.address == ocean.get_web3().toChecksumAddress(config.get(KEEPER_CONTRACTS, 'market.address'))
 
 #%%
 print("***OCEAN***")
 print("{} accounts".format(len(ocn.accounts)))
+for account in ocn.accounts:
+    print(account)
 print("\n***KEEPER NODE***")
 print("Keeper node connected at {}".format(ocn.config.keeper_url))
 print("Using ABI files from {}".format(ocn.config.keeper_path))

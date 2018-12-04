@@ -1,36 +1,29 @@
+from pathlib import Path
+if not 'PATH_PROJECT' in locals():
+    PATH_PROJECT = Path.cwd()
+print("Project root path:", PATH_PROJECT)
+
 # %%
 import requests
-from squid_py import ocean
+from squid_py.ocean import ocean
 import sys
 from pathlib import Path
 
-# %% Logging
-""" 
-"""
+# %%
+# When running in IPython, ensure the path is obtained
+# This may vary according to your environment
+
 import logging
-logger = logging.getLogger()
 
-# Set level
-logger.setLevel(logging.DEBUG)
-FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-formatter = logging.Formatter(FORMAT, DATE_FMT)
+# Add the local utilities package
+utilities_path = PATH_PROJECT / 'script_fixtures'
+assert utilities_path.exists()
+utilities_path = str(utilities_path.absolute())
+if utilities_path not in sys.path:
+    sys.path.append(utilities_path)
 
-# Create handler and assign
-logger.handlers = []
-handler = logging.StreamHandler(sys.stderr)
-handler.setFormatter(formatter)
-logger.handlers = [handler]
-logger.debug("Logging started")
-
-
-class LoggerCritical:
-    def __enter__(self):
-        my_logger = logging.getLogger()
-        my_logger.setLevel("CRITICAL")
-    def __exit__(self, type, value, traceback):
-        my_logger = logging.getLogger()
-        my_logger.setLevel("DEBUG")
+import script_fixtures.logging as util_logging
+util_logging.logger.setLevel('INFO')
 
 #%%
 
@@ -50,7 +43,7 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     return res.status_code, res.content
 
 for endpoint in endpoints_dict:
-    with LoggerCritical():
+    with util_logging.LoggerCritical():
         print("Checking {}".format(endpoint))
         try:
             code, status = check_endpoint(endpoint, endpoints_dict[endpoint])
@@ -66,8 +59,8 @@ for endpoint in endpoints_dict:
 # check_endpoint('brizo_doc', endpoints_dict)
 
 #%%
-config_path = Path.cwd() / '..' / '..' / 'config_k8s.ini'
-config_path = Path.cwd() / 'config_k8s.ini'
+
+config_path = PATH_PROJECT / 'config_k8s_deployed.ini'
 assert config_path.exists()
 ocn = ocean.Ocean(config_path)
 

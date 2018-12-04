@@ -66,7 +66,6 @@ Create a new virtual environment.
 
 A conda environment can also be used, it may cause a conflict in certain conda env packages (certifi, etc.?). 
 
-
 Activate the environment and install the ocean stack API for python, called **squid-py**. 
 The latest version is installed with `pip install squid-py 0.2.9`. 
 
@@ -76,11 +75,44 @@ For end users, no other packages are required.
 
 For developers, the `jupytext` package can be used to export an IPython script the Jupyter Lab format.
 
+### Get the simulated Ocean Protocol local components
+
+git clone the [docker images](https://github.com/oceanprotocol/docker-images) github repository. 
+
+### Setup publisher accounts 
+
+#### Brizo, the publisher service
+As a Publisher, the service endpoint called 'brizo' will need to be correctly configured. 
+
+This configuration is found in the docker-images repo which you have just cloned. 
+
+Edit this file: `brizo.env`
+
+The account information must match your publisher account.
+
+Update the following values to an unlocked account:
+ - PARITY_ADDRESS=
+ - PARITY_PASSWORD=
+ 
+#### MS Azure account, for hosting files
+Currently, only Microsoft Azure is supported for hosting files. 
+
+Complete the following account details to ensure the asset is published and served: 
+ - AZURE_ACCOUNT_NAME=
+ - AZURE_ACCOUNT_KEY=
+ - AZURE_RESOURCE_GROUP=
+ - AZURE_LOCATION=
+ - AZURE_CLIENT_ID=
+ - AZURE_CLIENT_SECRET=
+ - AZURE_TENANT_ID=
+ - AZURE_SUBSCRIPTION_ID=
+
+
 ### Start the simulated Ocean Protocol local components
 
-Next, clone the [docker images](https://github.com/oceanprotocol/docker-images) github repository. 
+With the above configuration complete, you are ready to start the local components in docker. 
 
-This repository holds 
+A shell script is provided in the docker-images repo; `start-ocean.sh`.
 
 The recommended configuration is `./start_ocean.sh --latest --local-parity-node`
 
@@ -114,7 +146,7 @@ The API can be explored in IPython, Jupyter Lab, or your preferred Python enviro
 
 `from squid-py.ocean.ocean import Ocean`
 
-
+# TODO: Update below information
 ## Examples
 [Test the components](/mantaray/ipython_scripts/m00_test_connections.py)
 
