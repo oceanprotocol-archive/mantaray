@@ -111,3 +111,4 @@ sphinx
 /jupyter_notebooks/**/*.*
 squid_py.db
 /consume-downloads/**/*.*
+/artifacts/**/*.*
