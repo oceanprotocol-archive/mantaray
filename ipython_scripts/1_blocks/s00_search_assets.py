@@ -78,6 +78,7 @@ result = requests.get(this_asset_endpoint).content
 # These assets can also be searched, the Asset class is returned from a search
 #%% A full text search is implemented
 sample_meta_data = squid_py.ddo.metadata.Metadata.get_example()
+
 ocn.search_assets('Random Text')
 ocn.search_assets('')
 ocn.search_assets('asdfasdfasdf')

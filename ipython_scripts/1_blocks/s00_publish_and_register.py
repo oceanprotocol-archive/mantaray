@@ -14,7 +14,6 @@ print("Project root path:", PATH_PROJECT)
 #%%
 import sys
 import logging
-from pathlib import Path
 import squid_py
 from squid_py.ocean.ocean import Ocean
 
