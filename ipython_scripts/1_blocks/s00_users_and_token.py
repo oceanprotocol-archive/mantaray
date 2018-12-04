@@ -40,6 +40,8 @@ if utilities_path not in sys.path:
 import script_fixtures.logging as util_logging
 util_logging.logger.setLevel('INFO')
 
+import script_fixtures.user as user
+
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
@@ -49,7 +51,7 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # The contract addresses are loaded from file
 # CHOOSE YOUR CONFIGURATION HERE
 PATH_CONFIG = Path.cwd() / 'config_local.ini'
-# PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
+PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(PATH_CONFIG)
@@ -118,7 +120,7 @@ class User():
 
         logging.info(self)
 
-    def create_config(self,password):
+    def create_config(self, password):
         """Fow now, a new config.ini file must be created and passed into Ocean for instantiation"""
         conf = configparser.ConfigParser()
         assert PATH_CONFIG.exists()
@@ -149,6 +151,7 @@ PASSWORD_MAP = {
     '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',
     '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0' : 'secret',
     '0xa99d43d86a0758d5632313b8fa3972b6088a21bb' : 'secret',
+    '0x64137aF0104d2c96C44bb04AC06f09eC84CC5Ae4' : 'test',
 }
 
 # Create some simulated users of Ocean Protocol
@@ -158,12 +161,12 @@ users = list()
 for i, acct_address in enumerate(ocn.accounts):
     if i%2 == 0: role = 'Data Scientist'
     else: role = 'Data Owner'
-    user = User(names.get_full_name(), role, acct_address)
+    user = user.User(names.get_full_name(), role, acct_address)
     users.append(user)
 
 # Select only unlocked accounts
 unlocked_users = [u for u in users if u.credentials]
-logging.info("Selected {} unlocked accounts for simulation.".format(len(users)))
+logging.info("Selected {} unlocked accounts for simulation.".format(len(unlocked_users)))
 
 #%%
 # (Optional)
