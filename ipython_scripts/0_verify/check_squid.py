@@ -2,30 +2,18 @@
 # With docker running, run this script to test the Ocean wrapper (squid-py).
 # Instantiate the wrapper with the local config_local.ini.
 
-
-
 # %% Imports
-
 import pathlib
-# import squid_py.ocean.ocean as ocean
+PATH_PROJECT = pathlib.Path.cwd()
 from squid_py.ocean.ocean import Ocean
-import sys
-# from squid_py.utils.web3_helper import convert_to_bytes, convert_to_string, convert_to_text
-
-
-
 
 # The contract addresses are loaded from file
-PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
-# PATH_CONFIG = pathlib.Path.cwd() / 'config_k8s_deployed.ini'
+PATH_CONFIG = PATH_PROJECT / 'config_local.ini'
+# PATH_CONFIG = PATH_PROJECT / 'config_k8s_deployed.ini'
 
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-#ocn = ocean.Ocean(host='http://0.0.0.0', port=8545, config_path=PATH_CONFIG)
-
 ocn = Ocean(config_file=PATH_CONFIG)
-#config = Config('config_local.ini')
-#assert ocean.market.address == ocean.get_web3().toChecksumAddress(config.get(KEEPER_CONTRACTS, 'market.address'))
 
 #%%
 print("***OCEAN***")
