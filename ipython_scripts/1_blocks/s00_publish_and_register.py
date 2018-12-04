@@ -4,8 +4,14 @@
 
 # %% [markdown]
 # ### Section 0: Housekeeping, import modules, and setup logging
+# %%
+# When running in IPython, ensure the path is obtained
+# This may vary according to your environment
+from pathlib import Path
+if not 'PATH_PROJECT' in locals():
+    PATH_PROJECT = Path.cwd()
+print("Project root path:", PATH_PROJECT)
 #%%
-import pathlib
 import sys
 import logging
 from pathlib import Path
@@ -13,18 +19,11 @@ import squid_py
 from squid_py.ocean.ocean import Ocean
 
 # Add the local utilities package
-utilities_path = Path('.') / 'script_fixtures'
-if not utilities_path.exists():
-    utilities_path = Path('.') / '..' / '..' / 'script_fixtures'
+utilities_path = PATH_PROJECT / 'script_fixtures'
 assert utilities_path.exists()
-
-#Get the project root path
-PATH_PROJECT_ROOT = utilities_path / '..'
-PATH_PROJECT_ROOT.absolute()
-
-utilities_path_str = str(utilities_path.absolute())
-if utilities_path_str not in sys.path:
-    sys.path.append(utilities_path_str)
+utilities_path = str(utilities_path.absolute())
+if utilities_path not in sys.path:
+    sys.path.append(utilities_path)
 
 import script_fixtures.logging as util_logging
 util_logging.logger.setLevel('INFO')
@@ -40,7 +39,7 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # <a title="Engraved by Benjamin Cole (1695–1766) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Bbeard_Sword.jpg"><img width="256" alt="Bbeard Sword" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bbeard_Sword.jpg/256px-Bbeard_Sword.jpg"></a>
 #%%
 # The contract addresses are loaded from file
-PATH_CONFIG = pathlib.Path.cwd() / 'config_local.ini'
+PATH_CONFIG = Path.cwd() / 'config_local.ini'
 assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)

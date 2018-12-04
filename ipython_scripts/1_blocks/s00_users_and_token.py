@@ -12,10 +12,16 @@
 # See the /script_fixtures directory for utilities such as the User() class
 
 # %% [markdown]
-# ### Section 1: Import modules, and setup logging
+# ### Section 0: Import modules, and setup logging
 
 #%%
+# When running in IPython, ensure the path is obtained
+# This may vary according to your environment
 from pathlib import Path
+if not 'PATH_PROJECT' in locals():
+    PATH_PROJECT = Path.cwd()
+print("Project root path:", PATH_PROJECT)
+#%%
 import sys
 import random
 import configparser
@@ -25,9 +31,7 @@ import squid_py
 from squid_py.ocean.ocean import Ocean
 
 # Add the local utilities package
-utilities_path = Path('.') / 'script_fixtures'
-if not utilities_path.exists():
-    utilities_path = Path('.') / '..' / '..' / 'script_fixtures'
+utilities_path = PATH_PROJECT / 'script_fixtures'
 assert utilities_path.exists()
 utilities_path = str(utilities_path.absolute())
 if utilities_path not in sys.path:
@@ -39,7 +43,7 @@ util_logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
-# ## Section 2: Instantiate the Ocean Protocol interface
+# ## Section 1: Instantiate the Ocean Protocol interface
 
 #%%
 # The contract addresses are loaded from file
