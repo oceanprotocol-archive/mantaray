@@ -15,54 +15,41 @@
 # ### Section 0: Import modules, and setup logging
 
 #%%
-# When running in IPython, ensure the path is obtained
-# This may vary according to your environment
-from pathlib import Path
-if not 'PATH_PROJECT' in locals():
-    PATH_PROJECT = Path.cwd()
-print("Project root path:", PATH_PROJECT)
-
-#%%
+# Standard imports
 import sys
 import random
 import configparser
 import names
 import logging
+
+# Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
+import mantaray_utilities.config as manta_config
+import mantaray_utilities.logging as manta_logging
+import mantaray_utilities.user as manta_user
 
-# Add the local utilities package
-utilities_path = PATH_PROJECT / 'script_fixtures'
-assert utilities_path.exists()
-utilities_path = str(utilities_path.absolute())
-if utilities_path not in sys.path:
-    sys.path.append(utilities_path)
+# Setup logging
+manta_logging.logger.setLevel('INFO')
 
-import script_fixtures.logging as util_logging
-util_logging.logger.setLevel('INFO')
+#%%
+# Get the configuration file path for this environment
+CONFIG_INI_PATH = manta_config.get_config_file_path()
 
-import script_fixtures.user as util_user
-
+logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
 # ## Section 1: Instantiate the Ocean Protocol interface
 
 #%%
-# The contract addresses are loaded from file
-# CHOOSE YOUR CONFIGURATION HERE
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
-PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
-
-ocn = Ocean(PATH_CONFIG)
+ocn = Ocean(CONFIG_INI_PATH)
 logging.info("Ocean smart contract node connected ".format())
 
 ocn.config.keeper_path
 
 # List the accounts created in Ganache
 # ocn.accounts is a {address: Account} dict
-
 print("Ocean accounts:")
 for address in ocn.accounts:
     acct = ocn.accounts[address]
@@ -91,11 +78,11 @@ for address, account in ocn.accounts.items():
 # and Data Owners (providers)
 users = list()
 
-list(ocn.accounts.keys())[0] in util_user.PASSWORD_MAP
+list(ocn.accounts.keys())[0] in manta_user.PASSWORD_MAP
 for i, acct_address in enumerate(ocn.accounts):
     if i%2 == 0: role = 'Data Scientist'
     else: role = 'Data Owner'
-    user = util_user.User(names.get_full_name(), role, acct_address)
+    user = manta_user.User(names.get_full_name(), role, acct_address)
     users.append(user)
 
 # Select only unlocked accounts

@@ -3,45 +3,33 @@
 # In this notebook, TODO: description
 
 # %% [markdown]
-# ### Section 0: Housekeeping, import modules, and setup logging
+# ### Section 0: Import modules, and setup logging
 
 #%%
-# When running in IPython, ensure the path is obtained
-# This may vary according to your environment
-from pathlib import Path
-if not 'PATH_PROJECT' in locals():
-    PATH_PROJECT = Path.cwd()
-print("Project root path:", PATH_PROJECT)
-
-#%%
+# Standard imports
 import sys
 import logging
-import squid_py
-from squid_py.ocean.ocean import Ocean
 import requests
 import json
 import time
-
 from web3 import Web3
 
-# Add the local utilities package
-utilities_path = Path('.') / 'script_fixtures'
-if not utilities_path.exists():
-    utilities_path = Path('.') / '..' / '..' / 'script_fixtures'
-assert utilities_path.exists()
+# Import mantaray and the Ocean API (squid)
+import squid_py
+from squid_py.ocean.ocean import Ocean
+import mantaray_utilities.config as manta_config
+import mantaray_utilities.logging as manta_logging
+import mantaray_utilities.user as manta_user
+import mantaray_utilities.asset_pretty_print as manta_print
 
-#Get the project root path
-PATH_PROJECT_ROOT = utilities_path / '..'
-PATH_PROJECT_ROOT.absolute()
+# Setup logging
+manta_logging.logger.setLevel('INFO')
 
-utilities_path_str = str(utilities_path.absolute())
-if utilities_path_str not in sys.path:
-    sys.path.append(utilities_path_str)
+#%%
+# Get the configuration file path for this environment
+CONFIG_INI_PATH = manta_config.get_config_file_path()
 
-import script_fixtures.logging as util_logging
-util_logging.logger.setLevel('INFO')
-
-import script_fixtures.user as user
+logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
