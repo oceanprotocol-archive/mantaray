@@ -5,18 +5,17 @@
 # When running in IPython, ensure the path is obtained
 # This may vary according to your environment
 
-from pathlib import Path
-if not 'PATH_PROJECT' in locals():
-    PATH_PROJECT = Path.cwd()
-print("Project root path:", PATH_PROJECT)
-
+# Import mantaray and the Ocean API (squid)
 from squid_py.ocean.ocean import Ocean
+import mantaray_utilities.config as manta_config
+import mantaray_utilities.logging as manta_logging
 
-PATH_CONFIG = PATH_PROJECT / 'config_local.ini'
+
+# PATH_CONFIG = PATH_PROJECT / 'config_local.ini'
 # Change the PATH_CONFIG below to your config.ini file
 # PATH_CONFIG = PATH_PROJECT / 'config_k8s_deployed.ini'
 
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
+# assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
 ocn = Ocean(config_file=PATH_CONFIG)
 

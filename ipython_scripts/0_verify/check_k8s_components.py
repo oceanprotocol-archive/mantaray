@@ -16,8 +16,7 @@ manta_config.name_deployment_type()
 
 # When running in IPython, ensure the project path is correct
 # This may vary according to your environment
-import manta_logging.logging as util_logging
-util_logging.logger.setLevel('INFO')
+manta_logging.logger.setLevel('INFO')
 
 # Get the configuration file path
 CONFIG_INI_PATH = manta_config.get_config_file_path()
@@ -49,7 +48,7 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     return res.status_code, res.content
 
 for endpoint in endpoints_dict:
-    with util_logging.LoggerCritical():
+    with manta_logging.LoggerCritical():
         print("Checking {}".format(endpoint))
         try:
             code, status = check_endpoint(endpoint, endpoints_dict[endpoint])
@@ -66,10 +65,9 @@ for endpoint in endpoints_dict:
 
 #%%
 
-with util_logging.LoggerCritical():
-    config_path = PATH_PROJECT / 'config_k8s_deployed.ini'
-    assert config_path.exists()
-    ocn = ocean.Ocean(config_path)
+with manta_logging.LoggerCritical():
+    ocn = ocean.Ocean(CONFIG_INI_PATH)
 print("*******************")
 print("Ocean successfully instantiated with kubernetes!")
+
 
