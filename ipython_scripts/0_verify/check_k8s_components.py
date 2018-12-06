@@ -1,7 +1,4 @@
-from pathlib import Path
-if not 'PATH_PROJECT' in locals():
-    PATH_PROJECT = Path.cwd()
-print("Project root path:", PATH_PROJECT)
+
 
 # %%
 import requests
@@ -10,7 +7,7 @@ import sys
 from pathlib import Path
 
 # %%
-# When running in IPython, ensure the path is obtained
+# When running in IPython, ensure the project path is correct
 # This may vary according to your environment
 
 import logging
