@@ -8,3 +8,5 @@ def jupyter_env():
     else:
         logging.info("Default deployment detected.".format())
         return False
+
+
