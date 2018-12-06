@@ -4,11 +4,11 @@ The User() class, a helper class for simulating users of Ocean Protocol.
 import logging
 import configparser
 import logging
+from .config import get_config_file_path
 from squid_py.ocean.ocean import Ocean
-from pathlib import Path
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
-PATH_CONFIG = Path.cwd() / 'config_k8s_deployed.ini'
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
+from pathlib import PathA
+# assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
+PATH_CONFIG = get_config_file_path()
 
 PASSWORD_MAP = {
     '0x00bd138abd70e2f00903268f3db08f2d25677c9e' : 'node0',

@@ -28,7 +28,9 @@ def get_deployment_type():
 
 def get_config_file_path():
     # The configuration ini file is in the root of the project
-    return get_project_path() / CONFIG_MAP[get_deployment_type()]['config_ini_name':]
+    proj_path = get_project_path() / CONFIG_MAP[get_deployment_type()]['config_ini_name':]
+    assert proj_path.exists()
+    return proj_path
 
 def get_project_path():
     if get_deployment_type() == 'JUPYTER_DEPLOYMENT':
@@ -39,18 +41,14 @@ def get_project_path():
         else:
             print("JUPYTER_DEPLOYMENT is set, but can't find the correct paths!")
             raise EnvironmentError
-
     elif get_deployment_type() == 'USE_K8S_CLUSTER':
         return Path.cwd()
-
     elif get_deployment_type() == 'DEFAULT':
         return Path.cwd()
-
     else:
         raise NameError
 
-
-    print(Path.cwd())
+    # print(Path.cwd())
 # if not 'PATH_PROJECT' in locals():
 #     PATH_PROJECT = Path.cwd()
 # print("Project root path:", PATH_PROJECT)
