@@ -28,7 +28,7 @@ def get_deployment_type():
 
 def get_config_file_path():
     # The configuration ini file is in the root of the project
-    return = get_project_path() / CONFIG_MAP[get_deployment_type()]['config_ini_name':]
+    return get_project_path() / CONFIG_MAP[get_deployment_type()]['config_ini_name':]
 
 def get_project_path():
     if get_deployment_type() == 'JUPYTER_DEPLOYMENT':
