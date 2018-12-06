@@ -1,5 +1,3 @@
-
-
 # %%
 import requests
 from squid_py.ocean import ocean
@@ -11,6 +9,8 @@ from pathlib import Path
 # This may vary according to your environment
 
 import logging
+
+CONFIG_INI_PATH = get_config_file_path()
 
 # Add the local utilities package
 utilities_path = PATH_PROJECT / 'script_fixtures'
