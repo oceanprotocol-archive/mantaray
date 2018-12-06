@@ -10,10 +10,10 @@ CONFIG_MAP = {
         'config_ini_name':'config_k8s_deployed.ini',
     },
     'DEFAULT' : {
-        'config_ini_name':'config.ini',
+        'config_ini_name':'config_local.ini',
     },
 }
-SCRIPT_FOLDERS = ['0_verify', '1_blocks', '2_use_cases', '3_demos']
+SCRIPT_FOLDERS = ['0_notebooks_verify', '1_notebooks_blocks', '2_notebooks_use_cases', '3_notebooks_demos']
 
 def get_deployment_type():
     if 'JUPYTER_DEPLOYMENT' in os.environ:

@@ -18,7 +18,7 @@ header_path=path_ipy_root / 'header_template.py'
 assert header_path.exists()
 logging.getLogger().setLevel(logging.DEBUG)
 
-notebook_folders = ['0_verify','1_blocks','2_uses','3_stories']
+notebook_folders = ['0_notebooks_verify','1_notebooks_blocks','2_notebooks_uses','3_notebooks_stories']
 logging.info("Started logging".format())
 #%% Empty the target directory
 for the_file in path_jupyter_root.iterdir():
