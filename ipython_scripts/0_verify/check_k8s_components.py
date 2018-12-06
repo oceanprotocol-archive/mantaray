@@ -35,8 +35,8 @@ endpoints_dict = {
     'secret_store' : 'https://secret-store.dev-ocean.com'
 
 }
-endpoints_dict['aquarius_doc'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
-endpoints_dict['brizo_doc'] = endpoints_dict['brizo'] + '/api/v1/docs/'
+endpoints_dict['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
+endpoints_dict['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     res = requests.request(verb, endpoint_url)
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
@@ -60,8 +60,10 @@ for endpoint in endpoints_dict:
 
 #%%
 
-config_path = PATH_PROJECT / 'config_k8s_deployed.ini'
-assert config_path.exists()
-ocn = ocean.Ocean(config_path)
-
+with util_logging.LoggerCritical():
+    config_path = PATH_PROJECT / 'config_k8s_deployed.ini'
+    assert config_path.exists()
+    ocn = ocean.Ocean(config_path)
+print("*******************")
+print("Ocean successfully instantiated with kubernetes!")
 
