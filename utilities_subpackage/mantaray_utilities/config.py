@@ -17,18 +17,26 @@ SCRIPT_FOLDERS = ['0_verify', '1_blocks', '2_use_cases', '3_demos']
 
 def get_deployment_type():
     if 'JUPYTER_DEPLOYMENT' in os.environ:
-        logging.info("Environment configuration detected: JupyterHub cluster.".format())
+        # logging.info("Environment configuration detected: JupyterHub cluster.".format())
         return 'JUPYTER_DEPLOYMENT'
     if 'USE_K8S_CLUSTER' in os.environ:
-        logging.info("Environment configuration detected: Use deployed k8s endpoints.".format())
+        # logging.info("Environment configuration detected: Use deployed k8s endpoints.".format())
         return 'USE_K8S_CLUSTER'
     else:
-        logging.info("Environment configuration detected: Local machine with start-ocean local components.".format())
+        # logging.info("Environment configuration detected: Local machine with start-ocean local components.".format())
         return 'DEFAULT'
+
+def name_deployment_type():
+    if 'JUPYTER_DEPLOYMENT' in os.environ:
+        logging.info("Environment configuration detected: JupyterHub cluster.".format())
+    if 'USE_K8S_CLUSTER' in os.environ:
+        logging.info("Environment configuration detected: Use deployed k8s endpoints.".format())
+    else:
+        logging.info("Environment configuration detected: Local machine with start-ocean local components.".format())
 
 def get_config_file_path():
     # The configuration ini file is in the root of the project
-    proj_path = get_project_path() / CONFIG_MAP[get_deployment_type()]['config_ini_name':]
+    proj_path = get_project_path() / CONFIG_MAP[get_deployment_type()]['config_ini_name']
     assert proj_path.exists()
     return proj_path
 

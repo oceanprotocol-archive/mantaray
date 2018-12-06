@@ -1,26 +1,35 @@
 # %%
 import requests
-from squid_py.ocean import ocean
-import mantaray_utilities as manta_utils
 import sys
-
-# %%
-# When running in IPython, ensure the project path is correct
-# This may vary according to your environment
-
+import os
 import logging
 
-CONFIG_INI_PATH = manta_utils.get_config_file_path()
+# Import mantaray and the Ocean API (squid)
+from squid_py.ocean import ocean
+import mantaray_utilities.config as manta_config
+import mantaray_utilities.logging as manta_logging
 
-# Add the local utilities package
-utilities_path = PATH_PROJECT / 'script_fixtures'
-assert utilities_path.exists()
-utilities_path = str(utilities_path.absolute())
-if utilities_path not in sys.path:
-    sys.path.append(utilities_path)
+#%%
+# For this test, set the configuration environment variable
+os.environ['USE_K8S_CLUSTER'] = 'true'
+manta_config.name_deployment_type()
 
-import script_fixtures.logging as util_logging
+# When running in IPython, ensure the project path is correct
+# This may vary according to your environment
+import manta_logging.logging as util_logging
 util_logging.logger.setLevel('INFO')
+
+# Get the configuration file path
+CONFIG_INI_PATH = manta_config.get_config_file_path()
+# manta_config.get_project_path() /
+# Add the local utilities package
+# utilities_path = PATH_PROJECT / 'script_fixtures'
+# assert utilities_path.exists()
+# utilities_path = str(utilities_path.absolute())
+# if utilities_path not in sys.path:
+#     sys.path.append(utilities_path)
+
+
 
 #%%
 
