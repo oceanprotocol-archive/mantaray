@@ -1,44 +1,31 @@
 # %% [markdown]
-# With docker running, run this script to test the Ocean wrapper (squid-py).
-# Instantiate the wrapper with the local config_local.ini.
+# Run this script to test the Ocean wrapper (squid-py).
+# Instantiate the wrapper with your selected `config.ini` file
+
 #%%
-# When running in IPython, ensure the path is obtained
-# This may vary according to your environment
+# Standard imports
+import logging
 
 # Import mantaray and the Ocean API (squid)
 from squid_py.ocean.ocean import Ocean
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 
+#%%
+# Get the configuration file path for this environment
+CONFIG_INI_PATH = manta_config.get_config_file_path()
+logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
-# PATH_CONFIG = PATH_PROJECT / 'config_local.ini'
-# Change the PATH_CONFIG below to your config.ini file
-# PATH_CONFIG = PATH_PROJECT / 'config_k8s_deployed.ini'
-
-# assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
-
-ocn = Ocean(config_file=PATH_CONFIG)
+#%%
+# Instantiate Ocean
+ocn = Ocean(CONFIG_INI_PATH)
 
 #%%
 print("***OCEAN***")
 print("{} accounts".format(len(ocn.accounts)))
 for account in ocn.accounts:
     print(account)
-print("\n***KEEPER NODE***")
-print("Keeper node connected at {}".format(ocn.config.keeper_url))
-print("Using ABI files from {}".format(ocn.config.keeper_path))
-print("{:>40} {}".format("Token contract address:", ocn.keeper.token.address))
-print("{:>40} {}".format("Authentication contract at address:", ocn.keeper.auth.address))
-print("{:>40} {}".format("Market contract address:", ocn.keeper.market.address))
-print("{:>40} {}".format("DID Registry contract address:", ocn.keeper.didregistry.address))
 
-print("\n***METADATA STORE (aquarius)***")
-print("Connect at: {}".format(ocn.metadata_store._base_url))
+# A utility function is provided to summarize the Ocean class
+manta_config.print_ocean(ocn)
 
-print("\n***SECRET STORE***")
-
-print("\n***SERVICE HANDLER (brizo)***")
-
-# %%
-
-# %%

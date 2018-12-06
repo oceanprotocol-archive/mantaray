@@ -1,4 +1,9 @@
+# %% [markdown]
+# With simulated Kubernetes endpoints deployed, this script will make a simple
+# HTTP request to each, and report the status returned.
+#
 # %%
+# Standard imports
 import requests
 import os
 import logging

@@ -12,46 +12,12 @@
 # %% Imports
 import docker
 import subprocess
-# import subprocess
-# import pathlib
-# import squid_py.ocean as ocean
 import sys
 from pprint import pprint
 
 # %% Logging
 import logging
-
-loggers_dict = logging.Logger.manager.loggerDict
-
-logger = logging.getLogger()
-logger.handlers = []
-
-# Set level
-logger.setLevel(logging.DEBUG)
-
-# FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-# FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
-FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-formatter = logging.Formatter(FORMAT, DATE_FMT)
-
-# Create handler and assign
-handler = logging.StreamHandler(sys.stderr)
-handler.setFormatter(formatter)
-logger.handlers = [handler]
-logger.debug("Logging started")
-
-
-class LoggerCritical:
-    def __enter__(self):
-        my_logger = logging.getLogger()
-        my_logger.setLevel("CRITICAL")
-
-    def __exit__(self, type, value, traceback):
-        my_logger = logging.getLogger()
-        my_logger.setLevel("DEBUG")
+import mantaray_utilities.logging as manta_logging
 
 # %% Check running docker images from command line
 # s = subprocess.check_output('docker ps', shell=True).wait()
@@ -65,7 +31,7 @@ client = docker.from_env()
 low_level_api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
 # %% Check running docker images using SDK
-with LoggerCritical():
+with manta_logging.LoggerCritical():
     for container in client.containers.list():
         print(f"Docker container {container.name} is {container.status}")
         print('\tTags:', container.image.tags)
