@@ -1,8 +1,8 @@
 # %%
 import requests
 from squid_py.ocean import ocean
+import mantaray_utilities as manta_utils
 import sys
-from pathlib import Path
 
 # %%
 # When running in IPython, ensure the project path is correct
@@ -10,7 +10,7 @@ from pathlib import Path
 
 import logging
 
-CONFIG_INI_PATH = get_config_file_path()
+CONFIG_INI_PATH = manta_utils.get_config_file_path()
 
 # Add the local utilities package
 utilities_path = PATH_PROJECT / 'script_fixtures'

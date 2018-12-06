@@ -4,6 +4,7 @@
 #%%
 # When running in IPython, ensure the path is obtained
 # This may vary according to your environment
+
 from pathlib import Path
 if not 'PATH_PROJECT' in locals():
     PATH_PROJECT = Path.cwd()

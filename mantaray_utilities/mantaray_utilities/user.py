@@ -6,7 +6,7 @@ import configparser
 import logging
 from .config import get_config_file_path
 from squid_py.ocean.ocean import Ocean
-from pathlib import PathA
+from pathlib import Path
 # assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 PATH_CONFIG = get_config_file_path()
 
