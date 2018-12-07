@@ -1,7 +1,11 @@
 # %% [markdown]
 # ## Building Blocks: Getting tokens to your users
+# To interact in Ocean Protocol, you will need a wallet and you will fund it with some
+# Token to access the assets in the network.
+#
 # In this notebook, we will work with a class which represents a
 # User of Ocean Protocol.
+#
 # To use Ocean, a User requires
 # - A wallet address
 # - A password
@@ -13,35 +17,33 @@
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
-
 #%%
 # Standard imports
-import sys
 import random
-import configparser
 import names
 import logging
-
+from pathlib import Path
 # Import mantaray and the Ocean API (squid)
+# mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
 import squid_py
 from squid_py.ocean.ocean import Ocean
+
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.user as manta_user
+logging.info("Squid API version: {}".format(squid_py.__version__))
 
-# Setup logging
+# Setup logging to a higher level and not flood the console with debug messages
 manta_logging.logger.setLevel('INFO')
 
 #%%
 # Get the configuration file path for this environment
+# You can specify your own configuration file at any time, and pass it to the Ocean class.
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
-logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
 # ## Section 1: Instantiate the Ocean Protocol interface
-
 #%%
 ocn = Ocean(CONFIG_INI_PATH)
 logging.info("Ocean smart contract node connected ".format())
@@ -62,7 +64,7 @@ for address, account in ocn.accounts.items():
     assert account.balance.ocn >= 0
 
 # %% [markdown]
-# From accounts -> Users
+# From accounts, to Users
 #
 # A simple wrapper for each address is created to represent a user
 # This wrapper is presented below, and later used as a fixture,
@@ -101,7 +103,7 @@ for f in Path('.').glob('user_configurations/*.ini'):
 for u in unlocked_users: print(u)
 
 #%% [markdown]
-# Get some Ocean token
+# Get these users some Ocean token
 #%%
 for usr in unlocked_users:
     if usr.account.ocean_balance == 0:

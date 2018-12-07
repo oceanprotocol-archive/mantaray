@@ -2,14 +2,13 @@
 # ## Building Blocks: Publishing assets
 # In this notebook, TODO: description
 
-
-
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
 
 #%%
 # Standard imports
 import logging
+from pathlib import Path
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -36,9 +35,7 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # Follow the most notorious pirate Edward Teach (Blackbeard) as he tries to register an asset into Ocean Protocol
 # <a title="Engraved by Benjamin Cole (1695–1766) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Bbeard_Sword.jpg"><img width="256" alt="Bbeard Sword" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bbeard_Sword.jpg/256px-Bbeard_Sword.jpg"></a>
 #%%
-# The contract addresses are loaded from file
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
+# Instantiate Ocean with the default configuration file
 
 ocn = Ocean(config_file=PATH_CONFIG)
 #%%

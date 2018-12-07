@@ -57,6 +57,7 @@ print("Swagger API documentation: {}{}".format(ocn.metadata_store._base_url,"/do
 #%%
 result = requests.get(ocn.metadata_store._base_url).content
 all_dids = json.loads(result)['ids']
+print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 for i, id in enumerate(all_dids):
     print(i, id)
 
