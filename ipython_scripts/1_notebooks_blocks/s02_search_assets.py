@@ -37,11 +37,8 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # ### Section 1: Assets in the MetaData store (Aquarius)
 # Anyone can search assets in the public metadata stores
 #%%
-# The contract addresses are loaded from file
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-ocn = Ocean(config_file=PATH_CONFIG)
+ocn = Ocean(config_file=CONFIG_INI_PATH)
 
 #%% [markdown]
 # The Metadata store is a database wrapped with a REST API

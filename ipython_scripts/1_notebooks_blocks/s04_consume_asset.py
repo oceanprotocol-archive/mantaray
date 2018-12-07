@@ -38,25 +38,16 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 #
 # Follow Anne Bonny as she purchases an asset which has been registered in Ocean Protocol
 #%%
-# The contract addresses are loaded from file
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
-
-ocn = Ocean(config_file=PATH_CONFIG)
-#%%
-print("HTTP Client:")
-print(ocn._http_client)
-print("Secret Store Client:")
-print(ocn._secret_store_client)
+ocn = Ocean(config_file=CONFIG_INI_PATH)
 
 #%%
 # This utility function gets all simulated accounts
-users = user.get_all_users(ocn.accounts)
+users = manta_user.get_all_users(ocn.accounts)
 
 # We don't need this ocn instance reference anymore
 del ocn
 
-# Let's take the first unlocked account, and name it the Publisher
+# Let's take the first unlocked account, and name it the Consumer
 consumer1 = [u for u in users if not u.locked][0]
 consumer1.name = "Anny Bonny"
 consumer1.role = "Consumer"
@@ -64,7 +55,7 @@ print(consumer1)
 
 assert consumer1.ocn._http_client.__name__ == 'requests'
 assert consumer1.ocn._secret_store_client.__name__ == 'Client'
-
+assert consumer1.account.ocean_balance > 0, "Consumer does not have any Ocean token, go to 'users_and_token' script and fund the account!"
 #%% [markdown]
 # ### Section 2: Find an asset
 #%%
@@ -73,23 +64,23 @@ result = requests.get(consumer1.ocn.metadata_store._base_url).content
 all_dids = json.loads(result)['ids']
 assert len(all_dids) > 0
 
-# Get the first DID for testing
+# Get the DID for testing
 first_did = all_dids[-1]
 
 #%% From this DID, get the DDO
+this_ddo = consumer1.ocn.resolve_did(first_did)
+manta_print.print_ddo(this_ddo)
+
+#%%
+# Skip this cell...
 # TODO: This is broken, wait for patch in squid_py to point to correct method (resolve_did())
 # consumer1.ocn.get_asset(first_did)
-
-this_ddo = consumer1.ocn.resolve_did(first_did)
-
-this_ddo
 #%%
 # TODO: Remove this in final publication
 # The asset can also be retreieved direct from the REST endpoint
 # this_asset_endpoint = consumer1.ocn.metadata_store._base_url  + '/ddo/' + first_did
 # result = requests.get(this_asset_endpoint).content
 # ddo_dict = json.loads(result)
-
 
 #%% [markdown]
 # ### Section 3: Get ready for purchase
@@ -118,26 +109,26 @@ if consumer1.account.ocean_balance == 0:
 service_agreement_id = consumer1.ocn.sign_service_agreement(this_ddo.did, sa.sa_definition_id, consumer_address)
 print('got new service agreement id:', service_agreement_id)
 
-
 #%%
+# TODO: This has been refactored. The workflow is now part of .sign_service_agreement() call. Delete cell.
 # We will now watch on-chain to ensure that the service is 1) Executed and 2) Granted
-
-def wait_for_event(event, arg_filter, wait_iterations=20):
-    _filter = event.createFilter(fromBlock=0 , argument_filters=arg_filter)
-    for check in range(wait_iterations):
-        events = _filter.get_all_entries()
-        if events:
-            return events[0]
-        time.sleep(0.5)
-
-
-filter1 = {'serviceAgreementId': Web3.toBytes(hexstr=service_agreement_id)}
-filter_2 = {'serviceId': Web3.toBytes(hexstr=service_agreement_id)}
-
-executed = wait_for_event(consumer1.ocn.keeper.service_agreement.events.ExecuteAgreement, filter1)
-assert executed
-granted = wait_for_event(consumer1.ocn.keeper.access_conditions.events.AccessGranted, filter_2)
-assert granted
-fulfilled = wait_for_event(consumer1.ocn.keeper.service_agreement.events.AgreementFulfilled, filter1)
-assert fulfilled
-time.sleep(3)
+#
+# def wait_for_event(event, arg_filter, wait_iterations=20):
+#     _filter = event.createFilter(fromBlock=0 , argument_filters=arg_filter)
+#     for check in range(wait_iterations):
+#         events = _filter.get_all_entries()
+#         if events:
+#             return events[0]
+#         time.sleep(0.5)
+#
+#
+# filter1 = {'serviceAgreementId': Web3.toBytes(hexstr=service_agreement_id)}
+# filter_2 = {'serviceId': Web3.toBytes(hexstr=service_agreement_id)}
+#
+# executed = wait_for_event(consumer1.ocn.keeper.service_agreement.events.ExecuteAgreement, filter1)
+# assert executed
+# granted = wait_for_event(consumer1.ocn.keeper.access_conditions.events.AccessGranted, filter_2)
+# assert granted
+# fulfilled = wait_for_event(consumer1.ocn.keeper.service_agreement.events.AgreementFulfilled, filter1)
+# assert fulfilled
+# time.sleep(3)

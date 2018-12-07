@@ -37,16 +37,19 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 #%%
 # Instantiate Ocean with the default configuration file
 
-ocn = Ocean(config_file=PATH_CONFIG)
+ocn = Ocean(config_file=CONFIG_INI_PATH)
 #%%
-print("HTTP Client:")
-print(ocn._http_client)
-print("Secret Store Client:")
-print(ocn._secret_store_client)
+print("HTTP Client:", ocn._http_client.__name__)
+print("Secret Store Client:", ocn._secret_store_client)
+
+#%% [markdown]
+# For this tutorial, we will select one of the available unlocked accounts
+#
+# In general, as a publisher, you will have your own configuration file with your personal account.
 
 #%%
 # This utility function gets all simulated accounts
-users = user.get_all_users(ocn.accounts)
+users = manta_user.get_all_users(ocn.accounts)
 
 # We don't need this ocn instance reference anymore
 del ocn
@@ -63,15 +66,14 @@ assert publisher1.ocn._secret_store_client.__name__ == 'Client'
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
 # A more complex use case is to manually generate your metadata conforming to Ocean standard
-# Metadata is a dictionary, as follows:
 
 #%%
 # Get a simple example of a Metadata object from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
-print('Name of asset:',metadata['base']['name'])
+print('Name of asset:', metadata['base']['name'])
 
 #%% [markdown]
-# ### Section X: Get the Service Execution Agreement (SEA) template for an Asset
+# ### Section 3: Get the Service Execution Agreement (SEA) template for an Asset
 # (An asset is consumed by simple download of files, such as datasets)
 #%%
 # Get the path of the SEA
@@ -124,17 +126,5 @@ print("DDO created and registered!")
 #%%
 # Inspect the new DDO
 print("did:", ddo.did)
-print("Services:")
-for svc in ddo.services:
-    if 'conditions' in svc._values:
-        num_conditions = len(svc._values['conditions'])
-    else:
-        num_conditions = 0
-    print("\t{} service with {} conditions".format(svc._type,num_conditions))
-    if 'conditions' in svc._values:
-        for condition in svc._values['conditions']:
-            params = [p.name for p in condition.parameters]
-            param_string = ", ".join(params)
-            print("\t\t{}.{}({})".format(condition.contract_name,condition.function_name,param_string))
-
+manta_print.print_ddo(ddo)
 
