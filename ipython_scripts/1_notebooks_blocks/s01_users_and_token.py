@@ -20,6 +20,7 @@
 #%%
 # Standard imports
 import random
+import os
 import names
 import logging
 from pathlib import Path
@@ -35,6 +36,7 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # Setup logging to a higher level and not flood the console with debug messages
 manta_logging.logger.setLevel('INFO')
+
 
 #%%
 # Get the configuration file path for this environment

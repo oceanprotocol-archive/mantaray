@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 
 CONFIG_MAP = {
-    'JUPYER_DEPLOYMENT' : {
+    'JUPYTER_DEPLOYMENT' : {
         'config_ini_name':'config_jupyter.ini',
     },
     'USE_K8S_CLUSTER' : {
