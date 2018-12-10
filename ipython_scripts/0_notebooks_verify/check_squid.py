@@ -9,7 +9,6 @@ import os
 # Import mantaray and the Ocean API (squid)
 from squid_py.ocean.ocean import Ocean
 import mantaray_utilities.config as manta_config
-import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.asset_pretty_print as manta_print
 #%%
 # Get the configuration file path for this environment
