@@ -12,10 +12,11 @@ import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.asset_pretty_print as manta_print
 # %% For testing, set the desired environment
-os.environ['USE_K8S_CLUSTER'] = 'true'
+# os.environ['USE_K8S_CLUSTER'] = 'true'
 
 #%%
 # Get the configuration file path for this environment
+logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 

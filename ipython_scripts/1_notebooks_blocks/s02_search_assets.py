@@ -29,7 +29,7 @@ manta_logging.logger.setLevel('INFO')
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-
+logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
@@ -59,8 +59,8 @@ for i, id in enumerate(all_dids):
     print(i, id)
 
 first_did = all_dids[0]
-first_id = first_did.split(':')[-1]
-first_id_int = int(first_id,16)
+# first_id = first_did.split(':')[-1]
+# first_id_int = int(first_id,16)
 # %% [markdown]
 # Then, the assets can be retrieved;
 #%%

@@ -24,7 +24,7 @@ manta_logging.logger.setLevel('INFO')
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-
+logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
