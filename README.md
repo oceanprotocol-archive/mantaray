@@ -67,9 +67,9 @@ Create a new virtual environment.
 A conda environment can also be used, it may cause a conflict in certain conda env packages (certifi, etc.?). 
 
 Activate the environment and install the ocean stack API for python, called **squid-py**. 
-The latest version is installed with `pip install squid-py 0.2.9`. 
+The latest version is installed with `pip install squid-py 0.2.14`. 
 
-The **mantaray** project has several other dependencies which are *currently* listed in the `setup.py` script. 
+TODO: UPDATE -> The **mantaray** project has several other dependencies which are *currently* listed in the `setup.py` script. 
 
 For end users, no other packages are required. 
 
@@ -77,7 +77,7 @@ For developers, the `jupytext` package can be used to export an IPython script t
 
 ### Get the simulated Ocean Protocol local components
 
-git clone the [docker images](https://github.com/oceanprotocol/docker-images) github repository. 
+git clone the [docker images](https://github.com/oceanprotocol/docker-images) github repository and switch to the `feature/refactor` branch. 
 
 ### Setup publisher accounts 
 
