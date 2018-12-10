@@ -3,17 +3,10 @@
 # In this notebook, TODO: description
 
 # %% [markdown]
-# ### Section 0: Housekeeping, import modules, and setup logging
-# %%
-# When running in IPython, ensure the path is obtained
-# This may vary according to your environment
-from pathlib import Path
-
-if not 'PATH_PROJECT' in locals():
-    PATH_PROJECT = Path.cwd()
-print("Project root path:", PATH_PROJECT)
+# ### Section 0: Import modules, and setup logging
 
 #%%
+# Standard imports
 import sys
 import logging
 from pathlib import Path
@@ -22,29 +15,30 @@ from squid_py.ocean.ocean import Ocean
 import requests
 import json
 
-# Add the local utilities package
-utilities_path = PATH_PROJECT / 'script_fixtures'
-assert utilities_path.exists()
-utilities_path = str(utilities_path.absolute())
-if utilities_path not in sys.path:
-    sys.path.append(utilities_path)
+# Import mantaray and the Ocean API (squid)
+import squid_py
+from squid_py.ocean.ocean import Ocean
+import mantaray_utilities.config as manta_config
+import mantaray_utilities.logging as manta_logging
+import mantaray_utilities.user as manta_user
+import mantaray_utilities.asset_pretty_print as manta_print
 
-import script_fixtures.logging as util_logging
-util_logging.logger.setLevel('INFO')
+# Setup logging
+manta_logging.logger.setLevel('INFO')
 
-import script_fixtures.asset_pretty_print as util_pprint
+#%%
+# Get the configuration file path for this environment
+CONFIG_INI_PATH = manta_config.get_config_file_path()
 
+logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
 # ### Section 1: Assets in the MetaData store (Aquarius)
 # Anyone can search assets in the public metadata stores
 #%%
-# The contract addresses are loaded from file
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
 
-ocn = Ocean(config_file=PATH_CONFIG)
+ocn = Ocean(config_file=CONFIG_INI_PATH)
 
 #%% [markdown]
 # The Metadata store is a database wrapped with a REST API
@@ -60,6 +54,7 @@ print("Swagger API documentation: {}{}".format(ocn.metadata_store._base_url,"/do
 #%%
 result = requests.get(ocn.metadata_store._base_url).content
 all_dids = json.loads(result)['ids']
+print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 for i, id in enumerate(all_dids):
     print(i, id)
 

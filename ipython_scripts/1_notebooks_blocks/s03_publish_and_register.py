@@ -3,31 +3,29 @@
 # In this notebook, TODO: description
 
 # %% [markdown]
-# ### Section 0: Housekeeping, import modules, and setup logging
-# %%
-# When running in IPython, ensure the path is obtained
-# This may vary according to your environment
-from pathlib import Path
-if not 'PATH_PROJECT' in locals():
-    PATH_PROJECT = Path.cwd()
-print("Project root path:", PATH_PROJECT)
+# ### Section 0: Import modules, and setup logging
+
 #%%
-import sys
+# Standard imports
 import logging
+from pathlib import Path
+
+# Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
+import mantaray_utilities.config as manta_config
+import mantaray_utilities.logging as manta_logging
+import mantaray_utilities.user as manta_user
+import mantaray_utilities.asset_pretty_print as manta_print
 
-# Add the local utilities package
-utilities_path = PATH_PROJECT / 'script_fixtures'
-assert utilities_path.exists()
-utilities_path = str(utilities_path.absolute())
-if utilities_path not in sys.path:
-    sys.path.append(utilities_path)
+# Setup logging
+manta_logging.logger.setLevel('INFO')
 
-import script_fixtures.logging as util_logging
-util_logging.logger.setLevel('INFO')
+#%%
+# Get the configuration file path for this environment
+CONFIG_INI_PATH = manta_config.get_config_file_path()
 
-import script_fixtures.user as user
+logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
@@ -37,20 +35,21 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # Follow the most notorious pirate Edward Teach (Blackbeard) as he tries to register an asset into Ocean Protocol
 # <a title="Engraved by Benjamin Cole (1695–1766) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Bbeard_Sword.jpg"><img width="256" alt="Bbeard Sword" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bbeard_Sword.jpg/256px-Bbeard_Sword.jpg"></a>
 #%%
-# The contract addresses are loaded from file
-PATH_CONFIG = Path.cwd() / 'config_local.ini'
-assert PATH_CONFIG.exists(), "{} does not exist".format(PATH_CONFIG)
+# Instantiate Ocean with the default configuration file
 
-ocn = Ocean(config_file=PATH_CONFIG)
+ocn = Ocean(config_file=CONFIG_INI_PATH)
 #%%
-print("HTTP Client:")
-print(ocn._http_client)
-print("Secret Store Client:")
-print(ocn._secret_store_client)
+print("HTTP Client:", ocn._http_client.__name__)
+print("Secret Store Client:", ocn._secret_store_client)
+
+#%% [markdown]
+# For this tutorial, we will select one of the available unlocked accounts
+#
+# In general, as a publisher, you will have your own configuration file with your personal account.
 
 #%%
 # This utility function gets all simulated accounts
-users = user.get_all_users(ocn.accounts)
+users = manta_user.get_all_users(ocn.accounts)
 
 # We don't need this ocn instance reference anymore
 del ocn
@@ -67,15 +66,14 @@ assert publisher1.ocn._secret_store_client.__name__ == 'Client'
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
 # A more complex use case is to manually generate your metadata conforming to Ocean standard
-# Metadata is a dictionary, as follows:
 
 #%%
 # Get a simple example of a Metadata object from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
-print('Name of asset:',metadata['base']['name'])
+print('Name of asset:', metadata['base']['name'])
 
 #%% [markdown]
-# ### Section X: Get the Service Execution Agreement (SEA) template for an Asset
+# ### Section 3: Get the Service Execution Agreement (SEA) template for an Asset
 # (An asset is consumed by simple download of files, such as datasets)
 #%%
 # Get the path of the SEA
@@ -128,17 +126,5 @@ print("DDO created and registered!")
 #%%
 # Inspect the new DDO
 print("did:", ddo.did)
-print("Services:")
-for svc in ddo.services:
-    if 'conditions' in svc._values:
-        num_conditions = len(svc._values['conditions'])
-    else:
-        num_conditions = 0
-    print("\t{} service with {} conditions".format(svc._type,num_conditions))
-    if 'conditions' in svc._values:
-        for condition in svc._values['conditions']:
-            params = [p.name for p in condition.parameters]
-            param_string = ", ".join(params)
-            print("\t\t{}.{}({})".format(condition.contract_name,condition.function_name,param_string))
-
+manta_print.print_ddo(ddo)
 
