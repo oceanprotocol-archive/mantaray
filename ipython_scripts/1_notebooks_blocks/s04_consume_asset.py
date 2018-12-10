@@ -106,7 +106,9 @@ if consumer1.account.ocean_balance == 0:
 # ### Section 3: Execute the agreement (purchase!)
 #%%
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
-service_agreement_id = consumer1.ocn.sign_service_agreement(this_ddo.did, sa.sa_definition_id, consumer_address)
+# this_did = 'did:op:0x23d76f6f5e1040c8bba8701fdaa59e28bf2c9edd3acc400aa8af46fe1433344e'
+this_did = this_ddo.did
+service_agreement_id = consumer1.ocn.sign_service_agreement(this_did, sa.sa_definition_id, consumer_address)
 print('got new service agreement id:', service_agreement_id)
 
 #%%
