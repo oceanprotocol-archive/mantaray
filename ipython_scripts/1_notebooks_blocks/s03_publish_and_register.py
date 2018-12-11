@@ -58,11 +58,11 @@ users = manta_user.get_all_users(ocn.accounts)
 del ocn
 
 # Let's take the first unlocked account, and name it the Publisher
-publisher1 = [u for u in users if not u.locked][0]
-print(publisher1)
+publisher = [u for u in users if not u.locked][0]
+print(publisher)
 
-assert publisher1.ocn._http_client.__name__ == 'requests'
-assert publisher1.ocn._secret_store_client.__name__ == 'Client'
+assert publisher.ocn._http_client.__name__ == 'requests'
+assert publisher.ocn._secret_store_client.__name__ == 'Client'
 
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
@@ -82,9 +82,9 @@ SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
 
 # Get the ID of this SEA
 template_id = squid_py.service_agreement.utils.register_service_agreement_template(
-    publisher1.ocn.keeper.service_agreement,
-    publisher1.ocn.keeper.contract_path,
-    publisher1.ocn.main_account,
+    publisher.ocn.keeper.service_agreement,
+    publisher.ocn.keeper.contract_path,
+    publisher.ocn.main_account,
     squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
 )
 print(template_id)
@@ -93,7 +93,7 @@ print(template_id)
 # ### Section X: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
 # brizo_url = 'http://172.15.0.17:8030' # For now, this is hardcoded
-brizo_url = publisher1.ocn.config.get('resources','brizo.url')
+brizo_url = publisher.ocn.config.get('resources', 'brizo.url')
 # TODO: Discussion on whether Squid should have an API to Brizo?
 
 
@@ -117,10 +117,13 @@ this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
 #
 # `price, purchase_endpoint, service_endpoint, timeout, template_id`
 
+
+publisher.ocn.keeper.web3.personal.unlockAccount(publisher.account.address, publisher.account.password)
+
 #%%
 # Register this asset into Ocean
-ddo = publisher1.ocn.register_asset(
-    metadata, publisher1.ocn.main_account.address,
+ddo = publisher.ocn.register_asset(
+    metadata, publisher.ocn.main_account.address,
     [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)])
 print("DDO created and registered!")
 
