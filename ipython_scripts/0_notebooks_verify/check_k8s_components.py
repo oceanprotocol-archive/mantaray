@@ -39,6 +39,8 @@ endpoints_dict = {
 endpoints_dict['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
 endpoints_dict['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
 
+# Go to endpoint/spec in the Swagger API page.
+
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     """HTTP Request on the given URL"""
     res = requests.request(verb, endpoint_url)
