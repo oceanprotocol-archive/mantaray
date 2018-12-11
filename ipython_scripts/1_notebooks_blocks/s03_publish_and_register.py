@@ -52,18 +52,19 @@ print("Secret Store Client:", ocn._secret_store_client)
 #%%
 # This utility function gets all simulated accounts
 #TODO: Refactor this function to handle k8s vs. local users
-users = manta_user.get_all_users(ocn.accounts)
+# users = manta_user.get_all_users()
 
-# We don't need this ocn instance reference anymore
-del ocn
 
 # Let's take the first unlocked account, and name it the Publisher
-publisher = [u for u in users if not u.locked][0]
+# publisher = [u for u in users if not u.locked][0]
+publisher = manta_user.get_first_user(ocn.accounts)
 print(publisher)
 
 assert publisher.ocn._http_client.__name__ == 'requests'
 assert publisher.ocn._secret_store_client.__name__ == 'Client'
 
+# We don't need this ocn instance reference anymore
+del ocn
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
 # A more complex use case is to manually generate your metadata conforming to Ocean standard
