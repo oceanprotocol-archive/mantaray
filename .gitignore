@@ -112,3 +112,4 @@ sphinx
 squid_py.db
 /consume-downloads/**/*.*
 /artifacts/**/*.*
+passwords.csv
