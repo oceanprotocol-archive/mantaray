@@ -9,6 +9,7 @@
 # Standard imports
 import logging
 from pathlib import Path
+import os
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -23,6 +24,7 @@ manta_logging.logger.setLevel('INFO')
 
 #%%
 # Get the configuration file path for this environment
+# os.environ['USE_K8S_CLUSTER'] = 'true'
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
@@ -47,14 +49,9 @@ print("Secret Store Client:", ocn._secret_store_client)
 #
 # In general, as a publisher, you will have your own configuration file with your personal account.
 
-user_config_path = manta_config.get_project_path() / 'user_configurations_deployed'
-for conf_file in user_config_path.glob('*.ini'):
-    name = ' '.join(conf_file.name.split('_')[0:2])
-    manta_user.User(name, role="Ocean User", address=None, password=None, config_template_path=None, config_path=conf_file)
-
-
 #%%
 # This utility function gets all simulated accounts
+#TODO: Refactor this function to handle k8s vs. local users
 users = manta_user.get_all_users(ocn.accounts)
 
 # We don't need this ocn instance reference anymore
@@ -62,8 +59,6 @@ del ocn
 
 # Let's take the first unlocked account, and name it the Publisher
 publisher1 = [u for u in users if not u.locked][0]
-publisher1.name = "Edward Teach"
-publisher1.role = "Publisher"
 print(publisher1)
 
 assert publisher1.ocn._http_client.__name__ == 'requests'
@@ -126,9 +121,11 @@ this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
 # Register this asset into Ocean
 ddo = publisher1.ocn.register_asset(
     metadata, publisher1.ocn.main_account.address,
-    [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)]
-)
+    [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)])
 print("DDO created and registered!")
+
+# rcpt = publisher1.account.request_tokens(5)
+# publisher1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 #%%
 # Inspect the new DDO
 print("did:", ddo.did)
