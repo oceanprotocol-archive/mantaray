@@ -68,39 +68,33 @@ with open(PASSWORD_FILE, mode='r') as infile:
 ocn = Ocean(CONFIG_INI_PATH)
 logging.info("Ocean smart contract node connected ".format())
 
-ocn.config.keeper_path
-
+#%%
 # List the accounts created in Ganache
 # ocn.accounts is a {address: Account} dict
-print("Ocean accounts:")
+print(len(ocn.accounts), "ocean accounts available with following addresses:")
 for address in ocn.accounts:
     acct = ocn.accounts[address]
     print(acct.address)
 
-#%%
-# These accounts have a balance of ETH and Ocean Token
-for address, account in ocn.accounts.items():
-    assert account.balance.eth >= 0
-    assert account.balance.ocn >= 0
-
 # %% [markdown]
 # From accounts, to Users
 #
-# A simple wrapper for each address is created to represent a user
-# This wrapper is presented below, and later used as a fixture,
+# A simple wrapper for each address is used to represent a user
 # See: ./script_fixtures/user.py
 
 #%% [markdown]
 # Users are instantiated and listed
+#
+# Selected accounts are unlocked via password.
+# A password.csv file should be located in the project root directory, with each row containing <address>,<password>
 #%%
-# Selected accounts are unlocked via password
-
 # Create some simulated users of Ocean Protocol
 # Alternate between Data Scientists (Consumers)
 # and Data Owners (providers)
 users = list()
-
-for i, acct_address in enumerate(ocn.accounts):
+num_users = 4
+address_list = [acct for acct in ocn.accounts]
+for i, acct_address in enumerate(address_list[0:num_users]):
     if i%2 == 0: role = 'Data Scientist'
     else: role = 'Data Owner'
     if acct_address.lower() in list(PASSWORD_MAP.keys()):
@@ -108,7 +102,7 @@ for i, acct_address in enumerate(ocn.accounts):
     else:
         this_password = None
 
-    user = manta_user.User(names.get_full_name(), role, acct_address, this_password)
+    user = manta_user.User(names.get_full_name(), role, acct_address, this_password, CONFIG_INI_PATH)
 
     users.append(user)
 
