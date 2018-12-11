@@ -24,6 +24,7 @@ import os
 import names
 import logging
 from pathlib import Path
+import csv
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
 import squid_py
@@ -41,9 +42,25 @@ manta_logging.logger.setLevel('INFO')
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
+# os.environ['USE_K8S_CLUSTER'] = 'true'
 logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
+
+#%% Get passwords from file
+
+class CaseInsensitiveDict(dict):
+    def __setitem__(self, key, value):
+        super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
+    def __getitem__(self, key):
+        return super(CaseInsensitiveDict, self).__getitem__(key.lower())
+
+PASSWORD_FILE = manta_config.get_project_path() / 'passwords.csv'
+PASSWORD_MAP = CaseInsensitiveDict() # New dict
+with open(PASSWORD_FILE, mode='r') as infile:
+    reader = csv.reader(infile)
+    for row in reader:
+        PASSWORD_MAP[row[0]] = row[1]
 
 # %% [markdown]
 # ## Section 1: Instantiate the Ocean Protocol interface
@@ -83,11 +100,16 @@ for address, account in ocn.accounts.items():
 # and Data Owners (providers)
 users = list()
 
-list(ocn.accounts.keys())[0] in manta_user.PASSWORD_MAP
 for i, acct_address in enumerate(ocn.accounts):
     if i%2 == 0: role = 'Data Scientist'
     else: role = 'Data Owner'
-    user = manta_user.User(names.get_full_name(), role, acct_address)
+    if acct_address.lower() in list(PASSWORD_MAP.keys()):
+        this_password = PASSWORD_MAP[acct_address]
+    else:
+        this_password = None
+
+    user = manta_user.User(names.get_full_name(), role, acct_address, this_password)
+
     users.append(user)
 
 # Select only unlocked accounts

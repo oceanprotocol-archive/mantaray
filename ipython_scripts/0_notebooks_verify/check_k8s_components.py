@@ -40,6 +40,10 @@ endpoints_dict['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + 
 endpoints_dict['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
 
 # Go to endpoint/spec in the Swagger API page.
+# http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030/api/v1/docs/
+# http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030/spec
+# http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000/api/v1/docs/
+# http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000/spec
 
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     """HTTP Request on the given URL"""
