@@ -97,6 +97,7 @@ address_list = [acct for acct in ocn.accounts]
 for i, acct_address in enumerate(address_list[0:num_users]):
     if i%2 == 0: role = 'Data Scientist'
     else: role = 'Data Owner'
+    role = "User"
     if acct_address.lower() in list(PASSWORD_MAP.keys()):
         this_password = PASSWORD_MAP[acct_address]
     else:

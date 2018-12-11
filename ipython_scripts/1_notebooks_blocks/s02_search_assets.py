@@ -44,7 +44,7 @@ ocn = Ocean(config_file=CONFIG_INI_PATH)
 # The Metadata store is a database wrapped with a REST API
 # For all the functionality, see the Swagger documentation
 #%%
-
+#TODO: Update
 print("REST API base URL:",ocn.metadata_store._base_url)
 print("Swagger API documentation: {}{}".format(ocn.metadata_store._base_url,"/docs/"))
 

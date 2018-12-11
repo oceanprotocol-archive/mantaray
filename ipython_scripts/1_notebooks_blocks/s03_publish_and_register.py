@@ -47,6 +47,12 @@ print("Secret Store Client:", ocn._secret_store_client)
 #
 # In general, as a publisher, you will have your own configuration file with your personal account.
 
+user_config_path = manta_config.get_project_path() / 'user_configurations_deployed'
+for conf_file in user_config_path.glob('*.ini'):
+    name = ' '.join(conf_file.name.split('_')[0:2])
+    manta_user.User(name, role="Ocean User", address=None, password=None, config_template_path=None, config_path=conf_file)
+
+
 #%%
 # This utility function gets all simulated accounts
 users = manta_user.get_all_users(ocn.accounts)
