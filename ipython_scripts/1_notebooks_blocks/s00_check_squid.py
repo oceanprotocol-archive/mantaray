@@ -1,4 +1,5 @@
 # %% [markdown]
+# # With the Ocean Protocol components running, test the Squid API (Python API!)
 # Run this script to test the Ocean wrapper (squid-py).
 # Instantiate the wrapper with your selected `config.ini` file
 

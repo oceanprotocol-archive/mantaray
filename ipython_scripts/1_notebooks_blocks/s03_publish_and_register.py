@@ -1,6 +1,7 @@
 # %% [markdown]
-# ## Building Blocks: Publishing assets
-# In this notebook, TODO: description
+# # Publishing assets
+# In this notebook
+# TODO: description
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
@@ -51,12 +52,7 @@ print("Secret Store Client:", ocn._secret_store_client)
 
 #%%
 # This utility function gets all simulated accounts
-#TODO: Refactor this function to handle k8s vs. local users
-# users = manta_user.get_all_users()
-
-
 # Let's take the first unlocked account, and name it the Publisher
-# publisher = [u for u in users if not u.locked][0]
 publisher = manta_user.get_first_user(ocn.accounts)
 print(publisher)
 
@@ -117,7 +113,6 @@ this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
 # And needs to be instantiated with the following attributes:
 #
 # `price, purchase_endpoint, service_endpoint, timeout, template_id`
-
 
 publisher.ocn.keeper.web3.personal.unlockAccount(publisher.account.address, publisher.account.password)
 

@@ -1,5 +1,5 @@
 # %% [markdown]
-# ## Building Blocks: Downloading Datasets
+# # Downloading Datasets (Assets)
 # In this notebook, TODO: description
 
 # %% [markdown]
