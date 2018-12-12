@@ -1,4 +1,5 @@
 # %% [markdown]
+# # Check the running Ocean protocol components
 # With simulated Kubernetes endpoints deployed, this script will make a simple
 # HTTP request to each, and report the status returned.
 #
@@ -34,14 +35,8 @@ endpoints_dict = {
     'brizo': 'http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030',
     'secret_store' : 'https://secret-store.dev-ocean.com'
 }
-endpoints_dict['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
-endpoints_dict['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
-
-# Go to endpoint/spec in the Swagger API page.
-# http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030/api/v1/docs/
-# http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030/spec
-# http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000/api/v1/docs/
-# http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000/spec
+# endpoints_dict['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
+# endpoints_dict['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
 
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     """HTTP Request on the given URL"""
@@ -49,6 +44,7 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
     return res.status_code, res.content
 
+#%%
 # Iterate over the defined endpoints
 for endpoint in endpoints_dict:
     with manta_logging.LoggerCritical():

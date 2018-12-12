@@ -108,7 +108,10 @@ sphinx
 /config_k8s_template.ini
 /**/artifacts/
 /user_configurations/*.ini
+/user_configurations_deployed/*.ini
 /jupyter_notebooks/**/*.*
 squid_py.db
 /consume-downloads/**/*.*
 /artifacts/**/*.*
+passwords.csv
+

@@ -1,6 +1,8 @@
 # %% [markdown]
 # ## Building Blocks: Searching and listing registered assets
-# In this notebook, TODO: description
+# In this notebook,
+#TODO: description
+#TODO: This script needs to be updated!
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
@@ -29,7 +31,7 @@ manta_logging.logger.setLevel('INFO')
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-
+logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
@@ -44,7 +46,7 @@ ocn = Ocean(config_file=CONFIG_INI_PATH)
 # The Metadata store is a database wrapped with a REST API
 # For all the functionality, see the Swagger documentation
 #%%
-
+#TODO: Update
 print("REST API base URL:",ocn.metadata_store._base_url)
 print("Swagger API documentation: {}{}".format(ocn.metadata_store._base_url,"/docs/"))
 
@@ -59,8 +61,8 @@ for i, id in enumerate(all_dids):
     print(i, id)
 
 first_did = all_dids[0]
-first_id = first_did.split(':')[-1]
-first_id_int = int(first_id,16)
+# first_id = first_did.split(':')[-1]
+# first_id_int = int(first_id,16)
 # %% [markdown]
 # Then, the assets can be retrieved;
 #%%

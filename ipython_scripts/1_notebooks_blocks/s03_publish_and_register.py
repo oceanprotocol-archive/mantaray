@@ -1,6 +1,7 @@
 # %% [markdown]
-# ## Building Blocks: Publishing assets
-# In this notebook, TODO: description
+# # Publishing assets
+# In this notebook
+# TODO: description
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
@@ -9,6 +10,7 @@
 # Standard imports
 import logging
 from pathlib import Path
+import os
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -23,8 +25,9 @@ manta_logging.logger.setLevel('INFO')
 
 #%%
 # Get the configuration file path for this environment
+# os.environ['USE_K8S_CLUSTER'] = 'true'
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-
+logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
@@ -49,20 +52,15 @@ print("Secret Store Client:", ocn._secret_store_client)
 
 #%%
 # This utility function gets all simulated accounts
-users = manta_user.get_all_users(ocn.accounts)
+# Let's take the first unlocked account, and name it the Publisher
+publisher = manta_user.get_first_user(ocn.accounts)
+print(publisher)
+
+assert publisher.ocn._http_client.__name__ == 'requests'
+assert publisher.ocn._secret_store_client.__name__ == 'Client'
 
 # We don't need this ocn instance reference anymore
 del ocn
-
-# Let's take the first unlocked account, and name it the Publisher
-publisher1 = [u for u in users if not u.locked][0]
-publisher1.name = "Edward Teach"
-publisher1.role = "Publisher"
-print(publisher1)
-
-assert publisher1.ocn._http_client.__name__ == 'requests'
-assert publisher1.ocn._secret_store_client.__name__ == 'Client'
-
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
 # A more complex use case is to manually generate your metadata conforming to Ocean standard
@@ -81,9 +79,9 @@ SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
 
 # Get the ID of this SEA
 template_id = squid_py.service_agreement.utils.register_service_agreement_template(
-    publisher1.ocn.keeper.service_agreement,
-    publisher1.ocn.keeper.contract_path,
-    publisher1.ocn.main_account,
+    publisher.ocn.keeper.service_agreement,
+    publisher.ocn.keeper.contract_path,
+    publisher.ocn.main_account,
     squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
 )
 print(template_id)
@@ -92,7 +90,7 @@ print(template_id)
 # ### Section X: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
 # brizo_url = 'http://172.15.0.17:8030' # For now, this is hardcoded
-brizo_url = publisher1.ocn.config.get('resources','brizo.url')
+brizo_url = publisher.ocn.config.get('resources', 'brizo.url')
 # TODO: Discussion on whether Squid should have an API to Brizo?
 
 
@@ -116,13 +114,17 @@ this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
 #
 # `price, purchase_endpoint, service_endpoint, timeout, template_id`
 
+publisher.ocn.keeper.web3.personal.unlockAccount(publisher.account.address, publisher.account.password)
+
 #%%
 # Register this asset into Ocean
-ddo = publisher1.ocn.register_asset(
-    metadata, publisher1.ocn.main_account.address,
-    [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)]
-)
+ddo = publisher.ocn.register_asset(
+    metadata, publisher.ocn.main_account.address,
+    [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)])
 print("DDO created and registered!")
+
+# rcpt = publisher1.account.request_tokens(5)
+# publisher1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 #%%
 # Inspect the new DDO
 print("did:", ddo.did)

@@ -132,8 +132,19 @@ Copy the `config.ini` file to `config_local.ini`. This configuration file is pas
 the **Ocean** class. This configuration file should have the necessary configuration information to instantiate the class. 
 
 Verify the following values refer to an unlocked account: 
- - PARITY_ADDRESS=
- - PARITY_PASSWORD=
+```PARITY_ADDRESS=
+PARITY_ADDRESS=
+PARITY_PASSWORD=
+```
+
+Verify that the URL's for Aquarius and Brizo match the exposed IP addresses in the docker network: 
+
+```
+aquarius.url = http://172.15.0.15:5000
+brizo.url = http://172.15.0.17:8030
+```
+
+Similarly verify the URL's for keeper. 
 
 This script will copy the ABI  files from the currently running 
 docker container (keeper-contracts) into your *project directory*. 

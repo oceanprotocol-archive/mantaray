@@ -1,5 +1,5 @@
 # %% [markdown]
-# ## Building Blocks: Downloading Datasets
+# # Downloading Datasets (Assets)
 # In this notebook, TODO: description
 
 # %% [markdown]
@@ -28,7 +28,7 @@ manta_logging.logger.setLevel('INFO')
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-
+logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
@@ -71,19 +71,9 @@ first_did = all_dids[-1]
 this_ddo = consumer1.ocn.resolve_did(first_did)
 manta_print.print_ddo(this_ddo)
 
-#%%
-# Skip this cell...
-# TODO: This is broken, wait for patch in squid_py to point to correct method (resolve_did())
-# consumer1.ocn.get_asset(first_did)
-#%%
-# TODO: Remove this in final publication
-# The asset can also be retreieved direct from the REST endpoint
-# this_asset_endpoint = consumer1.ocn.metadata_store._base_url  + '/ddo/' + first_did
-# result = requests.get(this_asset_endpoint).content
-# ddo_dict = json.loads(result)
-
 #%% [markdown]
 # ### Section 3: Get ready for purchase
+# Wait for this cell to complete, it may take a few seconds to mine the transaction!
 #%%
 
 # Get the service agreement for consuming (downloading)
@@ -106,29 +96,13 @@ if consumer1.account.ocean_balance == 0:
 # ### Section 3: Execute the agreement (purchase!)
 #%%
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
-service_agreement_id = consumer1.ocn.sign_service_agreement(this_ddo.did, sa.sa_definition_id, consumer_address)
+# this_did = 'did:op:0x23d76f6f5e1040c8bba8701fdaa59e28bf2c9edd3acc400aa8af46fe1433344e'
+this_did = this_ddo.did
+service_agreement_id = consumer1.ocn.sign_service_agreement(this_did, sa.sa_definition_id, consumer_address)
 print('got new service agreement id:', service_agreement_id)
 
-#%%
-# TODO: This has been refactored. The workflow is now part of .sign_service_agreement() call. Delete cell.
-# We will now watch on-chain to ensure that the service is 1) Executed and 2) Granted
-#
-# def wait_for_event(event, arg_filter, wait_iterations=20):
-#     _filter = event.createFilter(fromBlock=0 , argument_filters=arg_filter)
-#     for check in range(wait_iterations):
-#         events = _filter.get_all_entries()
-#         if events:
-#             return events[0]
-#         time.sleep(0.5)
-#
-#
-# filter1 = {'serviceAgreementId': Web3.toBytes(hexstr=service_agreement_id)}
-# filter_2 = {'serviceId': Web3.toBytes(hexstr=service_agreement_id)}
-#
-# executed = wait_for_event(consumer1.ocn.keeper.service_agreement.events.ExecuteAgreement, filter1)
-# assert executed
-# granted = wait_for_event(consumer1.ocn.keeper.access_conditions.events.AccessGranted, filter_2)
-# assert granted
-# fulfilled = wait_for_event(consumer1.ocn.keeper.service_agreement.events.AgreementFulfilled, filter1)
-# assert fulfilled
-# time.sleep(3)
+#%% [markdown]
+# Upon successful execution of the service agreement, a download is immediately initiated.
+# The downloaded files are stored in the current directory in a /downloads/datafile.<did> folder.
+# Check the directory in the JupyterLab notebook pane on the left!
+
