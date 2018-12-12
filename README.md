@@ -144,6 +144,8 @@ aquarius.url = http://172.15.0.15:5000
 brizo.url = http://172.15.0.17:8030
 ```
 
+Similarly verify the URL's for keeper. 
+
 This script will copy the ABI  files from the currently running 
 docker container (keeper-contracts) into your *project directory*. 
 
