@@ -1,98 +1,50 @@
-#%%
-# TODO: UPDATE!
-
-# # MANTARAY
-# ## Data Science powered by **Ocean Protocol**
-
 # %% [markdown]
-# The **Mantaray** scripts provide a guided tour of Ocean Protocol in an interactive environment.
+# # Welcome to Manta Ray
+# ## Data Science powered by Ocean Protocol
 #
-# The scripts are designed to be executed in an 'IPython' interactive console.
+# The **Manta Ray** scripts provide a guided tour of Ocean Protocol in an interactive Jupyter Notebook environment.
 #
-# The popular Jupyter Notebook format is supported.
+# Scripts are first written in regular Python (with the `#%%` cell demarcation formatting) in the
+# [mantaray](https://github.com/oceanprotocol/mantaray) repo, and then converted into Jupyter Notebooks, `.ipynb`.
+# A seperate GitHub repository holds these converted notebooks, to provide an uncluttered directory for JupyterHub. This repo,
+# [mantaray_jupyter](https://github.com/oceanprotocol/mantaray_utilities), is then cloned into the environment you are using.
 #
-# Alternatively, you can run the scripts in other IPython environments.
+# As a Data Scientist, you may feel free to copy these notebooks or parts thereof to build a new Notebook. Or if you
+# prefer to work in pure python, please go to the mantaray source repo and review the python scripts in the `/ipython` directory.
 #
-# The scripts are generated in two formats: .py scripts with the # %% cell demarcation convention, or the auto-converted .ipynb format for i.e. Jupyter Notebook.
+#%% [markdown]
+# ### For developers:
+# Cloud components are used to simulate Ocean Protocol. Local docker components are [also available](https://github.com/oceanprotocol/docker-images).
 #
-# These scripts also serve as a catalog of building blocks for building more complex user stories and applications.
-
-# %% [markdown]
-# Jupyter Lab can use different python environments (kernels)
-# For easiest use, install the `ipykernel` package into your environment:
+# The main import is the [squid-py](https://github.com/oceanprotocol/squid-py) ([PyPI link](https://pypi.org/project/squid-py/))
+# Ocean Python API. This in-turn depends on downloading the Application Binary Interface files for the deployed Ethereum smart contracts. These ABI files are
+# deployed to PyPI as the [keeper-contracts](https://pypi.org/project/keeper-contracts/) package.
 #
-# `pip install ipykernel` or `conda install ipykernel`
-#
-# Then, install the kernel using the IPython command; `ipython kernel install --user --name=projectname`
-#
-# TODO: Check this error in ipykernel deps
-#
-#  If error on above command, try `pip install 'prompt-toolkit==1.0.15'`
-# Then, `python -m ipykernel install --user --name mantaray3 --display-name "Python (mantaray3)" `
+# Instructions for setting a developer environment are available at our documentation website TODO: (releasing soon!)
 
 # %% [markdown]
 # ## Meanwhile, on the dry dock...
 # Let's get ship-shape! First, check your dependencies using the cell below. Install any missing components into your environment as necessary.
 
-# %%
-# The AWS SDK
-import boto3
-print( "boto3", boto3.__version__ )
-
-# The docker python utility can be used to manage your local docker configuration
-import docker
-print("docker", docker.__version__)
-
-# Alternatively, you may connect to the Kubernetes cluster for testing
-# TODO: k8s util check
-
-# Or, you can connect to the Ethereum test net
-# TODO: test net util check
-
-# Metamask is used to access the Ethereum network
-# TODO: metamask util
-
-# squid-py is your friendly interface to **Ocean Protocol**
+#%% [markdown]
+# **squid-py** is your friendly interface to **Ocean Protocol**
+#%%
 import squid_py
 print("squid_py", squid_py.__version__)
 
+#%% [markdown]
+# An set of [utility methods](https://github.com/oceanprotocol/mantaray_utilities) is installed, for extra functionality for the Data Science community
+#%%
+import mantaray_utilities
+print("mantaray_utilities", mantaray_utilities.__version__)
 # %% [markdown]
 ## Ship's manifest
-
-# %% [markdown]
-# ### <span style="color:Aqua">AWS S3 management</span>
-# #### check_aws_s3
-# Test your connection to S3
-# #### process_catalogue
-# Using your AWS account, manage your data assets
-
-# %% [markdown]
-# ### <span style="color:Aqua">Local docker verification</span>
-# #### check_docker
-# If using a local simulation of the blockchain and ocean protocol infrastructure, this script can help you verify your containers
-
-# %% [markdown]
-# ### <span style="color:Aqua">Local docker verification</span>
-# #### check_squid
-# Got squid?
-# #### play_with_your_squid
-# Start verifying fundamental interaction with Ocean Protocol.
-
-
-#%% [markdown]
-# OLD ...
-# %%
-# Rank:
-# Ensign -
-# Able seaman
-# Before embarking across Ocean Protocol, let's get ship-shape with the following pre-requisites;
-# Pre
-
-# %% [markdown]
+# In the left pane, several scripts are loaded, designed to walk you through the Ocean Protocol stack.
 #
-# Ready the sails!
-
-
-# %% [markdown]
+# First, check the functionality of the cloud components with `check_k8s_components`.
 #
-# Inspection
+# Then, you can instantiate the main class for interacting with Ocean, the aptly named **Ocean** class in `squid-py`, in the `check_squid` notebook.
+#
+# The next set of notebooks each focus on a main aspect of Ocean Protocol. These can be composed into a complete data science pipeline.
+#
+# Weigh anchor, and good luck sailing into Ocean Protocol!
