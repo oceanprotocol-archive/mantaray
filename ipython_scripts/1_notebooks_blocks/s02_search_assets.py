@@ -2,7 +2,7 @@
 # ## Building Blocks: Searching and listing registered assets
 # In this notebook,
 #TODO: description
-#TODO: This script needs to be updated!
+#TODO: This script needs to be updated for Alpha!
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging

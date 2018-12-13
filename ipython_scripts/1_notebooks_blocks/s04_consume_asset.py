@@ -36,7 +36,6 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # ### Section 1: Instantiate a simulated User
 # A 'User' in an abstract class representing a user of Ocean Protocol
 #
-# Follow Anne Bonny as she purchases an asset which has been registered in Ocean Protocol
 #%%
 ocn = Ocean(config_file=CONFIG_INI_PATH)
 

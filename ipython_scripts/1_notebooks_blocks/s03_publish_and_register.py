@@ -2,6 +2,7 @@
 # # Publishing assets
 # In this notebook
 # TODO: description
+# TODO: Update this notebook after latest refactor of squid-py
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
@@ -33,40 +34,35 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
 # ### Section 1: Instantiate a simulated User
-# A 'User' in an abstract class representing a user of Ocean Protocol
+# A 'User' in an abstract class representing a user of Ocean Protocol.
 #
-# Follow the most notorious pirate Edward Teach (Blackbeard) as he tries to register an asset into Ocean Protocol
-# <a title="Engraved by Benjamin Cole (1695–1766) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Bbeard_Sword.jpg"><img width="256" alt="Bbeard Sword" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bbeard_Sword.jpg/256px-Bbeard_Sword.jpg"></a>
 #%%
-# Instantiate Ocean with the default configuration file
-
+# Instantiate Ocean with the default configuration file.
 ocn = Ocean(config_file=CONFIG_INI_PATH)
-#%%
-print("HTTP Client:", ocn._http_client.__name__)
-print("Secret Store Client:", ocn._secret_store_client)
 
 #%% [markdown]
-# For this tutorial, we will select one of the available unlocked accounts
+# For this tutorial, we will select one of the available unlocked accounts.
 #
 # In general, as a publisher, you will have your own configuration file with your personal account.
 
 #%%
-# This utility function gets all simulated accounts
-# Let's take the first unlocked account, and name it the Publisher
+# This utility function gets all simulated accounts.
+# Let's take the first unlocked account, and name it the Publisher.
 publisher = manta_user.get_first_user(ocn.accounts)
 print(publisher)
 
 assert publisher.ocn._http_client.__name__ == 'requests'
 assert publisher.ocn._secret_store_client.__name__ == 'Client'
 
-# We don't need this ocn instance reference anymore
+# We don't need this ocn instance reference anymore ...
 del ocn
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
-# A more complex use case is to manually generate your metadata conforming to Ocean standard
+# A more complex use case is to manually generate your metadata conforming to Ocean standard, but for demonstration purposes,
+# a utility in squid-py is used to generate a sample Meta Data dictionary.
 
 #%%
-# Get a simple example of a Metadata object from the library directly
+# Get a simple example of a Meta Data object from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
 print('Name of asset:', metadata['base']['name'])
 
@@ -87,13 +83,9 @@ template_id = squid_py.service_agreement.utils.register_service_agreement_templa
 print(template_id)
 
 #%% [markdown]
-# ### Section X: Confirm your service endpoints with Brizo (services handler for Publishers)
+# ### Section 4: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
-# brizo_url = 'http://172.15.0.17:8030' # For now, this is hardcoded
 brizo_url = publisher.ocn.config.get('resources', 'brizo.url')
-# TODO: Discussion on whether Squid should have an API to Brizo?
-
-
 
 brizo_base_url = '/api/v1/brizo'
 purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)
