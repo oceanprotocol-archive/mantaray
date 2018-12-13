@@ -1,5 +1,8 @@
 # %% [markdown]
 # # User management - wallets, passwords and tokens
+#
+# TODO: Note that this notebook will not completely execute since the password file is *currently* not public.
+#
 # To interact in Ocean Protocol, you will need a wallet and you will fund it with some
 # Token to access the assets in the network.
 #
@@ -57,7 +60,7 @@ class CaseInsensitiveDict(dict):
 
 #%% [markdown]
 # This section will load passwords and create seperate user accounts for each one.
-#TODO: This file is not currently uploaded until after security review
+#TODO: This file is not currently uploaded until after security/scaling review
 
 #%% Get passwords from file
 PASSWORD_FILE = manta_config.get_project_path() / 'passwords.csv'
@@ -68,7 +71,7 @@ with open(PASSWORD_FILE, mode='r') as infile:
         PASSWORD_MAP[row[0]] = row[1]
 
 # %% [markdown]
-# ## Section 1: Instantiate the Ocean Protocol interface
+# ### Section 1: Instantiate the Ocean Protocol interface
 #%%
 ocn = Ocean(CONFIG_INI_PATH)
 logging.info("Ocean smart contract node connected ".format())
@@ -82,11 +85,10 @@ for address in ocn.accounts:
     print(acct.address)
 
 # %% [markdown]
-# From accounts, to Users
+# ### Section 2: From accounts, to Users
 #
-# A simple wrapper for each address is used to represent a user
-# See: ./script_fixtures/user.py
-#TODO: Provide context
+# A simple wrapper for each address is used to represent a user.
+# See: [./script_fixtures/user.py](https://github.com/oceanprotocol/mantaray_utilities/blob/8e3128b49ec8ba00f4f8056a4c888e86b23a5c5c/mantaray_utilities/user.py#L13)
 
 #%% [markdown]
 # Users are instantiated and listed
@@ -131,6 +133,7 @@ for f in Path('.').glob('user_configurations/*.ini'):
 for u in unlocked_users: print(u)
 
 #%% [markdown]
+# ### Section 3: Filling your chest with a bounty of ERC20 token
 # Get these users some Ocean token
 #%%
 for usr in unlocked_users:
