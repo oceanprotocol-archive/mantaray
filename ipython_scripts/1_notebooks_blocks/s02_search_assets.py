@@ -53,13 +53,14 @@ res = urllib.parse.urlparse(ocn.metadata_store._base_url)
 print("Aquarius service, REST API base URL: {}://{}".format(res.scheme, res.netloc))
 print("Aquarius service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
 res = urllib.parse.urlparse(ocn.config.brizo_url)
+# TODO: The Swagger page does not correctly populate the /spec endpoint. Enter manually the URL/spec!
 
 #%% [markdown]
-# Brizo
+# Brizo is an interface for asset access control.
 #%%
+# TODO: Brizo is not part of squid,
 # print("Brizo service, REST API base URL: {}://{}".format(res.scheme, res.netloc))
 # print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
-print("TODO: The Swagger page does not correctly populate the /spec endpoint. Enter manually the URL/spec!")
 # http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000/spec
 # %% [markdown]
 # All stored assets can be listed. This is typically not done in production, as the list would be too large.
