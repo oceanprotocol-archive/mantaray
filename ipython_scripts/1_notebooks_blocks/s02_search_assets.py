@@ -109,7 +109,6 @@ for asset in ocn.search_assets('Ocean'):
     util_pprint.print_ddo(asset.ddo)
 
 
-
 # %% [markdown]
 # Finally, assets can be deleted from the store
 result = requests.get(ocn.metadata_store._base_url).content
