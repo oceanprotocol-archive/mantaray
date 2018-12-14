@@ -16,6 +16,8 @@ import squid_py
 from squid_py.ocean.ocean import Ocean
 import requests
 import json
+import os
+import urllib
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -30,6 +32,7 @@ manta_logging.logger.setLevel('INFO')
 
 #%%
 # Get the configuration file path for this environment
+os.environ['USE_K8S_CLUSTER'] = 'true'
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
@@ -46,21 +49,30 @@ ocn = Ocean(config_file=CONFIG_INI_PATH)
 # The Metadata store is a database wrapped with a REST API
 # For all the functionality, see the Swagger documentation
 #%%
-#TODO: Update
-print("REST API base URL:",ocn.metadata_store._base_url)
-print("Swagger API documentation: {}{}".format(ocn.metadata_store._base_url,"/docs/"))
+res = urllib.parse.urlparse(ocn.metadata_store._base_url)
+print("Aquarius service, REST API base URL: {}://{}".format(res.scheme, res.netloc))
+print("Aquarius service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
+res = urllib.parse.urlparse(ocn.config.brizo_url)
 
+#%% [markdown]
+# Brizo
+#%%
+# print("Brizo service, REST API base URL: {}://{}".format(res.scheme, res.netloc))
+# print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
+print("TODO: The Swagger page does not correctly populate the /spec endpoint. Enter manually the URL/spec!")
+# http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000/spec
 # %% [markdown]
 # All stored assets can be listed. This is typically not done in production, as the list would be too large.
 # For demonstration purposes, we can access the REST API directly, first retrieve their DID string;
 #%%
-result = requests.get(ocn.metadata_store._base_url).content
-all_dids = json.loads(result)['ids']
+all_dids = ocn.metadata_store.list_assets()
 print("There are {} assets registered in the metadata store.".format(len(all_dids)))
-for i, id in enumerate(all_dids):
-    print(i, id)
 
-first_did = all_dids[0]
+for i, did in enumerate(all_dids):
+    this_metadata = ocn.metadata_store.get_asset_metadata(did)
+    print(i, did)
+
+# first_did = all_dids[0]
 # first_id = first_did.split(':')[-1]
 # first_id_int = int(first_id,16)
 # %% [markdown]
@@ -102,6 +114,6 @@ for asset in ocn.search_assets('Ocean'):
 # Finally, assets can be deleted from the store
 result = requests.get(ocn.metadata_store._base_url).content
 all_dids = json.loads(result)['ids']
-for i, id in enumerate(all_dids):
-    print("Deleting",id)
-    ocn.metadata_store.retire_asset_metadata(id)
+for i, did in enumerate(all_dids):
+    print("Deleting", did)
+    ocn.metadata_store.retire_asset_metadata(did)
