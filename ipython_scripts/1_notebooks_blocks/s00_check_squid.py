@@ -21,6 +21,9 @@ logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
+#%% [markdown]
+# ## The following cell is very verbose, since logging is set at lowest level for demo/debugging. In later notebooks, the debug logs are hidden using `manta_logging`.
+
 #%%
 # Instantiate Ocean
 ocn = Ocean(CONFIG_INI_PATH)

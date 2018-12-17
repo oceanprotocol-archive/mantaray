@@ -30,7 +30,6 @@ logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 # For now, the endpoints are hard-coded by the dev-ops team.
 endpoints_dict = {
     'keeper-contracts': 'http://52.1.94.55:8545',
-    # 'pleuston': 'http://ac98d76bade8d11e89c320e965e714bc-981020006.us-east-1.elb.amazonaws.com:3000/',
     'aquarius': 'http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000',
     'brizo': 'http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030',
     'secret_store' : 'https://secret-store.dev-ocean.com'
@@ -46,8 +45,9 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
 
 
 # %% [markdown]
-# Iterate over the defined endpoints. Note that Pleuston is
+# Iterate over the defined endpoints.
 #
+# TODO: secret_store fails, but scripts still run
 #%%
 for endpoint in endpoints_dict:
     with manta_logging.LoggerCritical():

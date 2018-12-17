@@ -47,7 +47,7 @@ import mantaray_utilities.user as manta_user
 import mantaray_utilities.asset_pretty_print as manta_print
 
 # Setup logging
-manta_logging.logger.setLevel('INFO')
+manta_logging.logger.setLevel('CRITICAL')
 
 #%%
 # Get the configuration file path for this environment
