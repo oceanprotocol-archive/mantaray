@@ -1,7 +1,7 @@
 # %% [markdown]
-# # Getting Underway - Searching and listing registered assets
-# In this notebook,
-#TODO: description
+# # Getting Underway - Listing and searching registered assets
+# In this notebook, we will explore the concept
+
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
@@ -31,7 +31,7 @@ manta_logging.logger.setLevel('INFO')
 
 #%%
 # Get the configuration file path for this environment
-# os.environ['USE_K8S_CLUSTER'] = 'true'
+os.environ['USE_K8S_CLUSTER'] = 'true'
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
@@ -119,16 +119,31 @@ print("Resolved asset: {}, {}".format(resolved_asset.metadata['base']['name'], t
 # %% [markdown]
 # ### Section 4: Searching the Ocean
 # Aquarius supports query search, the Asset class is returned
+# Currently, Aquarius is running MongoDB. For detailed query documentation, see the
+# [documentation](https://docs.mongodb.com/manual/reference/method/db.collection.find/)
+#%% [markdown]
+# To get started, the following query will return all documents with a 'metadata' service.
+#%%
+this_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}}
+query_section = {"service":{"$elemMatch":    {"metadata": {"$exists" : True }, "metadata.base.name": {'$eq':"Ocean protocol white paper"} }    }}
+
+db.test.find({A: {$regex: 'Star Wars'}})
+query_section = {"service":{"$elemMatch":    {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':"paper"} }    }}
+
+query_section = {"service":{"$elemMatch":    {"metadata": {"$exists" : True }, "metadata.base.name": "/paper/i" }    }}
+
+this_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": query_section}
+res = ocn.search_assets(this_query)
+print(res)
+
+print('Found {} assets'.format(len(res)))
+
+#%% [markdown]
+# This search can be refined to query assets matching the Name sting.
+
+#
 
 #%%
-this_query = {
-    "offset": 100,
-    "page": 0,
-    "sort": {"value": 1},
-     "query": { "service":"$elemMatch":{"metadata": {$exists : true}}}}}
-
-
-ocn.search_assets('Random Text')
 ocn.search_assets('')
 ocn.search_assets('asdfasdfasdf')
 res = ocn.search_assets('Hello do not give me csv')
