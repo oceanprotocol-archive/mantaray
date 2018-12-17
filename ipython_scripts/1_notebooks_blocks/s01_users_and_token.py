@@ -1,5 +1,5 @@
 # %% [markdown]
-# # User management - wallets, passwords and tokens
+# # Getting Underway - wallets, passwords and tokens
 #
 # TODO: Note that this notebook will not completely execute since the password file is *currently* not public.
 #

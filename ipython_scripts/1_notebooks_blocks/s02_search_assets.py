@@ -1,5 +1,5 @@
 # %% [markdown]
-# ## Building Blocks: Searching and listing registered assets
+# # Getting Underway - Searching and listing registered assets
 # In this notebook,
 #TODO: description
 #TODO: This script needs to be updated for Alpha!

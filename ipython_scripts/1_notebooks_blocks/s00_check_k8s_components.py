@@ -1,5 +1,5 @@
 # %% [markdown]
-# # Pre-sail checklist: Ocean protocol component status
+# # Pre-sail checklist - Ocean protocol component status
 # With simulated Kubernetes endpoints deployed, this script will make a simple
 # HTTP request to each, and report the status returned.
 #

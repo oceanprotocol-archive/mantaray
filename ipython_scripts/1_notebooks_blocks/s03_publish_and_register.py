@@ -1,5 +1,5 @@
 # %% [markdown]
-# # Publishing assets
+# # Getting Underway - Publishing assets
 # In this notebook
 # TODO: description
 # TODO: Update this notebook after latest refactor of squid-py
