@@ -9,6 +9,9 @@
 #
 # The DID is stored in the blockchain. The DDO is stored in a public searchable database, wrapped by the Aquarius
 # component.
+#
+# *Note to the reader: This is a testnet: a simulated blockchain and simulated DDO store. This testnet is open to the
+# public, and therefore may change state in unexpected ways (your asset might get deleted, etc.)*
 
 # %% [markdown]
 # Further reading!
