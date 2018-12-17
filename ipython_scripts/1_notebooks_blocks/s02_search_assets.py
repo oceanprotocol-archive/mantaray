@@ -184,17 +184,15 @@ first_ddo = all_dids[0]
 print("Selected DDO for deletion:", first_ddo)
 ocn.metadata_store.retire_asset_metadata(first_ddo)
 
-
 # Again, let's count how many DDO's are registered
 all_dids = ocn.metadata_store.list_assets()
 print("There are now {} assets registered in the metadata store.".format(len(all_dids)))
 
 # %%
 # Deleting all assets!
-# Please don't delete all the assets, as other users may be testing the
+# Please don't delete all the assets, as other users may be testing the components!
 
-# result = requests.get(ocn.metadata_store._base_url).content
-# all_dids = json.loads(result)['ids']
+# all_dids = ocn.metadata_store.list_assets()
 # for i, did in enumerate(all_dids):
-#     print("Deleting", did)
+#     print("Deleting DDO {} - {}".format(i, did))
 #     ocn.metadata_store.retire_asset_metadata(did)
