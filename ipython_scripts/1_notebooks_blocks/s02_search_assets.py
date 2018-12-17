@@ -2,7 +2,6 @@
 # # Getting Underway - Searching and listing registered assets
 # In this notebook,
 #TODO: description
-#TODO: This script needs to be updated for Alpha!
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
@@ -32,7 +31,7 @@ manta_logging.logger.setLevel('INFO')
 
 #%%
 # Get the configuration file path for this environment
-os.environ['USE_K8S_CLUSTER'] = 'true'
+# os.environ['USE_K8S_CLUSTER'] = 'true'
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
@@ -48,6 +47,7 @@ ocn = Ocean(config_file=CONFIG_INI_PATH)
 #%% [markdown]
 # The Metadata store is a database wrapped with a REST API
 # For all the functionality, see the Swagger documentation
+
 #%%
 res = urllib.parse.urlparse(ocn.metadata_store._base_url)
 print("Aquarius service, REST API base URL: {}://{}".format(res.scheme, res.netloc))
