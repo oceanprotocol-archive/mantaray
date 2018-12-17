@@ -42,7 +42,7 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     """HTTP Request on the given URL"""
     res = requests.request(verb, endpoint_url)
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
-    return res.status_code, res.content
+    return res
 
 #%%
 # Iterate over the defined endpoints
@@ -50,8 +50,12 @@ for endpoint in endpoints_dict:
     with manta_logging.LoggerCritical():
         print("Checking {}".format(endpoint))
         try:
-            code, status = check_endpoint(endpoint, endpoints_dict[endpoint])
-            print('\t', endpoint, code, status)
+            res = check_endpoint(endpoint, endpoints_dict[endpoint])
+            if res.headers['Content-Type'] == 'application/json':
+                if 'software' in res.json().keys() and 'version' in res.json().keys():
+                    print("\t Success: {} v{}".format(res.json()['software'], res.json()['version']))
+            else:
+                print("\t Success: <no status endpoint>")
         except:
             print('\t Failed!')
 
