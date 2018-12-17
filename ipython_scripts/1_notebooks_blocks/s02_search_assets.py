@@ -41,7 +41,6 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # ### Section 1: Assets in the MetaData store (Aquarius)
 # Anyone can search assets in the public metadata stores
 #%%
-
 ocn = Ocean(config_file=CONFIG_INI_PATH)
 
 #%% [markdown]
@@ -50,32 +49,72 @@ ocn = Ocean(config_file=CONFIG_INI_PATH)
 
 #%%
 res = urllib.parse.urlparse(ocn.metadata_store._base_url)
-print("Aquarius service, REST API base URL: {}://{}".format(res.scheme, res.netloc))
+print("Aquarius service, base URL: {}://{}".format(res.scheme, res.netloc))
 print("Aquarius service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
-res = urllib.parse.urlparse(ocn.config.brizo_url)
-# TODO: The Swagger page does not correctly populate the /spec endpoint. Enter manually the URL/spec!
+res = urllib.parse.urlparse(ocn.config['resources']['brizo.url'])
+print("Brizo service, base URL: {}://{}".format(res.scheme, res.netloc))
+print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
+# TODO: The Swagger page does not correctly populate the /spec endpoint. Enter the URL/spec manually!
 
-#%% [markdown]
-# Brizo is an interface for asset access control.
-#%%
-# TODO: Brizo is not part of squid,
-# print("Brizo service, REST API base URL: {}://{}".format(res.scheme, res.netloc))
-# print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
-# http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000/spec
 # %% [markdown]
 # All stored assets can be listed. This is typically not done in production, as the list would be too large.
-# For demonstration purposes, we can access the REST API directly, first retrieve their DID string;
+# First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius.
+
 #%%
 all_dids = ocn.metadata_store.list_assets()
 print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 
-for i, did in enumerate(all_dids):
-    this_metadata = ocn.metadata_store.get_asset_metadata(did)
-    print(i, did)
+# %% [markdown]
+# Aquarius is a document store, with the key being the DID, and the document being the DDO
+# (DID Document). The DDO describes the asset (metadata) and how to access it (Service Execution Agreement).
+# For more information on these topics, please visit the Ocean Protocol standards;
+#
+# [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/7)
+#
+# [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/8
+#
+# Let's select the first asset for inspection (Note, since the database is stateful, this can easily change/break,
+# so try with another index or register your own asset first!)
+# %%
+this_did = all_dids[-1]
+print("The last DID:", this_did)
+# TODO: This method is incorrectly named, issue open!
 
-# first_did = all_dids[0]
-# first_id = first_did.split(':')[-1]
-# first_id_int = int(first_id,16)
+# %%
+# Iterating over all DID's: (can be very slow!)
+# for i, did in enumerate(all_dids):
+#     this_ddo= ocn.metadata_store.get_asset_metadata(did)
+#     print(i, did)
+
+# %% [markdown]
+# The DDO can be retrieved direct from Aquarius, as a dictionary object
+
+#%%
+# Get the DDO from Aquarius database
+aquarius_ddo = ocn.metadata_store.get_asset_metadata(this_did)
+
+# And an asset can be created from the DDO dictionary as follows;
+aquarius_asset = squid_py.ocean.asset.Asset(aquarius_ddo)
+print("Asset retrieved directly from Aquarius: {}, {}".format(aquarius_asset.metadata['base']['name'], this_asset.did))
+
+# %% [markdown]
+# A DDO can be resolved from the DID on the blockchain
+
+#%%
+resolved_ddo = ocn.resolve_did(this_did)
+
+# %% [markdown]
+# However, the proper way to retrieve an asset is to **resolve** it from the Blockchain;
+#%%
+
+# TODO: This is broken!
+resolved_asset = ocn.get_asset(this_did)
+print(resolved_asset)
+print("Resolved asset: {}, {}".format(resolved_asset.metadata['base']['name'], this_asset.did))
+
+
+
+
 # %% [markdown]
 # Then, the assets can be retrieved;
 #%%

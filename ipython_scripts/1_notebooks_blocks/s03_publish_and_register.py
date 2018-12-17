@@ -70,6 +70,7 @@ print('Name of asset:', metadata['base']['name'])
 # ### Section 3: Get the Service Execution Agreement (SEA) template for an Asset
 # (An asset is consumed by simple download of files, such as datasets)
 #%%
+# TODO: The following cells are too complicated for end-users, need to refactor to simple .register_dataset(Asset, Price)
 # Get the path of the SEA
 SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
 
@@ -80,11 +81,12 @@ template_id = squid_py.service_agreement.utils.register_service_agreement_templa
     publisher.ocn.main_account,
     squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
 )
-print(template_id)
+print("Template ID:", template_id)
 
 #%% [markdown]
 # ### Section 4: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
+
 brizo_url = publisher.ocn.config.get('resources', 'brizo.url')
 
 brizo_base_url = '/api/v1/brizo'
@@ -114,7 +116,7 @@ ddo = publisher.ocn.register_asset(
     metadata, publisher.ocn.main_account.address,
     [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)])
 print("DDO created and registered!")
-
+print("DID:", ddo.did)
 # rcpt = publisher1.account.request_tokens(5)
 # publisher1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 #%%
