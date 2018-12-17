@@ -32,9 +32,9 @@ manta_logging.logger.setLevel('CRITICAL')
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
-logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
-logging.info("Squid API version: {}".format(squid_py.__version__))
+logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
+logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
+logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
 # ### Section 1: Instantiate a simulated User
