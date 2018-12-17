@@ -56,7 +56,9 @@ print("Brizo service, base URL: {}://{}".format(res.scheme, res.netloc))
 print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
 # TODO: The Swagger page does not correctly populate the /spec endpoint. Enter the URL/spec manually!
 
+
 # %% [markdown]
+# ### Section 2: Listing registered asset metadata in Aquarius
 # All stored assets can be listed. This is typically not done in production, as the list would be too large.
 # First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius.
 
@@ -77,8 +79,7 @@ print("There are {} assets registered in the metadata store.".format(len(all_did
 # so try with another index or register your own asset first!)
 # %%
 this_did = all_dids[-1]
-print("The last DID:", this_did)
-# TODO: This method is incorrectly named, issue open!
+print("Selected DID:", this_did)
 
 # %%
 # Iterating over all DID's: (can be very slow!)
@@ -87,10 +88,13 @@ print("The last DID:", this_did)
 #     print(i, did)
 
 # %% [markdown]
+# ### Section 3: Getting a DID Documents and Assets
+# %% [markdown]
 # The DDO can be retrieved direct from Aquarius, as a dictionary object
 
 #%%
 # Get the DDO from Aquarius database
+# TODO: This method is incorrectly named, issue opened!
 aquarius_ddo = ocn.metadata_store.get_asset_metadata(this_did)
 
 # And an asset can be created from the DDO dictionary as follows;
@@ -112,21 +116,17 @@ resolved_asset = ocn.get_asset(this_did)
 print(resolved_asset)
 print("Resolved asset: {}, {}".format(resolved_asset.metadata['base']['name'], this_asset.did))
 
-
-
-
 # %% [markdown]
-# Then, the assets can be retrieved;
+# ### Section 4: Searching the Ocean
+# Aquarius supports query search, the Asset class is returned
+
 #%%
-# TODO: Fix!
-ocn.get_asset(first_did)
-this_asset_endpoint = ocn.metadata_store._base_url  + '/' + first_did
-result = requests.get(this_asset_endpoint).content
+this_query = {
+    "offset": 100,
+    "page": 0,
+    "sort": {"value": 1},
+     "query": { "service":"$elemMatch":{"metadata": {$exists : true}}}}}
 
-# %% [markdown]
-# These assets can also be searched, the Asset class is returned from a search
-#%% A full text search is implemented
-sample_meta_data = squid_py.ddo.metadata.Metadata.get_example()
 
 ocn.search_assets('Random Text')
 ocn.search_assets('')
