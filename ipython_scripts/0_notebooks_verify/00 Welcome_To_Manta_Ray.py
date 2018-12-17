@@ -69,7 +69,7 @@ import mantaray_utilities.config
 # USE_K8S_CLUSTER       - For running scripts locally, but still connecting to the deployed cloud components
 # DEFAULT               - Running scripts locally, and running the components locally in Docker
 
-print("***Deployment***")
+print("***Deployment Settings***")
 
 # The deployment is retrieved using;
 print("Deployment environment:", mantaray_utilities.config.get_deployment_type())
