@@ -1,7 +1,7 @@
 # %% [markdown]
 # # Getting Underway - wallets, passwords and tokens
 #
-# TODO: Note that this notebook will not completely execute since the password file is *currently* not public.
+# TODO: Note that this notebook will not completely execute since the Parity password file is *currently* not public.
 #
 # To interact in Ocean Protocol, you will need a wallet and you will fund it with some
 # Token to access the assets in the network.

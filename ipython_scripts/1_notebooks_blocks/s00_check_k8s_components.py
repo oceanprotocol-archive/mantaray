@@ -55,9 +55,3 @@ for endpoint in endpoints_dict:
         except:
             print('\t Failed!')
 
-#%%
-# Finally, attempt to instantiate the Ocean API with the configured endpoints
-with manta_logging.LoggerCritical():
-    ocn = ocean.Ocean(CONFIG_INI_PATH)
-print("*******************")
-print("Ocean successfully instantiated with kubernetes!")
