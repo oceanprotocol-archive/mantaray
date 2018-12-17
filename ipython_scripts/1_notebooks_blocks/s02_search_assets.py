@@ -1,7 +1,24 @@
 # %% [markdown]
 # # Getting Underway - Listing and searching registered assets
-# In this notebook, we will explore the concept
+# In this notebook, we will explore the concept of Assets. An Asset has an ID
+# (actually a 'decentralized' ID, called **DID**!).
+#
+# An Asset also has a document which describes the Asset and how to # authorize and gain access (i.e. purchase the asset).
+# This document is called a **DDO**, the DID Document. For Data Scientists, the DDO attribute of note is the 'metadata'
+# attribute. Metadata is used to describe your asset, for example the name and description of a Data Set.
+#
+# The DID is stored in the blockchain. The DDO is stored in a public searchable database, wrapped by the Aquarius
+# component.
 
+# %% [markdown]
+# Further reading!
+#
+# [W3C early draft standard 'Decentralized Identifiers (DIDs)'](https://w3c-ccg.github.io/did-spec/)
+#
+# [OEP 7 - Ocean Protocol standard for 'Decentralized Identifiers'](https://github.com/oceanprotocol/OEPs/tree/master/7)
+#
+# [OEP 7 - Ocean Protocol standard for 'Assets Metadata Ontology'](https://github.com/oceanprotocol/OEPs/tree/master/8)
+#
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
@@ -55,7 +72,6 @@ res = urllib.parse.urlparse(ocn.config['resources']['brizo.url'])
 print("Brizo service, base URL: {}://{}".format(res.scheme, res.netloc))
 print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
 # TODO: The Swagger page does not correctly populate the /spec endpoint. Enter the URL/spec manually!
-
 
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
