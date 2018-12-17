@@ -118,56 +118,83 @@ print("Resolved asset: {}, {}".format(resolved_asset.metadata['base']['name'], t
 
 # %% [markdown]
 # ### Section 4: Searching the Ocean
-# Aquarius supports query search, the Asset class is returned
+# Aquarius supports query search. A list of [Asset class] is returned from a search call.
+#
 # Currently, Aquarius is running MongoDB. For detailed query documentation, see the
 # [documentation](https://docs.mongodb.com/manual/reference/method/db.collection.find/)
+#
+# TODO: Wrap queries into Utilities for higher abstraction
+
 #%% [markdown]
 # To get started, the following query will return all documents with a 'metadata' service.
 #%%
-this_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}}
-query_section = {"service":{"$elemMatch":    {"metadata": {"$exists" : True }, "metadata.base.name": {'$eq':"Ocean protocol white paper"} }    }}
+# First, the pure mongoDB Query is built according to the documentation
+#
+# We are checking if the 'metadata' field exists, this should return all Assets.
+mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
 
-db.test.find({A: {$regex: 'Star Wars'}})
-query_section = {"service":{"$elemMatch":    {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':"paper"} }    }}
-
-query_section = {"service":{"$elemMatch":    {"metadata": {"$exists" : True }, "metadata.base.name": "/paper/i" }    }}
-
-this_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": query_section}
-res = ocn.search_assets(this_query)
-print(res)
-
-print('Found {} assets'.format(len(res)))
+search_results = ocn.search_assets(full_paged_query)
+print("Found {} assets".format(len(search_results)))
+if search_results:
+    print("First match:",search_results[0])
+    manta_print.print_ddo(search_results[0].ddo)
+# TODO: Update pretty-printer
 
 #%% [markdown]
-# This search can be refined to query assets matching the Name sting.
-
-#
-
+# Next, let's find an exact name within the 'metadata' of the Asset
 #%%
-ocn.search_assets('')
-ocn.search_assets('asdfasdfasdf')
-res = ocn.search_assets('Hello do not give me csv')
-this = res[0]
-this.asset_id
-this.did
-ocn.search_assets('Ocean')
-ocn.search_assets('id')
-ocn.search_assets('compression')
-ocn.search_assets('contenttype = csv')
+match_this_name = "Ocean protocol white paper"
+mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$eq':match_this_name } }}}
+full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
 
+search_results = ocn.search_assets(full_paged_query)
 
-for asset in ocn.search_assets('Ocean'):
-    print("\nASSET FOUND:", asset)
-    print('Asset:')
-    util_pprint.print_asset(asset)
-    print('DDO:')
-    util_pprint.print_ddo(asset.ddo)
+print("Found {} assets".format(len(search_results)))
+if search_results:
+    print("First match:",search_results[0])
+    manta_print.print_ddo(search_results[0].ddo)
 
+#%% Finally, let's find a substring within the name. We will use a Regex in MongoDB.
+match_this_substring = 'paper'
+mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':match_this_substring}}}}
+full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
+
+search_results = ocn.search_assets(full_paged_query)
+
+print("Found {} assets".format(len(search_results)))
+if search_results:
+    print("First match:", search_results[0])
+    manta_print.print_asset(search_results[0])
 
 # %% [markdown]
-# Finally, assets can be deleted from the store
-result = requests.get(ocn.metadata_store._base_url).content
-all_dids = json.loads(result)['ids']
-for i, did in enumerate(all_dids):
-    print("Deleting", did)
-    ocn.metadata_store.retire_asset_metadata(did)
+# ### Section 5: Cleaning the Ocean
+# A DID is registered on the blockchain, and can be resolved to a DID Document (DDO) as presented above.
+#
+# Since the DDO exists on Aquarius and not in the blockchain, the DDO itself can be deleted. The DID trace can never be
+# deleted from the blockchain.
+
+#%%
+# Again, let's count how many DDO's are registered
+all_dids = ocn.metadata_store.list_assets()
+print("There are {} assets registered in the metadata store.".format(len(all_dids)))
+
+# Let's delete the first DDO object.
+first_ddo = all_dids[0]
+print("Selected DDO for deletion:", first_ddo)
+ocn.metadata_store.retire_asset_metadata(first_ddo)
+
+
+# Again, let's count how many DDO's are registered
+all_dids = ocn.metadata_store.list_assets()
+print("There are now {} assets registered in the metadata store.".format(len(all_dids)))
+
+# %%
+# Deleting all assets!
+# Please don't delete all the assets, as other users may be testing the
+
+# result = requests.get(ocn.metadata_store._base_url).content
+# all_dids = json.loads(result)['ids']
+# for i, did in enumerate(all_dids):
+#     print("Deleting", did)
+#     ocn.metadata_store.retire_asset_metadata(did)
