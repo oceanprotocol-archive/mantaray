@@ -1,9 +1,13 @@
 # %% [markdown]
 # # Getting Underway - Publishing assets
-# In this notebook
-# TODO: description
-# TODO: Update this notebook after latest refactor of squid-py
-
+# In this notebook, we will explore how to publish an Asset using Ocean Protocol.
+# As described in the previous notebook, Publish consists of 2 aspects:
+#
+# 1. Uploading the DDO to Aquarius
+# 1. Registering the Asset on the blockchain
+#
+# *Note to the reader! The current implementation is very low-level, most of the functionality will be wrapped into
+# simpler Ocean.publish_dataset() style methods!*
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
 
