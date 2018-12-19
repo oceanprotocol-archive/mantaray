@@ -1,7 +1,7 @@
 # %% [markdown]
-# # User management - wallets, passwords and tokens
+# # Getting Underway - wallets, passwords and tokens
 #
-# TODO: Note that this notebook will not completely execute since the password file is *currently* not public.
+# TODO: Note that this notebook will not completely execute since the Parity password file is *currently* not public.
 #
 # To interact in Ocean Protocol, you will need a wallet and you will fund it with some
 # Token to access the assets in the network.
@@ -39,15 +39,15 @@ import mantaray_utilities.user as manta_user
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # Setup logging to a higher level and not flood the console with debug messages
-manta_logging.logger.setLevel('INFO')
+manta_logging.logger.setLevel('CRITICAL')
 
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
 # os.environ['USE_K8S_CLUSTER'] = 'true'
-logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
+logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
+logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 #%% Utility class
 #TODO: Move this utility class to module

@@ -1,5 +1,5 @@
 # %% [markdown]
-# # Downloading Datasets (Assets)
+# Getting Underway - Downloading Datasets (Assets)
 # In this notebook, TODO: description
 
 # %% [markdown]
@@ -23,14 +23,14 @@ import mantaray_utilities.user as manta_user
 import mantaray_utilities.asset_pretty_print as manta_print
 
 # Setup logging
-manta_logging.logger.setLevel('INFO')
+manta_logging.logger.setLevel('CRITICAL')
 
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_config.get_config_file_path()
-logging.info("Deployment type: {}".format(manta_config.get_deployment_type()))
-logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
-logging.info("Squid API version: {}".format(squid_py.__version__))
+logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
+logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
+logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
 # ### Section 1: Instantiate a simulated User
@@ -59,15 +59,16 @@ assert consumer1.account.ocean_balance > 0, "Consumer does not have any Ocean to
 # ### Section 2: Find an asset
 #%%
 # Get ALL dids
-result = requests.get(consumer1.ocn.metadata_store._base_url).content
-all_dids = json.loads(result)['ids']
-assert len(all_dids) > 0
+all_dids = consumer1.ocn.metadata_store.list_assets()
+print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 
-# Get the DID for testing
-first_did = all_dids[-1]
+assert len(all_dids), "There are no assets registered, go to s03_publish_and_register!"
+
+# Get a DID for testing
+selected_did = all_dids[-1]
 
 #%% From this DID, get the DDO
-this_ddo = consumer1.ocn.resolve_did(first_did)
+this_ddo = consumer1.ocn.resolve_did(selected_did)
 manta_print.print_ddo(this_ddo)
 
 #%% [markdown]
@@ -103,5 +104,5 @@ print('got new service agreement id:', service_agreement_id)
 #%% [markdown]
 # Upon successful execution of the service agreement, a download is immediately initiated.
 # The downloaded files are stored in the current directory in a /downloads/datafile.<did> folder.
-# Check the directory in the JupyterLab notebook pane on the left!
+# Check the directory in the JupyterLab notebook pane on the left, and find your Assetgi!
 

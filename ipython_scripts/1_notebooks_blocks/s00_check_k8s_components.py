@@ -1,5 +1,5 @@
 # %% [markdown]
-# # Check the running Ocean protocol components
+# # Pre-sail checklist - Ocean protocol component status
 # With simulated Kubernetes endpoints deployed, this script will make a simple
 # HTTP request to each, and report the status returned.
 #
@@ -30,7 +30,6 @@ logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 # For now, the endpoints are hard-coded by the dev-ops team.
 endpoints_dict = {
     'keeper-contracts': 'http://52.1.94.55:8545',
-    'pleuston': 'http://ac98d76bade8d11e89c320e965e714bc-981020006.us-east-1.elb.amazonaws.com:3000/',
     'aquarius': 'http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000',
     'brizo': 'http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030',
     'secret_store' : 'https://secret-store.dev-ocean.com'
@@ -42,22 +41,29 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     """HTTP Request on the given URL"""
     res = requests.request(verb, endpoint_url)
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
-    return res.status_code, res.content
+    return res
 
+
+# %% [markdown]
+# Iterate over the defined endpoints.
+#
 #%%
-# Iterate over the defined endpoints
+flag_fail = True
 for endpoint in endpoints_dict:
     with manta_logging.LoggerCritical():
         print("Checking {}".format(endpoint))
         try:
-            code, status = check_endpoint(endpoint, endpoints_dict[endpoint])
-            print('\t', endpoint, code, status)
+            res = check_endpoint(endpoint, endpoints_dict[endpoint])
+            if res.headers['Content-Type'] == 'application/json':
+                if 'software' in res.json().keys() and 'version' in res.json().keys():
+                    print("\t Success: {} v{}".format(res.json()['software'], res.json()['version']))
+            else:
+                print("\t Success: <no status endpoint>")
         except:
+            flag_fail = True
             print('\t Failed!')
 
-#%%
-# Finally, attempt to instantiate the Ocean API with the configured endpoints
-with manta_logging.LoggerCritical():
-    ocn = ocean.Ocean(CONFIG_INI_PATH)
-print("*******************")
-print("Ocean successfully instantiated with kubernetes!")
+if flag_fail:
+    print("Failure in a component, please contact administrator!")
+
+
