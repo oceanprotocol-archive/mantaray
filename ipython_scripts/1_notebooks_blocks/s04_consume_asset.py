@@ -104,5 +104,5 @@ print('got new service agreement id:', service_agreement_id)
 #%% [markdown]
 # Upon successful execution of the service agreement, a download is immediately initiated.
 # The downloaded files are stored in the current directory in a /downloads/datafile.<did> folder.
-# Check the directory in the JupyterLab notebook pane on the left, and find your Asset!
+# Check the directory in the JupyterLab notebook pane on the left, and find your Assetgi!
 
