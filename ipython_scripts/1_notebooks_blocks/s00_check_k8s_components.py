@@ -47,8 +47,8 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
 # %% [markdown]
 # Iterate over the defined endpoints.
 #
-# TODO: secret_store fails, but scripts still run
 #%%
+flag_fail = True
 for endpoint in endpoints_dict:
     with manta_logging.LoggerCritical():
         print("Checking {}".format(endpoint))
@@ -60,5 +60,10 @@ for endpoint in endpoints_dict:
             else:
                 print("\t Success: <no status endpoint>")
         except:
+            flag_fail = True
             print('\t Failed!')
+
+if flag_fail:
+    print("Failure in a component, please contact administrator!")
+
 

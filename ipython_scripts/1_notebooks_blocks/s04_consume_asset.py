@@ -59,12 +59,13 @@ assert consumer1.account.ocean_balance > 0, "Consumer does not have any Ocean to
 # ### Section 2: Find an asset
 #%%
 # Get ALL dids
-result = requests.get(consumer1.ocn.metadata_store._base_url).content
-all_dids = json.loads(result)['ids']
+all_dids = consumer1.ocn.metadata_store.list_assets()
+print("There are {} assets registered in the metadata store.".format(len(all_dids)))
+
 assert len(all_dids) > 0
 
-# Get the DID for testing
-first_did = all_dids[-1]
+# Get a DID for testing
+selected_did = all_dids[-1]
 
 #%% From this DID, get the DDO
 this_ddo = consumer1.ocn.resolve_did(first_did)
