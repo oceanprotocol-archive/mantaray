@@ -62,13 +62,13 @@ assert consumer1.account.ocean_balance > 0, "Consumer does not have any Ocean to
 all_dids = consumer1.ocn.metadata_store.list_assets()
 print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 
-assert len(all_dids) > 0
+assert len(all_dids), "There are no assets registered, go to s03_publish_and_register!"
 
 # Get a DID for testing
 selected_did = all_dids[-1]
 
 #%% From this DID, get the DDO
-this_ddo = consumer1.ocn.resolve_did(first_did)
+this_ddo = consumer1.ocn.resolve_did(selected_did)
 manta_print.print_ddo(this_ddo)
 
 #%% [markdown]
@@ -104,5 +104,5 @@ print('got new service agreement id:', service_agreement_id)
 #%% [markdown]
 # Upon successful execution of the service agreement, a download is immediately initiated.
 # The downloaded files are stored in the current directory in a /downloads/datafile.<did> folder.
-# Check the directory in the JupyterLab notebook pane on the left!
+# Check the directory in the JupyterLab notebook pane on the left, and find your Asset!
 

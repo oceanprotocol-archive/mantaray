@@ -84,6 +84,7 @@ print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netl
 
 #%%
 all_dids = ocn.metadata_store.list_assets()
+assert len(all_dids), "There are no assets registered, go to s03_publish_and_register!"
 print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 
 # %% [markdown]
@@ -214,24 +215,26 @@ if search_results:
 # deleted from the blockchain.
 
 #%%
-# Again, let's count how many DDO's are registered
-all_dids = ocn.metadata_store.list_assets()
-print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 
-# Let's delete the first DDO object.
-first_ddo = all_dids[0]
-print("Selected DDO for deletion:", first_ddo)
-ocn.metadata_store.retire_asset_metadata(first_ddo)
+if 0:
+    # Let's count how many ddo's are registered
+    all_dids = ocn.metadata_store.list_assets()
+    print("there are {} assets registered in the metadata store.".format(len(all_dids)))
 
-# Again, let's count how many DDO's are registered
-all_dids = ocn.metadata_store.list_assets()
-print("There are now {} assets registered in the metadata store.".format(len(all_dids)))
+    # let's delete the first ddo object.
+    first_ddo = all_dids[0]
+    print("selected ddo for deletion:", first_ddo)
+    ocn.metadata_store.retire_asset_metadata(first_ddo)
+
+    # again, let's count how many ddo's are registered
+    all_dids = ocn.metadata_store.list_assets()
+    print("there are now {} assets registered in the metadata store.".format(len(all_dids)))
 
 # %%
 # Deleting all assets!
 # Please don't delete all the assets, as other users may be testing the components!
-
-all_dids = ocn.metadata_store.list_assets()
-for i, did in enumerate(all_dids):
-    print("Deleting DDO {} - {}".format(i, did))
-    ocn.metadata_store.retire_asset_metadata(did)
+# if 0:
+#     all_dids = ocn.metadata_store.list_assets()
+#     for i, did in enumerate(all_dids):
+#         print("Deleting DDO {} - {}".format(i, did))
+#         ocn.metadata_store.retire_asset_metadata(did)
