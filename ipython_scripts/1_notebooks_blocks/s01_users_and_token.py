@@ -24,7 +24,6 @@
 # Standard imports
 import random
 import os
-import names
 import logging
 from pathlib import Path
 import csv
@@ -113,8 +112,8 @@ for i, acct_address in enumerate(address_list[0:num_users]):
         this_password = PASSWORD_MAP[acct_address]
     else:
         this_password = None
-
-    user = manta_user.User(names.get_full_name(), role, acct_address, this_password, CONFIG_INI_PATH)
+    this_name = "User {}".format(i)
+    user = manta_user.User(this_name, role, acct_address, this_password, CONFIG_INI_PATH)
     users.append(user)
 
 # Select only unlocked accounts
