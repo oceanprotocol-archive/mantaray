@@ -1,29 +1,60 @@
 language: python
 matrix:
   include:
-    - python: 3.6
     - python: 3.7
       dist: xenial
-      sudo: true
-services:
-  - elasticsearch
-
-before_script:
-  - sleep 15
+      sudo: false
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -U tox-travis
+before_install:
+  - echo "Travis lifecycle 3) before_install"
+  - docker-compose -f docker/docker-compose.yml up -d
 
-# Command to run tests, e.g. python setup.py test
-script: tox
+install:
+  - echo "Travis lifecycle 4) install"
+#  - pip install -r requirements_dev.txt
+  - pip install -U tox-travis
 
+before_script:
+  - echo "Travis lifecycle 5) before_script [empty]"
+
+script:
+  - echo "Travis lifecycle 6) script"
+  - tox
+
+after_success:
+  - echo "Travis lifecycle 8) after_success"
+  - pip install jupytext
+  # Convert to Jupyter format
+  - mkdir ./jupyter_notebooks
+  - python ./scripts/nb_convert_jupytext.py
+  # Pull the mantaray_jupyter repo
+  - git clone https://github.com/oceanprotocol/mantaray_jupyter.git ~/git/mantaray_jupyter
+  # Copy the jupyter files into this repo
+  - ls
+  - cp -R ./jupyter_notebooks ~/git/mantaray_jupyter
+  # Go into the repo, add, commit, push
+  - cd ~/git/mantaray_jupyter
+  - ls
+  - git config --global user.email "travis@travis-ci.org"
+  - git config --global user.name "Travis CI"
+  - git add -A
+  - git commit -m "deploy Travis build job, mantaray IPython to Jupyter format"
+  - git push
+
+
+before_deploy:
+  - echo "Travis lifecycle 9) before_deploy [empty]"
+
+# TODO: Test the deployment
 # Generate PYPI package on tagged versions on master
 deploy:
+#  echo "Travis lifecycle 10) deploy [empty]"
   provider: pypi
   distributions: sdist bdist_wheel
   user: ${PYPI_USER}
   password: ${PYPI_PASSWORD}
   on:
     tags: true
-    repo: oceanprotocol/oceandb-elasticsearch-driver
-    python: 3.6
+    repo: oceanprotocol/mantaray
+    python: 3.7
