@@ -2,7 +2,7 @@
 
 # mantaray
 
->    🐙 [Data Science level 2 ](https://placeholder.com) high level implementation management for (Python).
+>    🐙 Data Science focused implementation of the Ocean Protocol stack and API for (Python).
 >    [oceanprotocol.com](https://oceanprotocol.com)
 
 [![Travis (.com)](https://img.shields.io/travis/com/oceanprotocol/mantaray.svg)](https://travis-ci.com/oceanprotocol/mantaray)
