@@ -23,7 +23,8 @@ CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 #%% [markdown]
-# ## The following cell is very verbose, since logging is set at lowest level for demo/debugging. In later notebooks, the debug logs are hidden using `manta_logging`.
+# ## Connect to Ocean with a configuration file
+# The following cell is very verbose, since logging is set at lowest level for demo/debugging. In later notebooks, the debug logs are hidden using `manta_logging`.
 
 #%%
 # Instantiate Ocean
@@ -39,3 +40,8 @@ for account in ocn.accounts:
 # A utility function is provided to summarize the Ocean class
 manta_print.print_ocean(ocn)
 
+#%% [markdown]
+# ## Connect to Ocean with a configuration dictionary
+# Instantiate Ocean
+configuration = Config(CONFIG_INI_PATH)
+ocn = Ocean(configuration)

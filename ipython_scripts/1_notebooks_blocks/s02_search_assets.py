@@ -28,16 +28,8 @@
 
 #%%
 # Standard imports
-import sys
 import logging
-from pathlib import Path
-import squid_py
-from squid_py.ocean.ocean import Ocean
-import requests
-import json
-import os
 import urllib
-import pprint
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -45,7 +37,6 @@ from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
-import mantaray_utilities.user as manta_user
 import mantaray_utilities.asset_pretty_print as manta_print
 
 # Setup logging

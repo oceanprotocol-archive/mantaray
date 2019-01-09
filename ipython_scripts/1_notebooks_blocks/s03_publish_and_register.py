@@ -20,6 +20,7 @@ import os
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
+from squid_py.config import Config
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.user as manta_user
@@ -42,7 +43,8 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 #
 #%%
 # Instantiate Ocean with the default configuration file.
-ocn = Ocean(config_file=CONFIG_INI_PATH)
+configuration = Config(CONFIG_INI_PATH)
+ocn = Ocean(configuration)
 
 #%% [markdown]
 # For this tutorial, we will select one of the available unlocked accounts.

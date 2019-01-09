@@ -43,7 +43,7 @@ def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
     return res
 
-
+requests.request('GET', 'https://secret-store.dev-ocean.com')
 # %% [markdown]
 # Iterate over the defined endpoints.
 #
