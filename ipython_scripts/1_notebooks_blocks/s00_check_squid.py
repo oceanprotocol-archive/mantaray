@@ -19,7 +19,6 @@ import mantaray_utilities.asset_pretty_print as manta_print
 #%%
 # Get the configuration file path for this environment
 logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
-manta_config.name_deployment_type()
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
@@ -38,5 +37,5 @@ for account in ocn.accounts:
     print(account)
 
 # A utility function is provided to summarize the Ocean class
-# manta_print.print_ocean(ocn)
+manta_print.print_ocean(ocn)
 
