@@ -9,6 +9,7 @@ import logging
 import os
 # Import mantaray and the Ocean API (squid)
 from squid_py.ocean.ocean import Ocean
+from squid_py.config import Config
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.asset_pretty_print as manta_print
@@ -18,6 +19,7 @@ import mantaray_utilities.asset_pretty_print as manta_print
 #%%
 # Get the configuration file path for this environment
 logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
+manta_config.name_deployment_type()
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
@@ -26,7 +28,8 @@ logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 #%%
 # Instantiate Ocean
-ocn = Ocean(CONFIG_INI_PATH)
+configuration = Config(CONFIG_INI_PATH)
+ocn = Ocean(configuration)
 
 #%%
 print("***OCEAN***")
@@ -35,5 +38,5 @@ for account in ocn.accounts:
     print(account)
 
 # A utility function is provided to summarize the Ocean class
-manta_print.print_ocean(ocn)
+# manta_print.print_ocean(ocn)
 
