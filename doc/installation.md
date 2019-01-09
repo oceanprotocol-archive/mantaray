@@ -1,28 +1,37 @@
-To install the latest environment for all local development;
+
+
+## Local development environment
+
+Create a virtual environment
 
 ```
-THISENVNAME=mantaray4
+THISENVNAME=mantaray
 conda create --name $THISENVNAME python
 source activate $THISENVNAME
 ```
 
-Install standard packages
-```
-conda install pandas
-conda install boto3
-```
+### Install dependencies from PyPI
+
+Install the main API, which in turn installs the contract ABI files
 
 ```
-pip install web3==4.7.1 --ignore-installed
+pip install squid-py
+conda list | egrep 'keeper-contracts|squid-py'
 ```
 
-Install ocean components from a local git repo
+You should verify the versions of squid-py, and keeper-contracts. 
+
+### Install dependencies from github
+
+Alternatively, you can install latest versions or branches from git. 
+
+Install ocean components from a local git repository directory 
+
 ```
 pip install ~/ocn/squid-py
-pip install
 ```
 
-Install Ocean components directly from a git branch
+Or install from a github branch
 ```
 pip install git+https://github.com/oceanprotocol/squid-py.git@develop
 ```
@@ -36,5 +45,6 @@ pip install --upgrade --force-reinstall git+https://github.com/oceanprotocol/$TH
 
 Even more generally, see the /scripts/install_local.sh script to manage the installation process.
 ```
-
+source activate $THISENVNAME
+source ./scripts/install_local.sh
 ```
