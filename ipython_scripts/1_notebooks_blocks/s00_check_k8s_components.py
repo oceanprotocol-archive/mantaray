@@ -48,15 +48,18 @@ requests.request('GET', 'https://secret-store.dev-ocean.com')
 # Iterate over the defined endpoints.
 #
 #%%
-flag_fail = True
+flag_fail = False
 for endpoint in endpoints_dict:
     with manta_logging.LoggerCritical():
         print("Checking {}".format(endpoint))
         try:
             res = check_endpoint(endpoint, endpoints_dict[endpoint])
-            if res.headers['Content-Type'] == 'application/json':
-                if 'software' in res.json().keys() and 'version' in res.json().keys():
-                    print("\t Success: {} v{}".format(res.json()['software'], res.json()['version']))
+            if 'Content-Type' in res.headers:
+                if res.headers['Content-Type'] == 'application/json':
+                    if 'software' in res.json().keys() and 'version' in res.json().keys():
+                        print("\t Success: {} v{}".format(res.json()['software'], res.json()['version']))
+                else:
+                    print("\t Success: <no status endpoint>")
             else:
                 print("\t Success: <no status endpoint>")
         except:
