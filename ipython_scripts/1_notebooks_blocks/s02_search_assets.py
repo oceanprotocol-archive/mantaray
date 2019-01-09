@@ -42,6 +42,7 @@ import pprint
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
+from squid_py.config import Config
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.user as manta_user
@@ -62,7 +63,8 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 # ### Section 1: Assets in the MetaData store (Aquarius)
 # Anyone can search assets in the public metadata stores
 #%%
-ocn = Ocean(config_file=CONFIG_INI_PATH)
+configuration = Config(CONFIG_INI_PATH)
+ocn = Ocean(configuration)
 
 #%% [markdown]
 # The Metadata store is a database wrapped with a REST API
@@ -115,29 +117,30 @@ print("Selected DID:", this_did)
 #
 # A DDO has information regarding authentication, access control, and more
 #
-# For now, we will retrieve the 'metadata' of the Asset
+# First, we will retrieve the 'metadata' of the Asset
 #%%
-# Get the DDO from Aquarius database
-# TODO: This method is incorrectly named, issue opened and solved in last version of squid-py!
-aquarius_ddo = ocn.metadata_store.get_asset_metadata(this_did)
-# This is a dictionary, we are interested in only one of the 'service' items
-aquarius_metadata_svc = [svc for svc in aquarius_ddo['service'] if svc['type'] == 'Metadata'][0]
-aquarius_metadata = aquarius_metadata_svc['metadata']
+aquarius_metadata = ocn.metadata_store.get_asset_metadata(this_did)
 print("Asset name:", aquarius_metadata['base']['name'])
-print("Asset metadata:")
-pprint.pprint(aquarius_metadata)
+print("Asset description:", aquarius_metadata['base']['description'])
+print("Asset size:", aquarius_metadata['base']['size'])
 
 # %% [markdown]
+# The proper way to retrieve an asset is to **resolve** it from the Blockchain and return an Asset.
 # Instead of accessing the Aquarius database directly,
 # a DDO can be resolved from the DID on the blockchain, which first checks if the DID exists on chain,
 # and then performs the Aquarius access to return a DDO instance. A DDO instance is essentially the same as
 # a dictionary object.
 
 #%%
+# Get the entire DDO
 resolved_ddo = ocn.resolve_did(this_did)
+# The Metadata is part of the DDO!
+aquarius_metadata_svc = [svc for svc in resolved_ddo._services if svc._type == 'Metadata'][0]
+aquarius_metadata = aquarius_metadata_svc._values['metadata']
+print("Asset name:", aquarius_metadata['base']['name'])
+print("Asset description:", aquarius_metadata['base']['description'])
+print("Asset size:", aquarius_metadata['base']['size'])
 
-# %% [markdown]
-# The proper way to retrieve an asset is to **resolve** it from the Blockchain and return an Asset.
 #%%
 
 # TODO: This is not working in this version, update!
