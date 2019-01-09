@@ -1,8 +1,6 @@
 # %% [markdown]
 # # Getting Underway - wallets, passwords and tokens
 #
-# TODO: Note that this notebook will not completely execute since the Parity password file is *currently* not public.
-#
 # To interact in Ocean Protocol, you will need a wallet and you will fund it with some
 # Token to access the assets in the network.
 #
@@ -23,8 +21,6 @@
 #%%
 # Standard imports
 import random
-import os
-# import names
 import logging
 from pathlib import Path
 import csv
@@ -32,43 +28,20 @@ import csv
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
 import squid_py
 from squid_py.ocean.ocean import Ocean
-
-import mantaray_utilities.config as manta_config
-import mantaray_utilities.logging as manta_logging
-import mantaray_utilities.user as manta_user
+from squid_py.config import Config
+import mantaray_utilities as manta_utils
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
 # Setup logging to a higher level and not flood the console with debug messages
-manta_logging.logger.setLevel('CRITICAL')
+manta_utils.logging.logger.setLevel('CRITICAL')
 
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
 # os.environ['USE_K8S_CLUSTER'] = 'true'
-logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
-CONFIG_INI_PATH = manta_config.get_config_file_path()
+logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
-
-#%% Utility class
-#TODO: Move this utility class to module
-class CaseInsensitiveDict(dict):
-    """User addresses are case"""
-    def __setitem__(self, key, value):
-        super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
-    def __getitem__(self, key):
-        return super(CaseInsensitiveDict, self).__getitem__(key.lower())
-
-#%% [markdown]
-# This section will load passwords and create seperate user accounts for each one.
-#TODO: This file is not currently uploaded until after security/scaling review
-
-#%% Get passwords from file
-PASSWORD_FILE = manta_config.get_project_path() / 'passwords.csv'
-PASSWORD_MAP = CaseInsensitiveDict() # New dict
-with open(PASSWORD_FILE, mode='r') as infile:
-    reader = csv.reader(infile)
-    for row in reader:
-        PASSWORD_MAP[row[0]] = row[1]
 
 # %% [markdown]
 # ### Section 1: Instantiate the Ocean Protocol interface
@@ -77,13 +50,19 @@ ocn = Ocean(CONFIG_INI_PATH)
 logging.info("Ocean smart contract node connected ".format())
 
 #%%
-# List the accounts created
+# List the accounts created in the node
 # ocn.accounts is a {address: Account} dict
 print(len(ocn.accounts), "ocean accounts available with following addresses:")
 for address in ocn.accounts:
     acct = ocn.accounts[address]
     print(acct.address)
 
+
+#%%
+# The configuration has a 'main account'. This is the currently active and unlocked account.
+
+#%%
+ocn.main_account.address
 # %% [markdown]
 # ### Section 2: From accounts, to Users
 #

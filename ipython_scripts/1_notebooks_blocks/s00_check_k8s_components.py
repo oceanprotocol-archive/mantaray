@@ -9,8 +9,6 @@ import requests
 import os
 import logging
 
-# Import mantaray and the Ocean API (squid)
-from squid_py.ocean import ocean
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 

@@ -11,7 +11,6 @@ import os
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities.config as manta_config
-import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.asset_pretty_print as manta_print
 # %% For testing, set the desired environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
@@ -41,7 +40,34 @@ for account in ocn.accounts:
 manta_print.print_ocean(ocn)
 
 #%% [markdown]
-# ## Connect to Ocean with a configuration dictionary
+# ## Alternatively, connect to Ocean with a configuration dictionary
+
+config_dict = {
+    'keeper-contracts': {
+        # Point to an Ethereum RPC client. Note that Squid learns the name of the network to work with from this client.
+        'keeper.url': 'http://localhost:8545',
+        # Specify the keeper contracts artifacts folder (has the smart contracts definitions json files). When you
+        # install the package, the artifacts are automatically picked up from the `keeper-contracts` Python
+        # dependency unless you are using a local ethereum network.
+        'keeper.path': 'artifacts',
+        'secret_store.url': 'http://localhost:12001',
+        'parity.url': 'http://localhost:8545',
+        'parity.address': '',
+        'parity.password': '',
+
+    },
+    'resources': {
+        # aquarius is the metadata store. It stores the assets DDO/DID-document
+        'aquarius.url': 'http://localhost:5000',
+        # Brizo is the publisher's agent. It serves purchase and requests for both data access and compute services
+        'brizo.url': 'http://localhost:8030',
+        # points to the local database file used for storing temporary information (for instance, pending service agreements).
+        'storage.path': 'squid_py.db',
+        # Where to store downloaded asset files
+        'downloads.path': 'consume-downloads'
+    }
+}
+
 # Instantiate Ocean
-configuration = Config(CONFIG_INI_PATH)
+configuration = Config(filename=None, options_dict=config_dict)
 ocn = Ocean(configuration)
