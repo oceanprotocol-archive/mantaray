@@ -79,6 +79,8 @@ conda list | egrep 'keeper-contracts|squid-py|mantaray-utilities
 
 ## Section 2) Run the simulated Ocean stack
 
+Ensure you have installed [docker](https://docs.docker.com/install/). 
+
 `git clone` the [docker images](https://github.com/oceanprotocol/barge) repository and ensure you are in the master branch. 
 
 Edit the `start_ocean.sh` script, and ensure that the `KEEPER_DEPLOY_CONTRACTS="true"`  variable is set. 
@@ -102,6 +104,8 @@ The parity node is deployed with accounts which are LOCKED. These must be UNLOCK
 The relevant docker-compose files will begin downloading the images, and starting the containers. The ethereum smart contracts will be *compiled* and *migrated* in the `keeper-contracts` container. These contracts will also be copied to your home directory in a `~/.ocean/keeper-contracts/artifacts` folder. 
 
 In this folder ensure that there exists several `.json` files with the word `spree` (referring to the local docker simulated testnet). These are the contract *artifacts* or ABI's (Application Binary Interface) which are the signatures of the deployed smart contracts. 
+
+You can view the running docker pods and versions of the components by executing `docker ps` at the terminal. 
 
 ## 3) Verify your contract ABI files
 
