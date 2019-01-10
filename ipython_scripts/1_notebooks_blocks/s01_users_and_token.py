@@ -67,8 +67,17 @@ print("Associated password:",configuration['keeper-contracts']['parity.password'
 ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
+# The Ocean API, during development, queries the blockchain to return all created (simulated) accounts;
+for acct in ocn.accounts:
+    print(acct)
+
+# Alternatively, the accounts are available on the keeper instance;
+print(ocn.keeper.accounts)
 # %% [markdown]
-# T
+# The Ocean API has a 'main_account', this is the currently active (your) account.
+#%%
+ocn.main_account.address
+
 #%%
 # List the accounts created in the node
 # ocn.accounts is a {address: Account} dict
