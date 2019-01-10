@@ -8,7 +8,7 @@
 # User of Ocean Protocol.
 #
 # To use Ocean, a User requires
-# - A wallet address
+# - A user account address
 # - A password
 #
 # With this information, the Ocean instance can be instantiated with the Ocean.main_account attribute.
@@ -44,7 +44,7 @@ CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 # %% [markdown]
-# ## Examine the configuration object
+# ## Section 1: Examine the configuration object
 #%%
 # The API can be configured with a file or a dictionary.
 # In this case, we will instantiate from file, which you may also inspect.
@@ -54,14 +54,21 @@ configuration = Config(CONFIG_INI_PATH)
 pprint(configuration._sections)
 
 # %% [markdown]
-# 
+# Let's look at the 2 parameters that define your identity
+# The 20-byte 'parity.address' defines your account address
+# 'parity.password' is used to decrypt your private key and securely sign transactions
+#%%
+print("Currently selected address:",configuration['keeper-contracts']['parity.address'])
+print("Associated password:",configuration['keeper-contracts']['parity.password'])
 
-# %%
 # %% [markdown]
-# ## Instan
+# ## Section 2: Instantiate the Ocean API class with this configuration
+# %%
 ocn = Ocean(configuration)
-logging.info("Ocean smart contract node connected ".format())
+logging.critical("Ocean smart contract node connected ".format())
 
+# %% [markdown]
+# T
 #%%
 # List the accounts created in the node
 # ocn.accounts is a {address: Account} dict
