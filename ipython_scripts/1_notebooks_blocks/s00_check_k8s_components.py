@@ -27,9 +27,9 @@ logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 # For now, the endpoints are hard-coded by the dev-ops team.
 endpoints_dict = {
-    'Ethereum testnet (Nile)': 'http://52.1.94.55:8545',
     'aquarius': 'http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000',
     'brizo': 'http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030',
+    'Ethereum testnet (Nile)': 'http://52.1.94.55:8545',
     'secret_store' : 'https://secret-store.dev-ocean.com'
 }
 # endpoints_dict['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'

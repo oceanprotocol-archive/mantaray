@@ -31,7 +31,7 @@ from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
 logging.info("Squid API version: {}".format(squid_py.__version__))
-
+from pprint import pprint
 # Setup logging to a higher level and not flood the console with debug messages
 manta_utils.logging.logger.setLevel('CRITICAL')
 
@@ -44,9 +44,22 @@ CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 # %% [markdown]
-# ### Section 1: Instantiate the Ocean Protocol interface
+# ## Examine the configuration object
 #%%
-ocn = Ocean(CONFIG_INI_PATH)
+# The API can be configured with a file or a dictionary.
+# In this case, we will instantiate from file, which you may also inspect.
+# The configuration is a standard library [configparser.ConfigParser()](https://docs.python.org/3/library/configparser.html) object.
+print("Configuration file:", CONFIG_INI_PATH)
+configuration = Config(CONFIG_INI_PATH)
+pprint(configuration._sections)
+
+# %% [markdown]
+# 
+
+# %%
+# %% [markdown]
+# ## Instan
+ocn = Ocean(configuration)
 logging.info("Ocean smart contract node connected ".format())
 
 #%%
