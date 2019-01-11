@@ -54,11 +54,11 @@ ocn = Ocean(configuration)
 #%%
 # This utility function gets all simulated accounts.
 # Let's take the first unlocked account, and name it the Publisher.
-publisher = manta_user.get_first_user(ocn.accounts)
-print(publisher)
+publisher_account = manta_user.get_first_user(ocn.accounts)
+print(publisher_account)
 
-assert publisher.ocn._http_client.__name__ == 'requests'
-assert publisher.ocn._secret_store_client.__name__ == 'Client'
+assert publisher_account.ocn._http_client.__name__ == 'requests'
+assert publisher_account.ocn._secret_store_client.__name__ == 'Client'
 
 # We don't need this ocn instance reference anymore ...
 del ocn
@@ -82,9 +82,9 @@ SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
 
 # Get the ID of this SEA
 template_id = squid_py.service_agreement.utils.register_service_agreement_template(
-    publisher.ocn.keeper.service_agreement,
-    publisher.ocn.keeper.contract_path,
-    publisher.ocn.main_account,
+    publisher_account.ocn.keeper.service_agreement,
+    publisher_account.ocn.keeper.contract_path,
+    publisher_account.ocn.main_account,
     squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
 )
 print("Template ID:", template_id)
@@ -93,7 +93,7 @@ print("Template ID:", template_id)
 # ### Section 4: Confirm your service endpoints with Brizo (services handler for Publishers)
 #%%
 
-brizo_url = publisher.ocn.config.get('resources', 'brizo.url')
+brizo_url = publisher_account.ocn.config.get('resources', 'brizo.url')
 
 brizo_base_url = '/api/v1/brizo'
 purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)
@@ -114,12 +114,12 @@ this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor
 #
 # `price, purchase_endpoint, service_endpoint, timeout, template_id`
 
-publisher.ocn.keeper.web3.personal.unlockAccount(publisher.account.address, publisher.account.password)
+publisher_account.ocn.keeper.web3.personal.unlockAccount(publisher_account.account.address, publisher_account.account.password)
 
 #%%
 # Register this asset into Ocean
-ddo = publisher.ocn.register_asset(
-    metadata, publisher.ocn.main_account.address,
+ddo = publisher_account.ocn.register_asset(
+    metadata, publisher_account.ocn.main_account.address,
     [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)])
 print("DDO created and registered!")
 print("DID:", ddo.did)
