@@ -95,19 +95,30 @@ print("Account Ether balance: ", my_acct.ether_balance) # TODO: Convert from wei
 print("Account Ocean Token balance: ", my_acct.ocean_balance)
 
 # %% [markdown]
-# Accounts need to be unlocked
-flag_unlocked = my_acct.unlock()
+# Most of your interaction with the blockchain will require your Password
+# In the following cell, we will try to request 1 ocean token without unlocking the account;
 
-print(flag_unlocked)
-from squid_py.keeper.web3_provider import Web3Provider
-Web3Provider.get_web3().personal.unlockAccount(my_acct.address, "asdf")
-Web3Provider.get_web3().personal.unlockAccount( "secret")
+# %%
+ocn.keeper.market.request_tokens(1, my_acct.address)
 
-Web3Provider.get_web3().eth.sign(my_acct.address, text="")
-ocn.keeper.market.request_tokens(100, my_acct.address)
-ocn.keeper.market.request_tokens(100, my_acct.address)
+# %% [markdown]
+# Let's unlock the account, and request a token.
+# The result is a transaction_hash. This is your ticket to your reciept, or in other words,
+# your proof that a transaction was completed. Welcome to the Asynchronous world of Blockchain - things take time.
+#
+# Your balance should be increased by 1 - but only after the block has been mined! Try The balance printing your balance
+# multiple times until it updates.
+# %%
+my_acct.unlock()
+ocn.keeper.market.request_tokens(1, my_acct.address)
+# %%
+# This will update after the transaction has been mined!
+print("Account Ocean Token balance: ", my_acct.ocean_balance)
 
-# flag_unlocked = my_acct.unlock(my_acct.address, my_acct.password)
-# print("Account unlocked:", flag_unlocked)
-# The following method can be used to lock an account
-#Web3Provider.get_web3().personal.lockAccount(ocn.main_account.address)
+# %% [markdown]
+# Of course, the point of the Ocean class is to abstract this away for you, so the following code makes it easy to request token;
+# %%
+my_acct.request_tokens(1)
+# %%
+# This will update after the transaction has been mined!
+print("Account Ocean Token balance: ", my_acct.ocean_balance)
