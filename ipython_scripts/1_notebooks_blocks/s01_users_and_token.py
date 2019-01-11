@@ -95,7 +95,10 @@ print("Account Ether balance: ", my_acct.ether_balance) # TODO: Convert from wei
 print("Account Ocean Token balance: ", my_acct.ocean_balance)
 
 # %% [markdown]
-# Most of your interaction with the blockchain will require your Password
+# Most of your interaction with the blockchain will require your Password.
+#
+# For development and testing, we have a magical function which will give you free Ocean Token!
+#
 # In the following cell, we will try to request 1 ocean token without unlocking the account;
 
 # %%
@@ -103,10 +106,11 @@ ocn.keeper.market.request_tokens(1, my_acct.address)
 
 # %% [markdown]
 # Let's unlock the account, and request a token.
-# The result is a transaction_hash. This is your ticket to your reciept, or in other words,
-# your proof that a transaction was completed. Welcome to the Asynchronous world of Blockchain - things take time.
+# The result is a *transaction_hash*. This is your ticket to your *transaction receipt*, or in other words,
+# your proof that a transaction was completed (or not!). Welcome to the Asynchronous world of Blockchain applications
+# - things take time.
 #
-# Your balance should be increased by 1 - but only after the block has been mined! Try The balance printing your balance
+# Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
 # %%
 my_acct.unlock()
@@ -122,3 +126,8 @@ my_acct.request_tokens(1)
 # %%
 # This will update after the transaction has been mined!
 print("Account Ocean Token balance: ", my_acct.ocean_balance)
+
+# %% [markdown]
+# Genearally, many methods in the API will include a call to
+# [.waitForTransactionReceipt(transaction_hash)](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.waitForTransactionReceiptj),
+# which explicitly pauses execution until the transaction has been mined.
