@@ -68,21 +68,14 @@ print("Associated password:", user1_pass)
 # ## Section 2: Instantiate the Ocean API class with this configuration
 # The Ocean API has an attribute listing all created (simulated) accounts in your local node
 # %%
-ocn_user1 = Ocean(configuration)
+ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
-
-print(len(ocn_user1.accounts), "accounts exist")
+print(len(ocn.accounts), "accounts exist")
 print("{:<45} {}".format("Account Address", "Ocean Token Balance"))
-for acct_address in ocn_user1.accounts:
-    this_account = ocn_user1.accounts[acct_address]
+for acct_address in ocn.accounts:
+    this_account = ocn.accounts[acct_address]
     print("{:<45} {}".format(this_account.address, this_account.ocean_balance))
-
-# %% [markdown]
-# One of these accounts will be selected as your current active account
-# %%
-
-
 
 # %% [markdown]
 # ### The User Account creed
@@ -90,16 +83,31 @@ for acct_address in ocn_user1.accounts:
 # my account is my best friend. it is my life. i must master it as i must master my life.
 # without me, my account is useless. without my account, i am useless. i must use my account true. *
 #
-# The Ocean API has a 'main_account', this is the currently active (your) account.
-#
 # It is not secure to send your password over an unsecured HTTP connection, this is for demonstration only!
-#%%
-print("Account address: ", ocn_user1.main_account.address)
-print("Account password: ", ocn_user1.main_account.password)
-print("Account Ether balance: ", ocn_user1.main_account.ether_balance) # TODO: Convert from wei?
-print("Account Ocean Token balance: ", ocn_user1.main_account.ocean_balance)
+#
+# One of these existing accounts will be selected as your current active account. A utility class Account, is used to
+# hold your address and password, and access your balance in Ether and Ocean Token.
+# %%
 
-flag_unlocked = Web3Provider.get_web3().personal.unlockAccount(ocn_user1.main_account.address, ocn_user1.main_account.password)
-print("Account unlocked:", flag_unlocked)
+my_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == user1_address.lower()][0]
+my_acct.password = user1_pass
+print("Account Ether balance: ", my_acct.ether_balance) # TODO: Convert from wei?
+print("Account Ocean Token balance: ", my_acct.ocean_balance)
+
+# %% [markdown]
+# Accounts need to be unlocked
+flag_unlocked = my_acct.unlock()
+
+print(flag_unlocked)
+from squid_py.keeper.web3_provider import Web3Provider
+Web3Provider.get_web3().personal.unlockAccount(my_acct.address, "asdf")
+Web3Provider.get_web3().personal.unlockAccount( "secret")
+
+Web3Provider.get_web3().eth.sign(my_acct.address, text="")
+ocn.keeper.market.request_tokens(100, my_acct.address)
+ocn.keeper.market.request_tokens(100, my_acct.address)
+
+# flag_unlocked = my_acct.unlock(my_acct.address, my_acct.password)
+# print("Account unlocked:", flag_unlocked)
 # The following method can be used to lock an account
 #Web3Provider.get_web3().personal.lockAccount(ocn.main_account.address)
