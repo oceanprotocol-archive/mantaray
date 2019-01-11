@@ -59,22 +59,31 @@ pprint(configuration._sections)
 # The 20-byte 'parity.address' defines your account address
 # 'parity.password' is used to decrypt your private key and securely sign transactions
 #%%
-print("Currently selected address:",configuration['keeper-contracts']['parity.address'])
-print("Associated password:",configuration['keeper-contracts']['parity.password'])
+user1_address = configuration['keeper-contracts']['parity.address']
+user1_pass = configuration['keeper-contracts']['parity.password']
+print("Currently selected address:", user1_address)
+print("Associated password:", user1_pass)
 
 # %% [markdown]
 # ## Section 2: Instantiate the Ocean API class with this configuration
+# The Ocean API has an attribute listing all created (simulated) accounts in your local node
 # %%
 ocn_user1 = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
-print(len(ocn_user1.accounts), "accounts exist")
-# The Ocean API, during development, queries the blockchain to return all created (simulated) accounts;
-for acct in ocn_user1.accounts:
-    print(acct)
 
-# Alternatively, the accounts are available on the keeper instance;
-# print(ocn.keeper.accounts)
+print(len(ocn_user1.accounts), "accounts exist")
+print("{:<45} {}".format("Account Address", "Ocean Token Balance"))
+for acct_address in ocn_user1.accounts:
+    this_account = ocn_user1.accounts[acct_address]
+    print("{:<45} {}".format(this_account.address, this_account.ocean_balance))
+
+# %% [markdown]
+# One of these accounts will be selected as your current active account
+# %%
+
+
+
 # %% [markdown]
 # ### The User Account creed
 # *this is my account. there are many like it, but this one is mine.
