@@ -160,7 +160,7 @@ search_results = ocn.search_assets(basic_query)
 print("Found {} assets".format(len(search_results)))
 if search_results:
     print("First match:",search_results[0])
-    manta_print.print_ddo(search_results[0].ddo)
+    manta_print.print_ddo(search_results[0])
 # TODO: Update pretty-printer
 
 
@@ -192,12 +192,6 @@ if search_results:
 #%% Finally, let's find a substring within the name. We will use a Regex in MongoDB.
 match_this_substring = 'paper'
 mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':match_this_substring}}}}
-
-author=Uber, type=dataset, name=automotive
-
-
-
-
 full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
 
 search_results = ocn.search_assets(full_paged_query)
@@ -205,7 +199,7 @@ search_results = ocn.search_assets(full_paged_query)
 print("Found {} assets".format(len(search_results)))
 if search_results:
     print("First match:", search_results[0])
-    manta_print.print_asset(search_results[0])
+    manta_print.print_ddo(search_results[0])
 
 # %% [markdown]
 # ### Section 5: Cleaning the Ocean
