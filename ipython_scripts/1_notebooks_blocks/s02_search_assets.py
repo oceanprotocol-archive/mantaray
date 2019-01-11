@@ -124,7 +124,7 @@ print("Asset size:", aquarius_metadata['base']['size'])
 
 #%%
 # Get the entire DDO
-resolved_ddo = ocn.resolve_did(this_did)
+resolved_ddo = ocn.resolve_asset_did(this_did)
 # The Metadata is part of the DDO!
 aquarius_metadata_svc = [svc for svc in resolved_ddo._services if svc._type == 'Metadata'][0]
 aquarius_metadata = aquarius_metadata_svc._values['metadata']
@@ -153,7 +153,7 @@ print("Asset size:", aquarius_metadata['base']['size'])
 #
 # First, the pure mongoDB Query is built according to the documentation
 #
-# We are checking if the 'metadata' field exists, this should return all Assets.
+# We are checking if the 'metadata' field exists, this should return **ALL** Assets.
 #%%
 basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 search_results = ocn.search_assets(basic_query)
@@ -174,7 +174,7 @@ search_results = ocn.search_assets(full_paged_query)
 print("Found {} assets".format(len(search_results)))
 if search_results:
     print("First match:",search_results[0])
-    manta_print.print_ddo(search_results[0].ddo)
+    manta_print.print_ddo(search_results[0])
 
 
 #%% [markdown]
@@ -187,11 +187,17 @@ search_results = ocn.search_assets(mongo_query)
 print("Found {} assets".format(len(search_results)))
 if search_results:
     print("First match:", search_results[0])
-    manta_print.print_ddo(search_results[0].ddo)
+    manta_print.print_ddo(search_results[0])
 
 #%% Finally, let's find a substring within the name. We will use a Regex in MongoDB.
 match_this_substring = 'paper'
 mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':match_this_substring}}}}
+
+author=Uber, type=dataset, name=automotive
+
+
+
+
 full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
 
 search_results = ocn.search_assets(full_paged_query)
