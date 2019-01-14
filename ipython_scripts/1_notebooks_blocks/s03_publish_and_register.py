@@ -51,17 +51,6 @@ ocn = Ocean(configuration)
 #
 # In general, as a publisher, you will have your own configuration file with your personal account.
 
-#%%
-# This utility function gets all simulated accounts.
-# Let's take the first unlocked account, and name it the Publisher.
-publisher_account = manta_user.get_first_user(ocn.accounts)
-print(publisher_account)
-
-assert publisher_account.ocn._http_client.__name__ == 'requests'
-assert publisher_account.ocn._secret_store_client.__name__ == 'Client'
-
-# We don't need this ocn instance reference anymore ...
-del ocn
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
 # A more complex use case is to manually generate your metadata conforming to Ocean standard, but for demonstration purposes,
