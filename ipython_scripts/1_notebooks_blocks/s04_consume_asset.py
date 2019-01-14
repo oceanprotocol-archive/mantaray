@@ -52,44 +52,22 @@ print("Selected DID:",selected_did)
 #%% From this DID, get the DDO
 this_ddo = ocn.resolve_asset_did(selected_did)
 
+service = this_ddo.get_service(service_type=squid_py.ServiceTypes.ASSET_ACCESS)
+assert squid_py.ServiceAgreement.SERVICE_DEFINITION_ID in service.as_dictionary()
+sa = squid_py.ServiceAgreement.from_service_dict(service.as_dictionary())
 
-access_service = [svc for svc in this_ddo._services if svc._type == 'Access'][0]
-access_service._id
-
-
-ocn.purchase_asset_service(this_ddo.did, access_service._id, consumer_acct)
-ocn.purchase_asset_service(this_ddo.did, 0, consumer_acct)
-manta_utils.asset_pretty_print.print_ddo(this_ddo)
-
-#%% [markdown]
-# ### Section 3: Get ready for purchase
-# Wait for this cell to complete, it may take a few seconds to mine the transaction!
-#%%
-
-# Get the service agreement for consuming (downloading)
-service_types = squid_py.service_agreement.service_types.ServiceTypes
-service = this_ddo.get_service(service_type=service_types.ASSET_ACCESS)
-assert squid_py.service_agreement.service_agreement.ServiceAgreement.SERVICE_DEFINITION_ID_KEY in service.as_dictionary()
-
-# This is the Service Agreement for downloading the Asset, contains conditions
-sa = squid_py.service_agreement.service_agreement.ServiceAgreement.from_service_dict(service.as_dictionary())
-
-consumer_address = consumer.ocn.main_account.address
-
-# The purchase (sign) command will fail unless the account has some Ocean Token to spend!
-if consumer.account.ocean_balance == 0:
-    rcpt = consumer.account.request_tokens(10)
-    consumer.ocn._web3.eth.waitForTransactionReceipt(rcpt)
-
+# This will send the purchase request to Brizo which in turn will execute the agreement on-chain
+service_agreement_id = ocn.purchase_asset_service(this_ddo.did, sa.sa_definition_id, consumer_acct)
+print('got new service agreement id:', service_agreement_id)
 
 #%% [markdown]
 # ### Section 3: Execute the agreement (purchase!)
 #%%
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
 # this_did = 'did:op:0x23d76f6f5e1040c8bba8701fdaa59e28bf2c9edd3acc400aa8af46fe1433344e'
-this_did = this_ddo.did
-service_agreement_id = consumer.ocn.sign_service_agreement(this_did, sa.sa_definition_id, consumer_address)
-print('got new service agreement id:', service_agreement_id)
+# this_did = this_ddo.did
+# service_agreement_id = consumer.ocn.sign_service_agreement(this_did, sa.sa_definition_id, consumer_address)
+# print('got new service agreement id:', service_agreement_id)
 
 #%% [markdown]
 # Upon successful execution of the service agreement, a download is immediately initiated.
