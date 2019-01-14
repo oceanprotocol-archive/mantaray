@@ -113,14 +113,16 @@ ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors)
 print("New asset registered at", ddo.did)
 manta_utils.asset_pretty_print.print_ddo(ddo)
 
+# %% [markdown]
+# Verify that this asset exists in the MetaData storage
+# %%
+ocn.metadata_store.get_asset_ddo(ddo.did)
 
 # %% [markdown]
-# Check that the asset exists in Aquarius
-#%%
-mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
-search_results = ocn.search_assets(full_paged_query)
-print("Found {} assets".format(len(search_results)))
-if search_results:
-    print("First match:",search_results[0])
-    manta_print.print_ddo(search_results[0])
+# Verify that this asset is registered into the blockchain, and that you are the owner
+# %%
+# We need the pure ID string (a DID without the prefixes)
+asset_id = squid_py.did.did_to_id(ddo.did)
+ocn.keeper.did_registry.contract_concise.getOwner(asset_id)
+
+
