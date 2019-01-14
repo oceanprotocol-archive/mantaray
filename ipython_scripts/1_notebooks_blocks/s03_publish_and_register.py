@@ -27,7 +27,7 @@ import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.user as manta_user
 import mantaray_utilities.asset_pretty_print as manta_print
-
+from pprint import pprint
 # Setup logging
 manta_logging.logger.setLevel('CRITICAL')
 
@@ -72,42 +72,35 @@ if publisher_acct.ocean_balance == 0:
 # a utility in squid-py is used to generate a sample Meta Data dictionary.
 
 #%%
-# Get a simple example of a Meta Data object from the library directly
+# Get a simple example of Meta Data from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
 print('Name of asset:', metadata['base']['name'])
 
-#%% [markdown]
-# ### Section 3: Get the Service Execution Agreement (SEA) template for an Asset
-# (An asset is consumed by simple download of files, such as datasets)
-#%%
-# TODO: The following cells are too complicated for end-users, need to refactor to simple .register_dataset(Asset, Price)
-# Get the path of the SEA
-SEA_template_path = squid_py.service_agreement.utils.get_sla_template_path()
+asset_price = 10 # Ocean Token
+service_timeout = 600 # 10 Minutes
+new_did = squid_py.utils.utilities.generate_new_id()
 
-# Get the ID of this SEA
-template_id = squid_py.service_agreement.utils.register_service_agreement_template(
-    publisher_account.ocn.keeper.service_agreement,
-    publisher_account.ocn.keeper.contract_path,
-    publisher_account.ocn.main_account,
-    squid_py.service_agreement.service_agreement_template.ServiceAgreementTemplate.from_json_file(SEA_template_path)
-)
-print("Template ID:", template_id)
+# %% [markdown]
+# When publishing a dataset, you are actually publishing *access* to the dataset. Access is negotiated by the access agent, called 'Brizo'.
+# %%
+brizo = squid_py.brizo.brizo_provider.BrizoProvider.get_brizo()
+purchase_url = brizo.get_purchase_endpoint(configuration)
+service_url = brizo.get_service_endpoint(configuration)
+print("To purchase the dataset, a user will call",  purchase_url)
+print("To download the dataset, a user will call", service_url)
 
-#%% [markdown]
-# ### Section 4: Confirm your service endpoints with Brizo (services handler for Publishers)
-#%%
+# %% [markdown]
+# These purchase and download functions are packaged into a Service Descriptor.
+# In the general case, a dataset is just a type of Asset. An Asset can be any digital asset on Ocean Protocol, including things like
+# Compute services, which can have complex access methods, hence the flexibility and composability of Service Descriptors.
+# %%
+dataset_access = squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor
+dataset_access_service = dataset_access(asset_price, '/purchaseEndpoint', '/serviceEndpoint', service_timeout, ('0x%s' % new_did))]
+service_descriptors = [dataset_access_service]
+pprint(service_descriptors)
 
-brizo_url = publisher_account.ocn.config.get('resources', 'brizo.url')
-
-brizo_base_url = '/api/v1/brizo'
-purchase_endpoint = '{}{}/services/access/initialize'.format(brizo_url, brizo_base_url)
-service_endpoint = '{}{}/services/consume'.format(brizo_url, brizo_base_url)
-print("Endpoints:")
-print("purchase_endpoint:", purchase_endpoint)
-print("service_endpoint:", service_endpoint)
-
-# A service descriptor function is used to build a service
-this_service_desc = squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor
+# %% [markdown]
+# The asset has been constructed, we are ready to publish to Ocean Protocol!
 
 # %% [markdown]
 # In this case, the service will have a type of:
