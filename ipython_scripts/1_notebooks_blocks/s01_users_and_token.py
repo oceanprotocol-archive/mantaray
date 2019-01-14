@@ -130,4 +130,7 @@ print("Account Ocean Token balance: ", my_acct.ocean_balance)
 # %% [markdown]
 # Genearally, many methods in the API will include a call to
 # [.waitForTransactionReceipt(transaction_hash)](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.waitForTransactionReceiptj),
-# which explicitly pauses execution until the transaction has been mined.
+# which explicitly pauses execution until the transaction has been mined. This will return the Transaction Receipt.
+# %%
+tx_hash = my_acct.request_tokens(1)
+Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)

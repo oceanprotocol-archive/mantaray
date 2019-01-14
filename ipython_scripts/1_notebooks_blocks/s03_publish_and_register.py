@@ -21,6 +21,8 @@ import os
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
+# TODO: This will be removed after refactor of .request_tokens()
+from squid_py.keeper.web3_provider import Web3Provider
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 import mantaray_utilities.user as manta_user
@@ -45,7 +47,20 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 # Instantiate Ocean with the default configuration file.
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
+# Get the publisher account
+publisher_address = configuration['keeper-contracts']['parity.address']
+publisher_pass = configuration['keeper-contracts']['parity.password']
+publisher_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == publisher_address.lower()][0]
+publisher_acct.password = publisher_pass
 
+# %% [markdown]
+# Your account will need some Ocean Token to make real transactions
+# %%
+# ensure Ocean token balance
+if publisher_acct.ocean_balance == 0:
+    tx_hash = publisher_acct.request_tokens(1)
+    Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
+# del ocn
 #%% [markdown]
 # For this tutorial, we will select one of the available unlocked accounts.
 #
