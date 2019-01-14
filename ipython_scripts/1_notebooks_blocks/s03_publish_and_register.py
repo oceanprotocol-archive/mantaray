@@ -110,19 +110,32 @@ ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors)
 
 #%%
 # Inspect the new DDO
-print("New asset registered at", ddo.did)
+# Your assigned DID:
+registered_did = ddo.did
+print("New asset registered at", registered_did)
 manta_utils.asset_pretty_print.print_ddo(ddo)
 
 # %% [markdown]
 # Verify that this asset exists in the MetaData storage
 # %%
-ocn.metadata_store.get_asset_ddo(ddo.did)
+ddo = ocn.metadata_store.get_asset_ddo(registered_did)
+squid_py.ddo.ddo.DDO()
 
 # %% [markdown]
-# Verify that this asset is registered into the blockchain, and that you are the owner
+# And this is what you would expect if the DID is *NOT* in the database
+# %%
+random_did = 'did:op:9a3c2693c1f942b8a61cba7d212e5cd50c1b9a5299f74e39848e9b4c2148d453'
+try: ocn.metadata_store.get_asset_ddo(random_did)
+except Exception as e: print("This raises an error, as required:", e)
+
+
+# %% [markdown]
+# Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner
 # %%
 # We need the pure ID string (a DID without the prefixes)
-asset_id = squid_py.did.did_to_id(ddo.did)
-ocn.keeper.did_registry.contract_concise.getOwner(asset_id)
+asset_id = squid_py.did.did_to_id(registered_did)
+owner = ocn.keeper.did_registry.contract_concise.getOwner(asset_id)
+print("Asset ID", asset_id, "owned by", owner)
+assert str.lower(owner) == str.lower(publisher_acct.address)
 
 
