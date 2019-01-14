@@ -23,14 +23,10 @@ from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 # TODO: This will be removed after refactor of .request_tokens()
 from squid_py.keeper.web3_provider import Web3Provider
-# import mantaray_utilities.config as manta_config
-# import mantaray_utilities.logging as manta_logging
-# import mantaray_utilities.asset_pretty_print as manta_print
 import mantaray_utilities as manta_utils
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
-# from tests.resources.helper_functions import get_registered_access_service_template
 #%%
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
@@ -127,7 +123,6 @@ squid_py.ddo.ddo.DDO()
 random_did = 'did:op:9a3c2693c1f942b8a61cba7d212e5cd50c1b9a5299f74e39848e9b4c2148d453'
 try: ocn.metadata_store.get_asset_ddo(random_did)
 except Exception as e: print("This raises an error, as required:", e)
-
 
 # %% [markdown]
 # Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner

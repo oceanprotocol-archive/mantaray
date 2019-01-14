@@ -12,18 +12,15 @@ import logging
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
-import mantaray_utilities.config as manta_config
-import mantaray_utilities.logging as manta_logging
-import mantaray_utilities.user as manta_user
-import mantaray_utilities.asset_pretty_print as manta_print
-
+from squid_py.config import Config
+import mantaray_utilities as manta_utils
 # Setup logging
-manta_logging.logger.setLevel('CRITICAL')
+manta_utils.logging.logger.setLevel('CRITICAL')
 
 #%%
 # Get the configuration file path for this environment
-CONFIG_INI_PATH = manta_config.get_config_file_path()
-logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
+CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
@@ -32,38 +29,28 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 # A 'User' in an abstract class representing a user of Ocean Protocol
 #
 #%%
-ocn = Ocean(config_file=CONFIG_INI_PATH)
+configuration = Config(CONFIG_INI_PATH)
+ocn = Ocean(configuration)
+# Get the consumer account
+consumer_address = configuration['keeper-contracts']['parity.address']
+consumer_pass = configuration['keeper-contracts']['parity.password']
+consumer_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == consumer_address.lower()][0]
+consumer_acct.password = consumer_pass
 
-#%%
-# This utility function gets all simulated accounts
-users = manta_user.get_all_users(ocn.accounts)
-
-# We don't need this ocn instance reference anymore
-del ocn
-
-# Let's take the first unlocked account, and name it the Consumer
-consumer1 = [u for u in users if not u.locked][0]
-consumer1.name = "Anny Bonny"
-consumer1.role = "Consumer"
-print(consumer1)
-
-assert consumer1.ocn._http_client.__name__ == 'requests'
-assert consumer1.ocn._secret_store_client.__name__ == 'Client'
-assert consumer1.account.ocean_balance > 0, "Consumer does not have any Ocean token, go to 'users_and_token' script and fund the account!"
 #%% [markdown]
 # ### Section 2: Find an asset
 #%%
 # Get ALL dids
-all_dids = consumer1.ocn.metadata_store.list_assets()
+all_dids = ocn.metadata_store.list_assets()
 print("There are {} assets registered in the metadata store.".format(len(all_dids)))
 
 assert len(all_dids), "There are no assets registered, go to s03_publish_and_register!"
 
 # Get a DID for testing
 selected_did = all_dids[-1]
-
+print("Selected DID:",selected_did)
 #%% From this DID, get the DDO
-this_ddo = consumer1.ocn.resolve_did(selected_did)
+this_ddo = ocn.resolve_did(selected_did)
 manta_print.print_ddo(this_ddo)
 
 #%% [markdown]
@@ -79,12 +66,12 @@ assert squid_py.service_agreement.service_agreement.ServiceAgreement.SERVICE_DEF
 # This is the Service Agreement for downloading the Asset, contains conditions
 sa = squid_py.service_agreement.service_agreement.ServiceAgreement.from_service_dict(service.as_dictionary())
 
-consumer_address = consumer1.ocn.main_account.address
+consumer_address = consumer.ocn.main_account.address
 
 # The purchase (sign) command will fail unless the account has some Ocean Token to spend!
-if consumer1.account.ocean_balance == 0:
-    rcpt = consumer1.account.request_tokens(10)
-    consumer1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
+if consumer.account.ocean_balance == 0:
+    rcpt = consumer.account.request_tokens(10)
+    consumer.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 
 
 #%% [markdown]
@@ -93,7 +80,7 @@ if consumer1.account.ocean_balance == 0:
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
 # this_did = 'did:op:0x23d76f6f5e1040c8bba8701fdaa59e28bf2c9edd3acc400aa8af46fe1433344e'
 this_did = this_ddo.did
-service_agreement_id = consumer1.ocn.sign_service_agreement(this_did, sa.sa_definition_id, consumer_address)
+service_agreement_id = consumer.ocn.sign_service_agreement(this_did, sa.sa_definition_id, consumer_address)
 print('got new service agreement id:', service_agreement_id)
 
 #%% [markdown]
