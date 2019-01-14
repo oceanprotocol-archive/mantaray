@@ -30,7 +30,7 @@ import mantaray_utilities.asset_pretty_print as manta_print
 from pprint import pprint
 # Setup logging
 manta_logging.logger.setLevel('CRITICAL')
-
+# from tests.resources.helper_functions import get_registered_access_service_template
 #%%
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
@@ -78,7 +78,6 @@ print('Name of asset:', metadata['base']['name'])
 
 asset_price = 10 # Ocean Token
 service_timeout = 600 # 10 Minutes
-new_did = squid_py.utils.utilities.generate_new_id()
 
 # %% [markdown]
 # When publishing a dataset, you are actually publishing *access* to the dataset. Access is negotiated by the access agent, called 'Brizo'.
@@ -93,25 +92,20 @@ print("To download the dataset, a user will call", service_url)
 # These purchase and download functions are packaged into a Service Descriptor.
 # In the general case, a dataset is just a type of Asset. An Asset can be any digital asset on Ocean Protocol, including things like
 # Compute services, which can have complex access methods, hence the flexibility and composability of Service Descriptors.
+
 # %%
+# template = get_registered_access_service_template(ocn, account)
+template_ID = squid_py.service_agreement.service_types.ACCESS_SERVICE_TEMPLATE_ID
 dataset_access = squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor
-dataset_access_service = dataset_access(asset_price, '/purchaseEndpoint', '/serviceEndpoint', service_timeout, ('0x%s' % new_did))]
+dataset_access_service = dataset_access(asset_price, purchase_url, service_url, service_timeout, template_ID)
 service_descriptors = [dataset_access_service]
 pprint(service_descriptors)
 
 # %% [markdown]
 # The asset has been constructed, we are ready to publish to Ocean Protocol!
-
-# %% [markdown]
-# In this case, the service will have a type of:
-#
-# `ServiceTypes.ASSET_ACCESS`
-#
-# And needs to be instantiated with the following attributes:
-#
-# `price, purchase_endpoint, service_endpoint, timeout, template_id`
-
-publisher_account.ocn.keeper.web3.personal.unlockAccount(publisher_account.account.address, publisher_account.account.password)
+# %%
+ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors)
+print("New asset registered at", ddo.did)
 
 #%%
 # Register this asset into Ocean
