@@ -50,7 +50,15 @@ assert len(all_dids), "There are no assets registered, go to s03_publish_and_reg
 selected_did = all_dids[-1]
 print("Selected DID:",selected_did)
 #%% From this DID, get the DDO
-this_ddo = ocn.resolve_did(selected_did)
+this_ddo = ocn.resolve_asset_did(selected_did)
+
+
+access_service = [svc for svc in this_ddo._services if svc._type == 'Access'][0]
+access_service._id
+
+
+ocn.purchase_asset_service(this_ddo.did, access_service._id, consumer_acct)
+ocn.purchase_asset_service(this_ddo.did, 0, consumer_acct)
 manta_utils.asset_pretty_print.print_ddo(this_ddo)
 
 #%% [markdown]
