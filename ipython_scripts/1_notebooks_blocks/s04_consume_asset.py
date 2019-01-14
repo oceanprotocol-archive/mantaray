@@ -7,12 +7,7 @@
 
 #%%
 # Standard imports
-import sys
 import logging
-import requests
-import json
-import time
-from web3 import Web3
 
 # Import mantaray and the Ocean API (squid)
 import squid_py

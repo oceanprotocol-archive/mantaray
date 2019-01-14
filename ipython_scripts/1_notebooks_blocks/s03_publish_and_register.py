@@ -14,8 +14,8 @@
 #%%
 # Standard imports
 import logging
-from pathlib import Path
-import os
+# from pathlib import Path
+# import os
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -23,19 +23,19 @@ from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 # TODO: This will be removed after refactor of .request_tokens()
 from squid_py.keeper.web3_provider import Web3Provider
-import mantaray_utilities.config as manta_config
-import mantaray_utilities.logging as manta_logging
-import mantaray_utilities.user as manta_user
-import mantaray_utilities.asset_pretty_print as manta_print
+# import mantaray_utilities.config as manta_config
+# import mantaray_utilities.logging as manta_logging
+# import mantaray_utilities.asset_pretty_print as manta_print
+import mantaray_utilities as manta_utils
 from pprint import pprint
 # Setup logging
-manta_logging.logger.setLevel('CRITICAL')
+manta_utils.logging.logger.setLevel('CRITICAL')
 # from tests.resources.helper_functions import get_registered_access_service_template
 #%%
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
-CONFIG_INI_PATH = manta_config.get_config_file_path()
-logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
+CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
@@ -105,19 +105,22 @@ pprint(service_descriptors)
 # The asset has been constructed, we are ready to publish to Ocean Protocol!
 # %%
 ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors)
-print("New asset registered at", ddo.did)
+# TODO: This is the final API incoming, much cleaner!
+# ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors=None)
 
-#%%
-# Register this asset into Ocean
-ddo = publisher_account.ocn.register_asset(
-    metadata, publisher_account.ocn.main_account.address,
-    [this_service_desc(7, purchase_endpoint, service_endpoint, 360, template_id)])
-print("DDO created and registered!")
-print("DID:", ddo.did)
-# rcpt = publisher1.account.request_tokens(5)
-# publisher1.ocn._web3.eth.waitForTransactionReceipt(rcpt)
 #%%
 # Inspect the new DDO
-print("did:", ddo.did)
-manta_print.print_ddo(ddo)
+print("New asset registered at", ddo.did)
+manta_utils.asset_pretty_print.print_ddo(ddo)
 
+
+# %% [markdown]
+# Check that the asset exists in Aquarius
+#%%
+mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
+search_results = ocn.search_assets(full_paged_query)
+print("Found {} assets".format(len(search_results)))
+if search_results:
+    print("First match:",search_results[0])
+    manta_print.print_ddo(search_results[0])
