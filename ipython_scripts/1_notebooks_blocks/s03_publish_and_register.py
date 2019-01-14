@@ -39,7 +39,7 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 # ### Section 1: Instantiate a simulated User
 # A 'User' in an abstract class representing a user of Ocean Protocol.
 #
-#%%
+
 # Instantiate Ocean with the default configuration file.
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
@@ -114,8 +114,8 @@ manta_utils.asset_pretty_print.print_ddo(ddo)
 # %% [markdown]
 # Verify that this asset exists in the MetaData storage
 # %%
-ddo = ocn.metadata_store.get_asset_ddo(registered_did)
-squid_py.ddo.ddo.DDO()
+# ddo = ocn.metadata_store.get_asset_ddo(registered_did)
+ddo = ocn.resolve_asset_did(registered_did)
 
 # %% [markdown]
 # And this is what you would expect if the DID is *NOT* in the database

@@ -51,7 +51,7 @@ selected_did = all_dids[-1]
 print("Selected DID:",selected_did)
 #%% From this DID, get the DDO
 this_ddo = ocn.resolve_did(selected_did)
-manta_print.print_ddo(this_ddo)
+manta_utils.asset_pretty_print.print_ddo(this_ddo)
 
 #%% [markdown]
 # ### Section 3: Get ready for purchase
