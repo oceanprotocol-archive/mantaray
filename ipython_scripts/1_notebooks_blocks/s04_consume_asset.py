@@ -49,6 +49,7 @@ assert len(all_dids), "There are no assets registered, go to s03_publish_and_reg
 # Get a DID for testing
 selected_did = all_dids[-1]
 print("Selected DID:",selected_did)
+selected_did = "did:op:d67397a67ced44bb93df65021c8b92ee7bf62b6fe4b24378b37349a290f6113c"
 #%% From this DID, get the DDO
 this_ddo = ocn.resolve_asset_did(selected_did)
 
