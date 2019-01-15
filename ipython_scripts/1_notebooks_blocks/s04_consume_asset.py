@@ -33,8 +33,8 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
 # Get the consumer account
-consumer_address = configuration['keeper-contracts']['parity.address']
-consumer_pass = configuration['keeper-contracts']['parity.password']
+consumer_address = configuration['keeper-contracts']['parity.address2']
+consumer_pass = configuration['keeper-contracts']['parity.password2']
 consumer_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == consumer_address.lower()][0]
 consumer_acct.password = consumer_pass
 print("Consumer account address: ", consumer_acct.address)
@@ -61,6 +61,7 @@ sa = squid_py.ServiceAgreement.from_service_dict(service.as_dictionary())
 
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
 service_agreement_id = ocn.purchase_asset_service(this_ddo.did, sa.sa_definition_id, consumer_acct)
+# service_agreement_id = ocn.purchase_asset_service(this_ddo.did, '2', consumer_acct)
 print('got new service agreement id:', service_agreement_id)
 
 # manta_utils.logging.logger.setLevel('CRITICAL')
