@@ -16,6 +16,7 @@ from squid_py.config import Config
 import mantaray_utilities as manta_utils
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
+# manta_utils.logging.logger.setLevel('DEBUG')
 
 #%%
 # Get the configuration file path for this environment
@@ -52,6 +53,8 @@ print("Selected DID:",selected_did)
 # selected_did = "did:op:d67397a67ced44bb93df65021c8b92ee7bf62b6fe4b24378b37349a290f6113c"
 #%% From this DID, get the DDO
 this_ddo = ocn.resolve_asset_did(selected_did)
+# manta_utils.logging.logger.setLevel('CRITICAL')
+# manta_utils.logging.logger.setLevel('DEBUG')
 
 service = this_ddo.get_service(service_type=squid_py.ServiceTypes.ASSET_ACCESS)
 assert squid_py.ServiceAgreement.SERVICE_DEFINITION_ID in service.as_dictionary()
@@ -60,6 +63,9 @@ sa = squid_py.ServiceAgreement.from_service_dict(service.as_dictionary())
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
 service_agreement_id = ocn.purchase_asset_service(this_ddo.did, sa.sa_definition_id, consumer_acct)
 print('got new service agreement id:', service_agreement_id)
+
+# manta_utils.logging.logger.setLevel('CRITICAL')
+# manta_utils.logging.logger.setLevel('DEBUG')
 
 #%% [markdown]
 # ### Section 3: Execute the agreement (purchase!)

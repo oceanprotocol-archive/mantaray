@@ -153,8 +153,8 @@ Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
 
 # %%
 # Request token for all accounts
-# for acct_address in ocn.accounts:
-#     this_acct = ocn.accounts[acct_address]
-#     if this_acct.password:
-#         this_acct.request_tokens(1)
+for acct_address in ocn.accounts:
+    this_acct = ocn.accounts[acct_address]
+    if this_acct.password:
+        this_acct.request_tokens(100)
 
