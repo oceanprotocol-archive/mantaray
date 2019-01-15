@@ -34,7 +34,20 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 from pprint import pprint
 # Setup logging to a higher level and not flood the console with debug messages
 manta_utils.logging.logger.setLevel('CRITICAL')
+manta_utils.logging.logger.setLevel('INFO')
 from squid_py.keeper.web3_provider import Web3Provider
+# %%
+# Get all passwords
+# TODO: Move to utils
+import csv
+passwords = dict()
+path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
+with open(path_passwords) as f:
+    for row in csv.reader(f):
+        if row:
+            passwords[row[0]] = row[1]
+
+passwords = {k.lower(): v for k, v in passwords.items()}
 
 #%%
 # Get the configuration file path for this environment
@@ -74,9 +87,12 @@ logging.critical("Ocean smart contract node connected ".format())
 print(len(ocn.accounts), "accounts exist")
 print("{:<45} {}".format("Account Address", "Ocean Token Balance"))
 for acct_address in ocn.accounts:
+    flg_pass = False
     this_account = ocn.accounts[acct_address]
-    print("{:<45} {}".format(this_account.address, this_account.ocean_balance))
-
+    if str.lower(this_account.address) in passwords:
+        this_account.password = passwords[str.lower(this_account.address)]
+        flg_pass = True
+    print("{:<45} {:<20} {}".format(this_account.address, this_account.ocean_balance, flg_pass, this_account.ether_balance))
 # %% [markdown]
 # ### The User Account creed
 # *this is my account. there are many like it, but this one is mine.
@@ -102,7 +118,7 @@ print("Account Ocean Token balance: ", my_acct.ocean_balance)
 # In the following cell, we will try to request 1 ocean token without unlocking the account;
 
 # %%
-ocn.keeper.market.request_tokens(1, my_acct.address)
+# ocn.keeper.market.request_tokens(1, my_acct.address)
 
 # %% [markdown]
 # Let's unlock the account, and request a token.
@@ -134,3 +150,11 @@ print("Account Ocean Token balance: ", my_acct.ocean_balance)
 # %%
 tx_hash = my_acct.request_tokens(1)
 Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
+
+# %%
+# Request token for all accounts
+# for acct_address in ocn.accounts:
+#     this_acct = ocn.accounts[acct_address]
+#     if this_acct.password:
+#         this_acct.request_tokens(1)
+

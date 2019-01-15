@@ -100,9 +100,9 @@ pprint(service_descriptors)
 # %% [markdown]
 # The asset has been constructed, we are ready to publish to Ocean Protocol!
 # %%
-ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors)
+# ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors)
 # TODO: This is the final API incoming, much cleaner!
-# ddo = ocn.register_asset(metadata, publisher_acct, service_descriptors=None)
+ddo = ocn.register_asset(metadata, publisher_acct)
 
 #%%
 # Inspect the new DDO
