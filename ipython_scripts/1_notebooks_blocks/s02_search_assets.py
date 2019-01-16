@@ -227,8 +227,8 @@ if 0:
 # %%
 # Deleting all assets!
 # Please don't delete all the assets, as other users may be testing the components!
-# if 0:
-#     all_dids = ocn.metadata_store.list_assets()
-#     for i, did in enumerate(all_dids):
-#         print("Deleting DDO {} - {}".format(i, did))
-#         ocn.metadata_store.retire_asset_metadata(did)
+if 0:
+    all_dids = ocn.metadata_store.list_assets()
+    for i, did in enumerate(all_dids):
+        print("Deleting DDO {} - {}".format(i, did))
+        ocn.metadata_store.retire_asset_ddo(did)

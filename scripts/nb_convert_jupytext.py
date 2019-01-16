@@ -58,7 +58,11 @@ for item in path_ipy_root.iterdir():
 
         # Concatenate the header
         total_script_lines = header_lines + script_lines
-        logging.info("{}+{}={} total lines".format( len(header_lines.split('\n')), len(script_lines.split('\n')), len(total_script_lines.split('\n')), ))
+        logging.info("Prepending header: {}+{}={} total lines".format(
+            len(header_lines.split('\n')),
+            len(script_lines.split('\n')),
+            len(total_script_lines.split('\n')),
+        ))
 
         # Parse the script to Jupyter format
         parsed = jupytext.reads(total_script_lines, ext='.py', format_name='percent')
@@ -67,6 +71,8 @@ for item in path_ipy_root.iterdir():
         if out_path.exists():
             out_path.unlink()
         logging.info("Wrote {}".format(out_path))
+
+        # Write the
         jupytext.writef(parsed, out_path)
         processed_cnt +=1
 

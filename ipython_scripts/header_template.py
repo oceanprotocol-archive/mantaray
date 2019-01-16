@@ -6,7 +6,7 @@
 
 # <h1><center>Ocean Protocol - Manta Ray project</center></h1>
 # <h3><center>Decentralized Data Science and Engineering, powered by Ocean Protocol</center></h3>
-# <p>Version 0.2 - alpha preview</p>
+# <p>Version 0.3 - alpha preview</p>
 # <p><a href="https://github.com/oceanprotocol/mantaray">mantaray on Github</a></p>
 # <p>
 
