@@ -20,9 +20,9 @@
 # ### Section 0: Import modules, and setup logging
 #%%
 # Standard imports
-import random
 import logging
 from pathlib import Path
+import os
 import csv
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
@@ -36,6 +36,7 @@ from pprint import pprint
 manta_utils.logging.logger.setLevel('CRITICAL')
 manta_utils.logging.logger.setLevel('INFO')
 from squid_py.keeper.web3_provider import Web3Provider
+# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 # %%
 # Get all passwords
 # TODO: Move to utils

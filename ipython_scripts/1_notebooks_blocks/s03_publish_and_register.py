@@ -15,7 +15,7 @@
 # Standard imports
 import logging
 # from pathlib import Path
-# import os
+import os
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -27,6 +27,7 @@ import mantaray_utilities as manta_utils
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
+# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 #%%
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
