@@ -56,7 +56,6 @@ publisher_acct.password = publisher_pass
 if publisher_acct.ocean_balance == 0:
     tx_hash = publisher_acct.request_tokens(1)
     Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
-# del ocn
 #%% [markdown]
 # For this tutorial, we will select one of the available unlocked accounts.
 #
