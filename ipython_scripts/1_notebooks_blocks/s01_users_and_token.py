@@ -84,15 +84,19 @@ print("Associated password:", user1_pass)
 ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
+# %% [markdown]
+# An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions
+# %%
+# List the accounts in the network
 print(len(ocn.accounts), "accounts exist")
-print("{:<45} {}".format("Account Address", "Ocean Token Balance"))
-for acct_address in ocn.accounts:
+print("{:<5} {:<45} {:<20} {}".format("","Account Address", "Ocean Token Balance", "Password provided?"))
+for i, acct_address in enumerate(ocn.accounts):
     flg_pass = False
     this_account = ocn.accounts[acct_address]
     if str.lower(this_account.address) in passwords:
         this_account.password = passwords[str.lower(this_account.address)]
         flg_pass = True
-    print("{:<45} {:<20} {}".format(this_account.address, this_account.ocean_balance, flg_pass, this_account.ether_balance))
+    print("{:<5} {:<45} {:<20} {}".format(i,this_account.address, this_account.ocean_balance, flg_pass, this_account.ether_balance))
 # %% [markdown]
 # ### The User Account creed
 # *this is my account. there are many like it, but this one is mine.
@@ -104,7 +108,7 @@ for acct_address in ocn.accounts:
 # One of these existing accounts will be selected as your current active account. A utility class Account, is used to
 # hold your address and password, and access your balance in Ether and Ocean Token.
 # %%
-
+# Select the account specified in your configuration file as the 'parity.address'
 my_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == user1_address.lower()][0]
 my_acct.password = user1_pass
 print("Account Ether balance: ", my_acct.ether_balance) # TODO: Convert from wei?
@@ -114,29 +118,16 @@ print("Account Ocean Token balance: ", my_acct.ocean_balance)
 # Most of your interaction with the blockchain will require your Password.
 #
 # For development and testing, we have a magical function which will give you free Ocean Token!
-#
-# In the following cell, we will try to request 1 ocean token without unlocking the account;
-
-# %%
-# ocn.keeper.market.request_tokens(1, my_acct.address)
 
 # %% [markdown]
-# Let's unlock the account, and request a token.
+# Let's request a token.
+#
 # The result is a *transaction_hash*. This is your ticket to your *transaction receipt*, or in other words,
 # your proof that a transaction was completed (or not!). Welcome to the Asynchronous world of Blockchain applications
 # - things take time.
 #
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
-# %%
-my_acct.unlock()
-ocn.keeper.market.request_tokens(1, my_acct.address)
-# %%
-# This will update after the transaction has been mined!
-print("Account Ocean Token balance: ", my_acct.ocean_balance)
-
-# %% [markdown]
-# Of course, the point of the Ocean class is to abstract this away for you, so the following code makes it easy to request token;
 # %%
 my_acct.request_tokens(1)
 # %%
@@ -148,13 +139,15 @@ print("Account Ocean Token balance: ", my_acct.ocean_balance)
 # [.waitForTransactionReceipt(transaction_hash)](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.waitForTransactionReceiptj),
 # which explicitly pauses execution until the transaction has been mined. This will return the Transaction Receipt.
 # %%
+#TODO: This is refactored to .request_tokens_wait()!
 tx_hash = my_acct.request_tokens(1)
 Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
 
 # %%
+# Quickly fund all accounts
 # Request token for all accounts
-for acct_address in ocn.accounts:
-    this_acct = ocn.accounts[acct_address]
-    if this_acct.password:
-        this_acct.request_tokens(100)
+# for acct_address in ocn.accounts:
+#     this_acct = ocn.accounts[acct_address]
+#     if this_acct.password:
+#         this_acct.request_tokens(100)
 
