@@ -8,16 +8,18 @@
 #%%
 # Standard imports
 import logging
-
+from pprint import pprint
+import os
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
+from squid_py.keeper.web3_provider import Web3Provider
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
 # manta_utils.logging.logger.setLevel('DEBUG')
-
+# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
@@ -52,7 +54,20 @@ selected_did = all_dids[-1]
 print("Selected DID:",selected_did)
 #%% From this DID, get the DDO
 this_ddo = ocn.resolve_asset_did(selected_did)
+pprint(this_ddo)
 
+# %% [markdown]
+# Your account will need some Ocean Token to make real transactions
+# %%
+# ensure Ocean token balance
+if consumer_acct.ocean_balance < 50:
+    tx_hash = consumer_acct.request_tokens(50)
+    Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
+
+# %% [markdown]
+# Purchase
+# %%
+# Get the service definition ID
 service = this_ddo.get_service(service_type=squid_py.ServiceTypes.ASSET_ACCESS)
 assert squid_py.ServiceAgreement.SERVICE_DEFINITION_ID in service.as_dictionary()
 sa = squid_py.ServiceAgreement.from_service_dict(service.as_dictionary())
