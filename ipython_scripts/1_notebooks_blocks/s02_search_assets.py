@@ -42,6 +42,7 @@ import mantaray_utilities.asset_pretty_print as manta_print
 
 # Setup logging
 manta_logging.logger.setLevel('CRITICAL')
+# manta_logging.logger.setLevel('DEBUG')
 # os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 #%%
 # Get the configuration file path for this environment
