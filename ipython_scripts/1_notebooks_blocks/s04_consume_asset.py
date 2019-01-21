@@ -18,7 +18,7 @@ import mantaray_utilities as manta_utils
 from squid_py.keeper.web3_provider import Web3Provider
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
-manta_utils.logging.logger.setLevel('DEBUG')
+# manta_utils.logging.logger.setLevel('DEBUG')
 # os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 #%%
 # Get the configuration file path for this environment
