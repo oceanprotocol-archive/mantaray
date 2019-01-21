@@ -6,14 +6,14 @@ The following guide will get you set up to run Mantaray locally in a development
 
 First, decide which versions of the dependencies you wish to run. The table below summarizes the 
 
-| component          | Type             | Date | PyPI    | Github     | Dockerhub | Kubernetes |
-| ------------------ | ---------------- | ---- | ------- | ---------- | --------- | ---------- |
-| squid-py           | Local -main API  |      | 0.2.19  | (develop)* | -         | -          |
-| keeper-contracts   | ABI files        |      | 0.5.2   | (develop)* | -         | -          |
-| mantaray_utilities | Library          |      | MISSING | 0.1.0      | -         | -          |
-| aquarius           | Service Endpoint |      |         |            |           |            |
-| brizo              | Service Endpoint |      |         |            |           |            |
-| Nile               | Ethereum network |      |         |            |           |            |
+| component          | Type             | Date | PyPI     | Github     | Dockerhub | Kubernetes |
+| ------------------ | ---------------- | ---- | -------- | ---------- | --------- | ---------- |
+| squid-py           | Local -main API  |      | 0.2.22   | (develop)* | -         | -          |
+| keeper-contracts   | ABI files        |      | 0.5.3    | (develop)* | -         | -          |
+| mantaray_utilities | Library          |      | MISSING  | 0.1.0      | -         | -          |
+| aquarius           | Service Endpoint |      | 0.1.5    |            |           |            |
+| brizo              | Service Endpoint |      | 0.1.5    |            |           |            |
+| Nile               | Ethereum network |      | (online) |            |           |            |
 
 ### Create a virtual environment
 
@@ -107,11 +107,18 @@ In this folder ensure that there exists several `.json` files with the word `spr
 
 You can view the running docker pods and versions of the components by executing `docker ps` at the terminal. 
 
-## 3) Verify your contract ABI files
+## 3) Copy the ABI Artifact files
 
+When running a local testnet (i.e. Spree network), you will **always** need to copy the deployed ABI files (contract artifacts). When running against a deployed blockchain (i.e. Nile, or ethereum testnet Kovan, etc.) you will need the exact ABI files which correspond to that blockchain. 
+
+### 3.1 Local environment: 
 The contract ABI `.json` files need to exist in the project root of the `mantaray` repo, in a folder called `\artifacts`. Copy all `.json`  files here from `~/.ocean/keeper-contracts/artifacts`. 
 
-## 4) Setup publisher accounts 
+### 3.2 Deployed testnet
+
+For Nile and Kovan networks, the contract ABI files have been packaged in [PyPI](https://pypi.org/project/keeper-contracts/), or go directly to the [github source](https://github.com/oceanprotocol/keeper-contracts) for the smart contracts . 
+
+## 5) Setup publisher accounts 
 
 As a Publisher, the service endpoint called 'brizo' will need to be correctly configured. 
 
@@ -134,14 +141,15 @@ Complete the following account details to ensure the asset is published and serv
 - AZURE_TENANT_ID=
 - AZURE_SUBSCRIPTION_ID=
 
-## Section 5) Copy and review the configuration file
+## 6) Copy and review the configuration file
 
 Copy the `config.ini` file to `config_local.ini`. This configuration file is passed into the main entrypoint of the library
 the **Ocean** class. This configuration file should have the necessary configuration information to instantiate the class. 
 
 Verify the following values refer to an unlocked account: 
 
-```PARITY_ADDRESS=
+```
+PARITY_ADDRESS=
 PARITY_ADDRESS=
 PARITY_PASSWORD=
 ```
@@ -158,7 +166,7 @@ Similarly verify the URL's for keeper.
 This script will copy the ABI  files from the currently running 
 docker container (keeper-contracts) into your *project directory*. 
 
-## Section 6) Check your installation
+## Section 7) Check your installation
 
 The above steps should be sufficient to start testing the latest status of the Ocean Protocol stack in a local environment. 
 The API can be explored in IPython, Jupyter Lab, or your preferred Python environment;
