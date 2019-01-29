@@ -89,7 +89,7 @@ print("There are {} assets registered in the metadata store.".format(len(all_did
 #
 # [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/7)
 #
-# [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/8
+# [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/8)
 #
 # Let's select an asset for inspection (Note, since the database is stateful, this can easily change/break,
 # so try with another index or register your own asset first!)

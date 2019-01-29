@@ -102,11 +102,12 @@ for i, acct_address in enumerate(ocn.accounts):
 # ### The User Account creed
 # *this is my account. there are many like it, but this one is mine.
 # my account is my best friend. it is my life. i must master it as i must master my life.
-# without me, my account is useless. without my account, i am useless. i must use my account true. *
+# without me, my account is useless. without my account, i am useless. i must use my account true.*
 #
-# It is not secure to send your password over an unsecured HTTP connection, this is for demonstration only!
+# %%
+# ### It is not secure to send your password over an unsecured HTTP connection, this is for demonstration only!
 #
-# One of these existing accounts will be selected as your current active account. A utility class Account, is used to
+# One of these existing accounts will be selected as your **current active account**. A simple utility class `Account`, is used to
 # hold your address and password, and access your balance in Ether and Ocean Token.
 # %%
 # Select the account specified in your configuration file as the 'parity.address'
@@ -118,14 +119,12 @@ print("Account Ocean Token balance: ", my_acct.ocean_balance)
 # %% [markdown]
 # Most of your interaction with the blockchain will require your Password.
 #
-# For development and testing, we have a magical function which will give you free Ocean Token!
-
 # %% [markdown]
-# Let's request a token.
+# ## Requesting tokens
+# For development and testing, we have a magical function which will give you free Ocean Token!
 #
 # The result is a *transaction_hash*. This is your ticket to your *transaction receipt*, or in other words,
-# your proof that a transaction was completed (or not!). Welcome to the Asynchronous world of Blockchain applications
-# - things take time.
+# your proof that a transaction was completed (or not!).
 #
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
@@ -136,14 +135,17 @@ my_acct.request_tokens(1)
 print("Account Ocean Token balance: ", my_acct.ocean_balance)
 
 # %% [markdown]
-# Genearally, many methods in the API will include a call to
+# ## Asynchronous interactions
+# Generally, many methods in the API will include a call to
 # [.waitForTransactionReceipt(transaction_hash)](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.waitForTransactionReceiptj),
 # which explicitly pauses execution until the transaction has been mined. This will return the Transaction Receipt.
 # %%
-#TODO: This is refactored to .request_tokens_wait()!
+#TODO: This is refactored in latest to .request_tokens_wait()!
 tx_hash = my_acct.request_tokens(1)
 Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
 
+# %% [markdown]
+# ## Uncomment below to fund all accounts, make it rain!
 # %%
 # Quickly fund all accounts
 # Request token for all accounts

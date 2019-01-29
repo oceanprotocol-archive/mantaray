@@ -12,8 +12,8 @@ from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
 manta_utils.logging.logger.setLevel('CRITICAL')
-# %% For testing, set the desired environment
-# os.environ['USE_K8S_CLUSTER'] = 'true'
+# For testing, set the desired environment:
+#os.environ['USE_K8S_CLUSTER'] = 'true'
 
 #%%
 # Get the configuration file path for this environment
@@ -29,6 +29,8 @@ logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
 
+# %%
+# The following cell will print some summary information of the Ocean connection
 #%%
 print("***OCEAN***")
 print("{} accounts".format(len(ocn.accounts)))
@@ -40,7 +42,7 @@ manta_utils.asset_pretty_print.print_ocean(ocn)
 
 #%% [markdown]
 # ## Alternatively, connect to Ocean with a configuration dictionary
-
+#%%
 config_dict = {
     'keeper-contracts': {
         # Point to an Ethereum RPC client. Note that Squid learns the name of the network to work with from this client.
@@ -66,7 +68,9 @@ config_dict = {
         'downloads.path': 'consume-downloads'
     }
 }
-
+# %%
+# You may modify the dictionary object and uncomment the next cell to test
+#%%
 # Instantiate Ocean
 configuration = Config(filename=None, options_dict=config_dict)
-ocn = Ocean(configuration)
+# ocn = Ocean(configuration)

@@ -23,27 +23,34 @@ manta_logging.logger.setLevel('INFO')
 CONFIG_INI_PATH = manta_config.get_config_file_path()
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
-#%%
+# %%
+# The endpoints (microservices) are defined in the below dictionary
 
+#%%
 # For now, the endpoints are hard-coded by the dev-ops team.
 endpoints_dict = {
-    'aquarius': 'http://ac8b5e618ef0511e88a360a98afc4587-575519081.us-east-1.elb.amazonaws.com:5000',
-    'brizo': 'http://ac8b8cc42ef0511e88a360a98afc4587-974193642.us-east-1.elb.amazonaws.com:8030',
-    'Ethereum testnet (Nile)': 'http://52.1.94.55:8545',
+    'aquarius': 'https://nginx-aquarius.dev-ocean.com:5000',
+    'brizo': 'https://nginx-brizo.dev-ocean.com:8030',
+    'Ethereum testnet (Nile)': 'https://nile.dev-ocean.com:8545',
     'secret_store' : 'https://secret-store.dev-ocean.com'
 }
-# endpoints_dict['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
-# endpoints_dict['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
+swagger_pages = dict()
+swagger_pages['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
+swagger_pages['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
 
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     """HTTP Request on the given URL"""
     res = requests.request(verb, endpoint_url)
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
     return res
+# %%
+# The microscervices for MetaData storage (aquarius) and for service negotiation (brizo) have Swagger documentation :)
+#%%
+print("Aquarius MetaData storage API:", swagger_pages['aquarius Swagger documentation'])
+print("Brizo Access API:", swagger_pages['brizo Swagger documentation'])
 
-requests.request('GET', 'https://secret-store.dev-ocean.com')
 # %% [markdown]
-# Iterate over the defined endpoints.
+# Finally, we will iterate over the endpoint and check for a response
 #
 #%%
 flag_fail = False
@@ -65,6 +72,6 @@ for endpoint in endpoints_dict:
             print('\t Failed!')
 
 if flag_fail:
-    print("Failure in a component, please contact administrator!")
+    print("Failure in a component, please contact an administrator on our Gitter channel - https://gitter.im/oceanprotocol/Lobby")
 
 
