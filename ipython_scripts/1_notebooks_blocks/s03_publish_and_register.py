@@ -104,6 +104,7 @@ except Exception as e: print("This raises an error, as required:", e)
 # %% [markdown]
 # Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner,
 # congratulations on publishing an Asset into Ocean Protocol!
+
 # %%
 # We need the pure ID string (a DID without the prefixes)
 asset_id = squid_py.did.did_to_id(registered_did)
