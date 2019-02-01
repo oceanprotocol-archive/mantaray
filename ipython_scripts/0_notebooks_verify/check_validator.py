@@ -16,6 +16,6 @@ import plecos.plecos as plecos
 PATH_DATA_ROOT = Path("~/DATA").expanduser()
 path_data_dir = PATH_DATA_ROOT / 'British_birdsong'
 path_metadata = path_data_dir / 'metadata.json'
-plecos.validate(path_metadata)
-# plecos.validate_cli
+if not plecos.is_valid(path_metadata):
+    plecos.list_errors(path_metadata)
 
