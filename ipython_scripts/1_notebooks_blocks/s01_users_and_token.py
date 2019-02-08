@@ -104,7 +104,7 @@ for i, acct in enumerate(ocn.accounts.list()):
     else:
         flg_password_exists = False
     print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_pass, acct_balance.eth))
-    
+
 # %% [markdown]
 # ### The User Account creed
 # *this is my account. there are many like it, but this one is mine.
@@ -118,11 +118,11 @@ for i, acct in enumerate(ocn.accounts.list()):
 # One of these existing accounts will be selected as your **current active account**. A simple utility class `Account`, is used to
 # hold your address and password, and access your balance in Ether and Ocean Token.
 # %%
-# Select the account specified in your configuration file as the 'parity.address'
-my_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == user1_address.lower()][0]
-my_acct.password = user1_pass
-print("Account Ether balance: ", my_acct.ether_balance) # TODO: Convert from wei?
-print("Account Ocean Token balance: ", my_acct.ocean_balance)
+# Select the first account specified as the main account
+main_account = ocn.accounts.list()[0]
+print(main_account.address, main_account.password)
+# print("Account Ether balance: ", main_account.ether_balance) # TODO: Convert from wei?
+# print("Account Ocean Token balance: ", main_account.ocean_balance)
 
 # %% [markdown]
 # Most of your interaction with the blockchain will require your Password.
@@ -137,28 +137,14 @@ print("Account Ocean Token balance: ", my_acct.ocean_balance)
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
 # %%
-my_acct.request_tokens(1)
-# %%
-# This will update after the transaction has been mined!
-print("Account Ocean Token balance: ", my_acct.ocean_balance)
+
+print("Starting Ocean balance:", ocn.accounts.balance(main_account).ocn)
+ocn.accounts.request_tokens(main_account, 1)
+print("Updated Ocean balance:", ocn.accounts.balance(main_account).ocn)
 
 # %% [markdown]
 # ## Asynchronous interactions
 # Generally, many methods in the API will include a call to
 # [.waitForTransactionReceipt(transaction_hash)](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.waitForTransactionReceiptj),
-# which explicitly pauses execution until the transaction has been mined. This will return the Transaction Receipt.
-# %%
-#TODO: This is refactored in latest to .request_tokens_wait()!
-tx_hash = my_acct.request_tokens(1)
-Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
-
-# %% [markdown]
-# ## Uncomment below to fund all accounts, make it rain!
-# %%
-# Quickly fund all accounts
-# Request token for all accounts
-# for acct_address in ocn.accounts:
-#     this_acct = ocn.accounts[acct_address]
-#     if this_acct.password:
-#         this_acct.request_tokens(100)
-
+# which explicitly pauses execution until the transaction has been mined. This will return the Transaction Receipt. When interacting
+# with the blockchain, things my take some time to execute!
