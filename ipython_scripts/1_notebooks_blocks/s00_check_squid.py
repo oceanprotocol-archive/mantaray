@@ -34,12 +34,12 @@ ocn = Ocean(configuration)
 # The following cell will print some summary information of the Ocean connection
 #%%
 print("***OCEAN***")
-print("{} accounts".format(len(ocn.accounts)))
-for account in ocn.accounts:
-    print(account)
+print("{} accounts".format(len(ocn.accounts._accounts)))
+for i, account in enumerate(ocn.accounts._accounts):
+    print(i, account.address)
 
 # A utility function is provided to summarize the Ocean class
-manta_utils.asset_pretty_print.print_ocean(ocn)
+# manta_utils.asset_pretty_print.print_ocean(ocn)
 
 #%% [markdown]
 # ## Alternatively, connect to Ocean with a configuration dictionary
