@@ -20,6 +20,7 @@
 # ### Section 0: Import modules, and setup logging
 #%%
 # Standard imports
+
 import logging
 from pathlib import Path
 import os
@@ -107,6 +108,7 @@ for i, acct_address in enumerate(ocn.accounts):
 # %%
 # ### It is not secure to send your password over an unsecured HTTP connection, this is for demonstration only!
 #
+
 # One of these existing accounts will be selected as your **current active account**. A simple utility class `Account`, is used to
 # hold your address and password, and access your balance in Ether and Ocean Token.
 # %%

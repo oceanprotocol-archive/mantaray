@@ -19,6 +19,7 @@ manta_utils.logging.logger.setLevel('CRITICAL')
 # Get the configuration file path for this environment
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 #%% [markdown]
