@@ -5,10 +5,13 @@ matrix:
       dist: xenial
       sudo: false
 
-# Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 before_install:
   - echo "Travis lifecycle 3) before_install"
-  - docker-compose -f docker/docker-compose.yml up -d
+  - git clone https://github.com/oceanprotocol/barge
+  - cd barge
+  - bash -x start_ocean.sh --latest --no-brizo --no-pleuston --no-secret-store --local-spree-node 2>&1 > start_ocean.log &
+  - sleep 30
+  - cd ..
 
 install:
   - echo "Travis lifecycle 4) install"
