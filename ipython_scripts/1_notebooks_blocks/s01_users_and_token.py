@@ -114,15 +114,12 @@ for i, acct in enumerate(ocn.accounts.list()):
 # %%
 # ### It is not secure to send your password over an unsecured HTTP connection, this is for demonstration only!
 #
-
 # One of these existing accounts will be selected as your **current active account**. A simple utility class `Account`, is used to
-# hold your address and password, and access your balance in Ether and Ocean Token.
+# hold your address and password, the address is used to retrieve your balance in Ether and Ocean Token.
 # %%
 # Select the first account specified as the main account
 main_account = ocn.accounts.list()[0]
 print(main_account.address, main_account.password)
-# print("Account Ether balance: ", main_account.ether_balance) # TODO: Convert from wei?
-# print("Account Ocean Token balance: ", main_account.ocean_balance)
 
 # %% [markdown]
 # Most of your interaction with the blockchain will require your Password.
