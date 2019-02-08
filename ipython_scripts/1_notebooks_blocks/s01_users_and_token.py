@@ -103,7 +103,7 @@ for i, acct in enumerate(ocn.accounts.list()):
         flg_password_exists = True
     else:
         flg_password_exists = False
-    print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_pass, acct_balance.eth))
+    print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_password_exists, acct_balance.eth))
 
 # %% [markdown]
 # ### The User Account creed
