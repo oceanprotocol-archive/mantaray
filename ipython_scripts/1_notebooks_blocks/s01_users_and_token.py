@@ -90,15 +90,21 @@ logging.critical("Ocean smart contract node connected ".format())
 # An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions
 # %%
 # List the accounts in the network
-print(len(ocn.accounts), "accounts exist")
-print("{:<5} {:<45} {:<20} {}".format("","Account Address", "Ocean Token Balance", "Password provided?"))
-for i, acct_address in enumerate(ocn.accounts):
-    flg_pass = False
-    this_account = ocn.accounts[acct_address]
-    if str.lower(this_account.address) in passwords:
-        this_account.password = passwords[str.lower(this_account.address)]
-        flg_pass = True
-    print("{:<5} {:<45} {:<20} {}".format(i,this_account.address, this_account.ocean_balance, flg_pass, this_account.ether_balance))
+print(len(ocn.accounts.list()), "accounts exist")
+print("{:<5} {:<45} {:<20} {:<12} {}".format("","Address", "Ocean Token Balance", "Password?", "ETH balance"))
+for i, acct in enumerate(ocn.accounts.list()):
+    acct_balance = ocn.accounts.balance(acct)
+
+    # Check the password
+    if acct.password:
+        flg_password_exists = True
+    elif str.lower(acct.address) in passwords:
+        acct.password = passwords[str.lower(acct.address)]
+        flg_password_exists = True
+    else:
+        flg_password_exists = False
+    print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_pass, acct_balance.eth))
+    
 # %% [markdown]
 # ### The User Account creed
 # *this is my account. there are many like it, but this one is mine.

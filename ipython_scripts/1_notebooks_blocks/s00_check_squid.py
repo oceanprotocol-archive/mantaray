@@ -74,4 +74,8 @@ config_dict = {
 #%%
 # Instantiate Ocean
 configuration = Config(filename=None, options_dict=config_dict)
-# ocn = Ocean(configuration)
+ocn = Ocean(configuration)
+print("***OCEAN***")
+print("{} accounts".format(len(ocn.accounts._accounts)))
+for i, account in enumerate(ocn.accounts._accounts):
+    print(i, account.address)
