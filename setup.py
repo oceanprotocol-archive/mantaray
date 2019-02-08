@@ -13,7 +13,7 @@ with open('CHANGELOG.md') as changelog_file:
 
 # Core requirements for end-users
 requirements = [
-    'squid-py==0.2.17'
+    'squid-py==0.2.22'
 ]
 
 # Required packages for developers

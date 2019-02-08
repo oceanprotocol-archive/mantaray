@@ -15,7 +15,7 @@
 # Standard imports
 import logging
 # from pathlib import Path
-import os
+# import os
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -27,7 +27,6 @@ import mantaray_utilities as manta_utils
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
-# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 #%%
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
@@ -72,18 +71,39 @@ if publisher_acct.ocean_balance == 0:
 metadata = squid_py.ddo.metadata.Metadata.get_example()
 print('Name of asset:', metadata['base']['name'])
 
-pprint(metadata)
-
+asset_price = 10 # Ocean Token
+service_timeout = 600 # 10 Minutes
 
 # %% [markdown]
-# Note the price in the Metadata! This will be purchase price you are placing on the asset.
-#
+# When publishing a dataset, you are actually publishing *access* to the dataset. Access is negotiated by the access agent, called 'Brizo'.
+# %%
+brizo = squid_py.brizo.brizo_provider.BrizoProvider.get_brizo()
+purchase_url = brizo.get_purchase_endpoint(configuration)
+service_url = brizo.get_service_endpoint(configuration)
+print("To purchase the dataset, a user will call",  purchase_url)
+print("To download the dataset, a user will call", service_url)
+
+# %% [markdown]
+# These purchase and download functions are packaged into a *Service Descriptor*.
+# In the general case, a dataset is just a type of Asset. An Asset can be any digital asset on Ocean Protocol, including things like
+# Compute services, which can have complex access methods, hence the flexibility and composability of Service Descriptors.
+# The following cell displays the access service descriptor. As a publisher, you will set the price in the Meta Data
+# %%
+# template = get_registered_access_service_template(ocn, account)
+template_ID = squid_py.service_agreement.service_types.ACCESS_SERVICE_TEMPLATE_ID
+dataset_access = squid_py.service_agreement.service_factory.ServiceDescriptor.access_service_descriptor
+dataset_access_service = dataset_access(asset_price, purchase_url, service_url, service_timeout, template_ID)
+service_descriptors = [dataset_access_service]
+pprint(service_descriptors)
+
+# %% [markdown]
 # The asset has been constructed, we are ready to publish to Ocean Protocol!
 # %%
 ddo = ocn.register_asset(metadata, publisher_acct)
 
-# %%
+#%%
 # Inspect the new DDO
+# Your assigned DID:
 registered_did = ddo.did
 print("New asset registered at", registered_did)
 manta_utils.asset_pretty_print.print_ddo(ddo)
@@ -102,9 +122,7 @@ try: ocn.metadata_store.get_asset_ddo(random_did)
 except Exception as e: print("This raises an error, as required:", e)
 
 # %% [markdown]
-# Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner,
-# congratulations on publishing an Asset into Ocean Protocol!
-
+# Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner
 # %%
 # We need the pure ID string (a DID without the prefixes)
 asset_id = squid_py.did.did_to_id(registered_did)

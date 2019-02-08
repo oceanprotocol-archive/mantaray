@@ -28,28 +28,22 @@
 
 #%%
 # Standard imports
-import sys
 import logging
-from pathlib import Path
-import squid_py
-from squid_py.ocean.ocean import Ocean
-import requests
-import json
-import os
 import urllib
-import pprint
+import os
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
+from squid_py.config import Config
 import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
-import mantaray_utilities.user as manta_user
 import mantaray_utilities.asset_pretty_print as manta_print
 
 # Setup logging
 manta_logging.logger.setLevel('CRITICAL')
-
+# manta_logging.logger.setLevel('DEBUG')
+# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 #%%
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
@@ -62,7 +56,8 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 # ### Section 1: Assets in the MetaData store (Aquarius)
 # Anyone can search assets in the public metadata stores
 #%%
-ocn = Ocean(config_file=CONFIG_INI_PATH)
+configuration = Config(CONFIG_INI_PATH)
+ocn = Ocean(configuration)
 
 #%% [markdown]
 # The Metadata store is a database wrapped with a REST API
@@ -94,9 +89,9 @@ print("There are {} assets registered in the metadata store.".format(len(all_did
 #
 # [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/7)
 #
-# [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/8
+# [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/8)
 #
-# Let's select the first asset for inspection (Note, since the database is stateful, this can easily change/break,
+# Let's select an asset for inspection (Note, since the database is stateful, this can easily change/break,
 # so try with another index or register your own asset first!)
 # %%
 this_did = all_dids[-1]
@@ -115,35 +110,31 @@ print("Selected DID:", this_did)
 #
 # A DDO has information regarding authentication, access control, and more
 #
-# For now, we will retrieve the 'metadata' of the Asset
+# First, we will retrieve the 'metadata' of the Asset
 #%%
-# Get the DDO from Aquarius database
-# TODO: This method is incorrectly named, issue opened and solved in last version of squid-py!
-aquarius_ddo = ocn.metadata_store.get_asset_metadata(this_did)
-# This is a dictionary, we are interested in only one of the 'service' items
-aquarius_metadata_svc = [svc for svc in aquarius_ddo['service'] if svc['type'] == 'Metadata'][0]
-aquarius_metadata = aquarius_metadata_svc['metadata']
+aquarius_metadata = ocn.metadata_store.get_asset_metadata(this_did)
 print("Asset name:", aquarius_metadata['base']['name'])
-print("Asset metadata:")
-pprint.pprint(aquarius_metadata)
+print("Asset description:", aquarius_metadata['base']['description'])
+print("Asset size:", aquarius_metadata['base']['size'])
 
 # %% [markdown]
+# The proper way to retrieve an asset is to **resolve** it from the Blockchain and return an Asset.
 # Instead of accessing the Aquarius database directly,
 # a DDO can be resolved from the DID on the blockchain, which first checks if the DID exists on chain,
 # and then performs the Aquarius access to return a DDO instance. A DDO instance is essentially the same as
 # a dictionary object.
 
 #%%
-resolved_ddo = ocn.resolve_did(this_did)
+# Get the entire DDO
+resolved_ddo = ocn.resolve_asset_did(this_did)
+# The Metadata is part of the DDO!
+aquarius_metadata_svc = [svc for svc in resolved_ddo._services if svc._type == 'Metadata'][0]
+aquarius_metadata = aquarius_metadata_svc._values['metadata']
+print("Asset name:", aquarius_metadata['base']['name'])
+print("Asset description:", aquarius_metadata['base']['description'])
+print("Asset size:", aquarius_metadata['base']['size'])
 
-# %% [markdown]
-# The proper way to retrieve an asset is to **resolve** it from the Blockchain and return an Asset.
-#%%
 
-# TODO: This is not working in this version, update!
-# resolved_asset = ocn.get_asset(this_did)
-# print(resolved_asset)
-# print("Resolved asset: {}, {}".format(resolved_asset.metadata['base']['name'], this_asset.did))
 
 # %% [markdown]
 # ### Section 4: Searching the Ocean
@@ -159,16 +150,16 @@ resolved_ddo = ocn.resolve_did(this_did)
 #
 # First, the pure mongoDB Query is built according to the documentation
 #
-# We are checking if the 'metadata' field exists, this should return all Assets.
+# We are checking if the 'metadata' field exists, this should return **ALL** Assets.
 #%%
 basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 search_results = ocn.search_assets(basic_query)
 print("Found {} assets".format(len(search_results)))
+print_match_idx = -1
 if search_results:
-    print("First match:",search_results[0])
-    manta_print.print_ddo(search_results[0].ddo)
+    print("Selected asset:",search_results[print_match_idx])
+    manta_print.print_ddo(search_results[print_match_idx])
 # TODO: Update pretty-printer
-
 
 #%% [markdown]
 # The MongoDB search API supports pagination as well
@@ -178,9 +169,10 @@ mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
 search_results = ocn.search_assets(full_paged_query)
 print("Found {} assets".format(len(search_results)))
+print_match_idx = -1
 if search_results:
-    print("First match:",search_results[0])
-    manta_print.print_ddo(search_results[0].ddo)
+    print("Selected asset:",search_results[print_match_idx])
+    manta_print.print_ddo(search_results[print_match_idx])
 
 
 #%% [markdown]
@@ -191,9 +183,10 @@ mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metad
 search_results = ocn.search_assets(mongo_query)
 
 print("Found {} assets".format(len(search_results)))
+print_match_idx = -1
 if search_results:
-    print("First match:", search_results[0])
-    manta_print.print_ddo(search_results[0].ddo)
+    print("Selected asset:",search_results[print_match_idx])
+    manta_print.print_ddo(search_results[print_match_idx])
 
 #%% Finally, let's find a substring within the name. We will use a Regex in MongoDB.
 match_this_substring = 'paper'
@@ -203,9 +196,10 @@ full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mon
 search_results = ocn.search_assets(full_paged_query)
 
 print("Found {} assets".format(len(search_results)))
+print_match_idx = -1
 if search_results:
-    print("First match:", search_results[0])
-    manta_print.print_asset(search_results[0])
+    print("Selected asset:",search_results[print_match_idx])
+    manta_print.print_ddo(search_results[print_match_idx])
 
 # %% [markdown]
 # ### Section 5: Cleaning the Ocean
@@ -233,8 +227,8 @@ if 0:
 # %%
 # Deleting all assets!
 # Please don't delete all the assets, as other users may be testing the components!
-# if 0:
-#     all_dids = ocn.metadata_store.list_assets()
-#     for i, did in enumerate(all_dids):
-#         print("Deleting DDO {} - {}".format(i, did))
-#         ocn.metadata_store.retire_asset_metadata(did)
+if 0:
+    all_dids = ocn.metadata_store.list_assets()
+    for i, did in enumerate(all_dids):
+        print("Deleting DDO {} - {}".format(i, did))
+        ocn.metadata_store.retire_asset_ddo(did)
