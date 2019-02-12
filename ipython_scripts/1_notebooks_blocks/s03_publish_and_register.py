@@ -70,44 +70,63 @@ if ocn.accounts.balance(publisher_acct).ocn == 0:
 # Get a simple example of Meta Data from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
 print('Name of asset:', metadata['base']['name'])
-
 pprint(metadata)
 
+# %% [markdown]
+# Note that the price is included in the Metadata! This will be purchase price you are placing on the asset.
+#%%
+metadata['base']['price']
+
+#%% [markdown]
+# Let's inspect another important component of your metadata - the actual asset files. The files of an asset are
+# described by valid URL's. You are responsible for ensuring the URL's are alive. Files may have additional
+# information, including a checksum, length, content type, etc.
+#%%
+for file in metadata['base']['files']:
+    print(file['url'])
 
 # %% [markdown]
-# Note the price in the Metadata! This will be purchase price you are placing on the asset.
-#
-# The asset has been constructed, we are ready to publish to Ocean Protocol.
+# With this metadata object, we are ready to publish the asset into Ocean Protocol. The result will be an ID
+# string (DID) registered into the smart contract, and a DID Document stored in Aquarius. The asset URLS's are
+# encrypted.
 # %%
-ddo = ocn.register_asset(metadata, publisher_acct)
-
-# %%
-# Inspect the new DDO
+ddo = ocn.assets.create(metadata, publisher_acct)
 registered_did = ddo.did
 print("New asset registered at", registered_did)
+# %%
+# Inspect the new DDO
+#%%
 manta_utils.asset_pretty_print.print_ddo(ddo)
 
-# %% [markdown]
-# Verify that this asset exists in the MetaData storage
 # %%
-# ddo = ocn.metadata_store.get_asset_ddo(registered_did)
-ddo = ocn.resolve_asset_did(registered_did)
+# Note that the 'files' attribute has been replaced by the 'encryptedFiles' attribute!
+#%%
+assert 'files' not in ddo.metadata['base']
+print("Encryped 'files' attribute, everything safe and secure!")
+print(ddo.metadata['base']['encryptedFiles'])
 
 # %% [markdown]
-# And this is what you would expect if the DID is *NOT* in the database
+# Now, let's verify that this asset exists in the MetaData storage
+# %%
+# ddo = ocn.metadata_store.get_asset_ddo(registered_did)
+ddo = ocn.assets.resolve(registered_did)
+print("Asset {} resolved from Aquarius metadata storage: {}".format(ddo.did,ddo.metadata['base']['name']))
+
+# %% [markdown]
+# For illustrative purposes, this is the error you can expect if the DID is *NOT* in the database
 # %%
 random_did = 'did:op:9a3c2693c1f942b8a61cba7d212e5cd50c1b9a5299f74e39848e9b4c2148d453'
-try: ocn.metadata_store.get_asset_ddo(random_did)
+try: ocn.assets.resolve(random_did)
 except Exception as e: print("This raises an error, as required:", e)
 
 # %% [markdown]
-# Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner,
-# congratulations on publishing an Asset into Ocean Protocol!
+# Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner.
+# Congratulations on publishing an Asset into Ocean Protocol!
 
 # %%
 # We need the pure ID string (a DID without the prefixes)
 asset_id = squid_py.did.did_to_id(registered_did)
-owner = ocn.keeper.did_registry.contract_concise.getOwner(asset_id)
+owner = ocn._keeper.did_registry.contract_concise.getOwner(asset_id)
 print("Asset ID", asset_id, "owned by", owner)
 assert str.lower(owner) == str.lower(publisher_acct.address)
 
