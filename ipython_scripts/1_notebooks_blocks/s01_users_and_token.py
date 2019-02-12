@@ -27,6 +27,7 @@ import os
 import csv
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
+import random
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
@@ -38,10 +39,6 @@ manta_utils.logging.logger.setLevel('CRITICAL')
 manta_utils.logging.logger.setLevel('INFO')
 from squid_py.keeper.web3_provider import Web3Provider
 # os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
-
-#%% Load the passwords file
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-manta_utils.user.
 
 #%%
 # Get the configuration file path for this environment
@@ -72,6 +69,16 @@ print("Currently selected address:", user1_address)
 print("Associated password:", user1_pass)
 
 # %% [markdown]
+# Alternatively, for the purposes of these demos, a list of passwords for local and cloud testing are available.
+# Several utility functions have been created to manage these passwords for testing multiple users.
+
+#%%
+# Load the passwords file
+path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
+passwords = manta_utils.user.load_passwords(path_passwords)
+user1_pass = manta_utils.user.password_map(user1_address, passwords)
+
+# %% [markdown]
 # ## Section 2: Instantiate the Ocean API class with this configuration
 # The Ocean API has an attribute listing all created (simulated) accounts in your local node
 # %%
@@ -79,10 +86,7 @@ ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
 # %% [markdown]
-# An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions
-
-# %% Users and passwords
-manta_utils.user.password_map('asdf','asdf')
+# An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions.
 
 # %%
 # List the accounts in the network
@@ -92,36 +96,32 @@ print(len(ocn.accounts.list()), "accounts exist")
 print("{:<5} {:<45} {:<20} {:<12} {}".format("","Address", "Ocean Token Balance", "Password?", "ETH balance"))
 for i, acct in enumerate(ocn.accounts.list()):
     acct_balance = ocn.accounts.balance(acct)
-
-    # Check the password
+    acct.password = manta_utils.user.password_map(acct.address, passwords)
     if acct.password:
-        flg_password_exists = True
-    elif str.lower(acct.address) in passwords:
-        acct.password = passwords[str.lower(acct.address)]
         flg_password_exists = True
     else:
         flg_password_exists = False
     print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_password_exists, acct_balance.eth))
 
+# %%
+# Select an account with a password
+main_account = random.choice([acct for acct in ocn.accounts.list() if manta_utils.user.password_map(acct.address, passwords)])
+
 # %% [markdown]
 # ### The User Account creed
 # *this is my account. there are many like it, but this one is mine.
+#
 # my account is my best friend. it is my life. i must master it as i must master my life.
+#
 # without me, my account is useless. without my account, i am useless. i must use my account true.*
 #
-# %%
 # ### It is not secure to send your password over an unsecured HTTP connection, this is for demonstration only!
 #
 # One of these existing accounts will be selected as your **current active account**. A simple utility class `Account`, is used to
 # hold your address and password, the address is used to retrieve your balance in Ether and Ocean Token.
-# %%
-# Select the first account specified as the main account
-main_account = ocn.accounts.list()[0]
-print(main_account.address, main_account.password)
-
-# %% [markdown]
-# Most of your interaction with the blockchain will require your Password.
 #
+# Most of your interaction with the blockchain will require your Password.
+
 # %% [markdown]
 # ## Requesting tokens
 # For development and testing, we have a magical function which will give you free Ocean Token!
