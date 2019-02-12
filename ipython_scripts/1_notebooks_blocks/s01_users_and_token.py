@@ -38,18 +38,10 @@ manta_utils.logging.logger.setLevel('CRITICAL')
 manta_utils.logging.logger.setLevel('INFO')
 from squid_py.keeper.web3_provider import Web3Provider
 # os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
-# %%
-# Get all passwords
-# TODO: Move to utils
-import csv
-passwords = dict()
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-with open(path_passwords) as f:
-    for row in csv.reader(f):
-        if row:
-            passwords[row[0]] = row[1]
 
-passwords = {k.lower(): v for k, v in passwords.items()}
+#%% Load the passwords file
+path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
+manta_utils.user.
 
 #%%
 # Get the configuration file path for this environment
@@ -88,9 +80,15 @@ logging.critical("Ocean smart contract node connected ".format())
 
 # %% [markdown]
 # An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions
+
+# %% Users and passwords
+manta_utils.user.password_map('asdf','asdf')
+
 # %%
 # List the accounts in the network
 print(len(ocn.accounts.list()), "accounts exist")
+
+# Print a simple table listing accounts and balances
 print("{:<5} {:<45} {:<20} {:<12} {}".format("","Address", "Ocean Token Balance", "Password?", "ETH balance"))
 for i, acct in enumerate(ocn.accounts.list()):
     acct_balance = ocn.accounts.balance(acct)

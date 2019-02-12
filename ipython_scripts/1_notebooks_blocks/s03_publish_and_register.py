@@ -37,13 +37,18 @@ logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
-# ### Section 1: Instantiate a simulated User
+# ### Section 1: User
 # A 'User' in an abstract class representing a user of Ocean Protocol.
 #
-
+#%%
 # Instantiate Ocean with the default configuration file.
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
+#%%
+main_account = ocn.accounts.list()[0]
+print(main_account.address, main_account.password)
+
+
 # Get the publisher account
 publisher_address = configuration['keeper-contracts']['parity.address']
 publisher_pass = configuration['keeper-contracts']['parity.password']
