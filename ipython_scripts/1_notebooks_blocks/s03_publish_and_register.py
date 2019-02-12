@@ -94,23 +94,26 @@ ddo = ocn.assets.create(metadata, publisher_acct)
 registered_did = ddo.did
 print("New asset registered at", registered_did)
 # %%
-# Inspect the new DDO
+# Inspect the new DDO. We can retrieve the DDO as a dictionary object, feel free to explore the DDO in the cell below!
 #%%
-manta_utils.asset_pretty_print.print_ddo(ddo)
+ddo_dict = ddo.as_dictionary()
+print("DID:", ddo.did)
+print("Services within this DDO:")
+for svc in ddo_dict['service']:
+    print(svc['type'], svc['serviceEndpoint'])
 
 # %%
 # Note that the 'files' attribute has been replaced by the 'encryptedFiles' attribute!
 #%%
 assert 'files' not in ddo.metadata['base']
 print("Encryped 'files' attribute, everything safe and secure!")
-print(ddo.metadata['base']['encryptedFiles'])
+print("Encrypted files decrypt on purchase! [{}...] etc. ".format(ddo.metadata['base']['encryptedFiles'][:50]))
 
 # %% [markdown]
 # Now, let's verify that this asset exists in the MetaData storage
 # %%
-# ddo = ocn.metadata_store.get_asset_ddo(registered_did)
 ddo = ocn.assets.resolve(registered_did)
-print("Asset {} resolved from Aquarius metadata storage: {}".format(ddo.did,ddo.metadata['base']['name']))
+print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did,ddo.metadata['base']['name']))
 
 # %% [markdown]
 # For illustrative purposes, this is the error you can expect if the DID is *NOT* in the database

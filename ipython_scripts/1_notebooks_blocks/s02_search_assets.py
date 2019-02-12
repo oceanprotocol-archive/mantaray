@@ -64,13 +64,13 @@ ocn = Ocean(configuration)
 # For all the functionality, see the Swagger documentation
 
 #%%
-res = urllib.parse.urlparse(ocn.metadata_store._base_url)
-print("Aquarius service, base URL: {}://{}".format(res.scheme, res.netloc))
-print("Aquarius service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
-res = urllib.parse.urlparse(ocn.config['resources']['brizo.url'])
-print("Brizo service, base URL: {}://{}".format(res.scheme, res.netloc))
-print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
-# TODO: The Swagger page does not correctly populate the /spec endpoint. Enter the URL/spec manually!
+# res = urllib.parse.urlparse(ocn.metadata_store._base_url)
+# print("Aquarius service, base URL: {}://{}".format(res.scheme, res.netloc))
+# print("Aquarius service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
+# res = urllib.parse.urlparse(ocn.config['resources']['brizo.url'])
+# print("Brizo service, base URL: {}://{}".format(res.scheme, res.netloc))
+# print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
+# # TODO: The Swagger page does not correctly populate the /spec endpoint. Enter the URL/spec manually!
 
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
