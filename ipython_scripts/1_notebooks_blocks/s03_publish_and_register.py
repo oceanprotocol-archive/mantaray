@@ -18,12 +18,12 @@ import logging
 import os
 
 # Import mantaray and the Ocean API (squid)
+import random
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
-# TODO: This will be removed after refactor of .request_tokens()
-from squid_py.keeper.web3_provider import Web3Provider
 import mantaray_utilities as manta_utils
+from mantaray_utilities.user import password_map
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
@@ -37,23 +37,26 @@ logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 # %% [markdown]
-# ### Section 1: User
-# A 'User' in an abstract class representing a user of Ocean Protocol.
+# ### Section 1: A publisher account in Ocean
 #
 #%%
 # Instantiate Ocean with the default configuration file.
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
 #%%
-main_account = ocn.accounts.list()[0]
-print(main_account.address, main_account.password)
+# Get a publisher account
+path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
+passwords = manta_utils.user.load_passwords(path_passwords)
 
-
-# Get the publisher account
-publisher_address = configuration['keeper-contracts']['parity.address']
-publisher_pass = configuration['keeper-contracts']['parity.password']
-publisher_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == publisher_address.lower()][0]
-publisher_acct.password = publisher_pass
+publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
+publisher_acct.password = password_map(publisher_acct.address, passwords)
+assert publisher_acct.password
+#%%
+print("Publisher account:", publisher_acct.address, publisher_acct.password)
+# publisher_address = configuration['keeper-contracts']['parity.address']
+# publisher_pass = configuration['keeper-contracts']['parity.password']
+# publisher_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == publisher_address.lower()][0]
+# publisher_acct.password = publisher_pass
 
 # %% [markdown]
 # Your account will need some Ocean Token to make real transactions
