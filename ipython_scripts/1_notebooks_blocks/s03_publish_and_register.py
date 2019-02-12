@@ -52,23 +52,14 @@ publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password
 publisher_acct.password = password_map(publisher_acct.address, passwords)
 assert publisher_acct.password
 #%%
-print("Publisher account:", publisher_acct.address, publisher_acct.password)
-# publisher_address = configuration['keeper-contracts']['parity.address']
-# publisher_pass = configuration['keeper-contracts']['parity.password']
-# publisher_acct = [ocn.accounts[addr] for addr in ocn.accounts if addr.lower() == publisher_address.lower()][0]
-# publisher_acct.password = publisher_pass
+print("Publisher account address {} with {} token".format(publisher_acct.address, ocn.accounts.balance(publisher_acct).ocn))
 
 # %% [markdown]
-# Your account will need some Ocean Token to make real transactions
+# Your account will need some Ocean Token to make real transactions, let's ensure that you are funded!
 # %%
 # ensure Ocean token balance
-if publisher_acct.ocean_balance == 0:
-    tx_hash = publisher_acct.request_tokens(1)
-    Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
-#%% [markdown]
-# For this tutorial, we will select one of the available unlocked accounts.
-#
-# In general, as a publisher, you will have your own configuration file with your personal account.
+if ocn.accounts.balance(publisher_acct).ocn == 0:
+    ocn.accounts.request_tokens(publisher_acct, 100)
 
 #%% [markdown]
 # ### Section 2: Create your MetaData for your asset
@@ -86,7 +77,7 @@ pprint(metadata)
 # %% [markdown]
 # Note the price in the Metadata! This will be purchase price you are placing on the asset.
 #
-# The asset has been constructed, we are ready to publish to Ocean Protocol!
+# The asset has been constructed, we are ready to publish to Ocean Protocol.
 # %%
 ddo = ocn.register_asset(metadata, publisher_acct)
 
