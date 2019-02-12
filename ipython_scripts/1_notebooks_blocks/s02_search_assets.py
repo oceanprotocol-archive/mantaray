@@ -82,7 +82,7 @@ print("Brizo access service Swagger API page (try it out!): {}/api/v1/docs/".for
 # First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius.
 
 #%%
-all_ddos = ocn.assets.search('')
+all_ddos = ocn.assets.search('.')
 #TODO: Broken?
 assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
 print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
