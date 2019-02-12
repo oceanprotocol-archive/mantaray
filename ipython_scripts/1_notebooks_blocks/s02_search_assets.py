@@ -56,21 +56,25 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 # ### Section 1: Assets in the MetaData store (Aquarius)
 # Anyone can search assets in the public metadata stores
 #%%
+# Instantiate Ocean from configuration file
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
 
+
 #%% [markdown]
-# The Metadata store is a database wrapped with a REST API
-# For all the functionality, see the Swagger documentation
+# The Metadata store is a database wrapped with a REST API.
+# For more details of functionality, see the documentation and our Swagger API page.
 
 #%%
-# res = urllib.parse.urlparse(ocn.metadata_store._base_url)
-# print("Aquarius service, base URL: {}://{}".format(res.scheme, res.netloc))
-# print("Aquarius service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
-# res = urllib.parse.urlparse(ocn.config['resources']['brizo.url'])
-# print("Brizo service, base URL: {}://{}".format(res.scheme, res.netloc))
-# print("Brizo service, Swagger: {}://{}/api/v1/docs/".format(res.scheme, res.netloc))
-# # TODO: The Swagger page does not correctly populate the /spec endpoint. Enter the URL/spec manually!
+print("Aquarius metadata service URL: {}".format(configuration.aquarius_url))
+print("Aquarius metadata service Swagger API page (try it out!): {}/api/v1/docs/".format(configuration.aquarius_url))
+
+# %% [markdown]
+# Similarly, the access control service is called Brizo, and will manage any access requests for an asset.
+#%%
+print("Brizo access service URL: {}".format(configuration.get('resources','brizo.url')))
+print("Brizo access service Swagger API page (try it out!): {}/api/v1/docs/".format(configuration.get('resources','brizo.url')))
+#TODO: Swagger page is still broken
 
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
@@ -78,9 +82,18 @@ ocn = Ocean(configuration)
 # First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius.
 
 #%%
-all_dids = ocn.metadata_store.list_assets()
-assert len(all_dids), "There are no assets registered, go to s03_publish_and_register!"
-print("There are {} assets registered in the metadata store.".format(len(all_dids)))
+all_ddos = ocn.assets.search('')
+#TODO: Broken?
+assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
+print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
+
+#%%
+# Alternative approach, use the Query function for now
+basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+all_ddos = ocn.assets.query(basic_query)
+#TODO: Broken?
+assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
+print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
 
 # %% [markdown]
 # Aquarius is a document store, with the key being the DID, and the document being the DDO
