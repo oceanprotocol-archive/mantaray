@@ -79,19 +79,12 @@ print("Brizo access service Swagger API page (try it out!): {}/api/v1/docs/".for
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
 # All stored assets can be listed. This is typically not done in production, as the list would be too large.
-# First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius.
+# First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius using the 'exists' tag.
 
 #%%
-all_ddos = ocn.assets.search('.')
-#TODO: Broken?
-assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
-print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
-
-#%%
-# Alternative approach, use the Query function for now
+# Use the Query function for now
 basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 all_ddos = ocn.assets.query(basic_query)
-#TODO: Broken?
 assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
 print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
 
@@ -104,50 +97,15 @@ print("There are {} assets registered in the metadata store.".format(len(all_ddo
 #
 # [OEP 7 - Decentralized Identifiers](https://github.com/oceanprotocol/OEPs/tree/master/8)
 #
-# Let's select an asset for inspection (Note, since the database is stateful, this can easily change/break,
+# Let's select an asset DDO for inspection (Note, since the database is stateful, this can easily change/break,
 # so try with another index or register your own asset first!)
 # %%
-this_did = all_dids[-1]
-print("Selected DID:", this_did)
-
-# %%
-# Iterating over all DID's: (can be very slow!)
-# for i, did in enumerate(all_dids):
-#     this_ddo= ocn.metadata_store.get_asset_metadata(did)
-#     print(i, did)
-
-# %% [markdown]
-# ### Section 3: Low level access: getting a DID Document from Aquarius
-# %% [markdown]
-# The DDO can be retrieved direct from Aquarius, as a dictionary object
-#
-# A DDO has information regarding authentication, access control, and more
-#
-# First, we will retrieve the 'metadata' of the Asset
-#%%
-aquarius_metadata = ocn.metadata_store.get_asset_metadata(this_did)
-print("Asset name:", aquarius_metadata['base']['name'])
-print("Asset description:", aquarius_metadata['base']['description'])
-print("Asset size:", aquarius_metadata['base']['size'])
-
-# %% [markdown]
-# The proper way to retrieve an asset is to **resolve** it from the Blockchain and return an Asset.
-# Instead of accessing the Aquarius database directly,
-# a DDO can be resolved from the DID on the blockchain, which first checks if the DID exists on chain,
-# and then performs the Aquarius access to return a DDO instance. A DDO instance is essentially the same as
-# a dictionary object.
-
-#%%
-# Get the entire DDO
-resolved_ddo = ocn.resolve_asset_did(this_did)
-# The Metadata is part of the DDO!
-aquarius_metadata_svc = [svc for svc in resolved_ddo._services if svc._type == 'Metadata'][0]
-aquarius_metadata = aquarius_metadata_svc._values['metadata']
-print("Asset name:", aquarius_metadata['base']['name'])
-print("Asset description:", aquarius_metadata['base']['description'])
-print("Asset size:", aquarius_metadata['base']['size'])
-
-
+# Select a single asset DDO from the list
+this_ddo = all_ddos[-1]
+print("Selected asset DID: {}".format(this_ddo.did))
+print("Asset name:", this_ddo.metadata['base']['name'])
+print("Asset price: {} token".format(this_ddo.metadata['base']['price']))
+print("Asset description: {} token".format(this_ddo.metadata['base']['description']))
 
 # %% [markdown]
 # ### Section 4: Searching the Ocean
@@ -166,7 +124,7 @@ print("Asset size:", aquarius_metadata['base']['size'])
 # We are checking if the 'metadata' field exists, this should return **ALL** Assets.
 #%%
 basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-search_results = ocn.search_assets(basic_query)
+search_results = ocn.assets.query(basic_query)
 print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
 if search_results:
@@ -180,7 +138,7 @@ if search_results:
 
 mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
-search_results = ocn.search_assets(full_paged_query)
+search_results = ocn.assets.query(full_paged_query)
 print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
 if search_results:
@@ -193,7 +151,7 @@ if search_results:
 #%%
 match_this_name = "Ocean protocol white paper"
 mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$eq':match_this_name } }}}
-search_results = ocn.search_assets(mongo_query)
+search_results = ocn.assets.query(mongo_query)
 
 print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
@@ -206,7 +164,7 @@ match_this_substring = 'paper'
 mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':match_this_substring}}}}
 full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
 
-search_results = ocn.search_assets(full_paged_query)
+search_results = ocn.assets.query(full_paged_query)
 
 print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
