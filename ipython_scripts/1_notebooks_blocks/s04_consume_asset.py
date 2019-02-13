@@ -78,12 +78,11 @@ if ocn.accounts.balance(consumer_acct).ocn == 0:
 # service_agreement_id = ocn.assets.order(this_asset.did, 'access', consumer_acct)
 #TODO: The service_definition_id will change to service_type
 service_agreement_id = ocn.assets.order(this_asset.did, '0', consumer_acct)
-print('got new service agreement id:', service_agreement_id)
+print('New service agreement id:', service_agreement_id)
 
 # %% [markdown]
 # The asset download is automatically initiated
+# This takes time!
 asset_path = Path.cwd() / ocn._config.downloads_path / f'datafile.{this_asset.asset_id}.0'
-assert asset_path.exists()
 print("Check for your downloaded asset in", asset_path)
-
-
+print("This might not appear immediately - the transaction needs be mined and the download needs to complete!")
