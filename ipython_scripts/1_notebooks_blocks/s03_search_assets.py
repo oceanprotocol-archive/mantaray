@@ -158,6 +158,7 @@ print_match_idx = -1
 if search_results:
     print("Selected asset:",search_results[print_match_idx])
     manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
+
 # %% [markdown]
 # #### Search using a regular expression
 # Finally, let's find a substring within the name. We will use a Regex in MongoDB.
