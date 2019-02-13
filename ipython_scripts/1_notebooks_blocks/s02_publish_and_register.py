@@ -1,21 +1,25 @@
 # %% [markdown]
 # # Getting Underway - Publishing assets
-# In this notebook, we will explore how to publish an Asset using Ocean Protocol.
-# As described in the previous notebook, Publish consists of 2 aspects:
+# In this notebook, we will explore how to publish an Asset using Ocean Protocol. An Asset consists of several files
+# which are kept private, and optionally other links which are open (samples, descriptions, etc.).
 #
-# 1. Uploading the DDO to Aquarius
-# 1. Registering the Asset on the blockchain
+# A publisher will require access to two services;
+# 1. A service to store the MetaData of the asset (part of the DDO) - 'Aquarius'
+# 1. A service to manage permissioned access to the assets - 'Brizo'
 #
-# *Note to the reader! The current implementation is very low-level, most of the functionality will be wrapped into
-# simpler Ocean.publish_dataset() style methods!*
+# The publishing of an asset consists of;
+# 1. Preparing the asset files locally
+# 1. Preparing the metadata of the asset
+# 1. Uploading assets or otherwise making them available as URL's
+# 1. Registering the metadata and service endpoints into Aquarius
+# 1. Registering the asset into the Blockchain (into the DID Registry)
+
 # %% [markdown]
-# ### Section 0: Import modules, and setup logging
+# ### Section 0: Import modules, connect the Ocean Protocol API
 
 #%%
 # Standard imports
 import logging
-# from pathlib import Path
-import os
 
 # Import mantaray and the Ocean API (squid)
 import random
@@ -27,22 +31,22 @@ from mantaray_utilities.user import password_map
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
-# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
+
 #%%
 # Get the configuration file path for this environment
-# os.environ['USE_K8S_CLUSTER'] = 'true'
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
-# %% [markdown]
-# ### Section 1: A publisher account in Ocean
-#
 #%%
 # Instantiate Ocean with the default configuration file.
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
+
+# %% [markdown]
+# ### Section 1: A publisher account in Ocean
+
 #%%
 # Get a publisher account
 path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
@@ -51,18 +55,22 @@ passwords = manta_utils.user.load_passwords(path_passwords)
 publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
 publisher_acct.password = password_map(publisher_acct.address, passwords)
 assert publisher_acct.password
+
 #%%
 print("Publisher account address {} with {} token".format(publisher_acct.address, ocn.accounts.balance(publisher_acct).ocn))
 
 # %% [markdown]
 # Your account will need some Ocean Token to make real transactions, let's ensure that you are funded!
+
 # %%
 # ensure Ocean token balance
 if ocn.accounts.balance(publisher_acct).ocn == 0:
     ocn.accounts.request_tokens(publisher_acct, 100)
 
 #%% [markdown]
-# ### Section 2: Create your MetaData for your asset
+# ### Section 2: Create the Metadata for your asset
+# The metadata is a key-value set of attributes which describe your asset
+#
 # A more complex use case is to manually generate your metadata conforming to Ocean standard, but for demonstration purposes,
 # a utility in squid-py is used to generate a sample Meta Data dictionary.
 
@@ -70,30 +78,37 @@ if ocn.accounts.balance(publisher_acct).ocn == 0:
 # Get a simple example of Meta Data from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
 print('Name of asset:', metadata['base']['name'])
+# Print the entire (JSON) dictionary
 pprint(metadata)
 
 # %% [markdown]
-# Note that the price is included in the Metadata! This will be purchase price you are placing on the asset.
+# Note that the price is included in the Metadata! This will be purchase price you are placing on the asset. You can
+# Alter the metadata object at any time before publishing.
 #%%
-metadata['base']['price']
+print("Price of Asset:", metadata['base']['price'])
+metadata['base']['price'] = 9
+print("Updated price of Asset:", metadata['base']['price'])
 
 #%% [markdown]
 # Let's inspect another important component of your metadata - the actual asset files. The files of an asset are
 # described by valid URL's. You are responsible for ensuring the URL's are alive. Files may have additional
 # information, including a checksum, length, content type, etc.
+
 #%%
-for file in metadata['base']['files']:
-    print(file['url'])
+for i, file in enumerate(metadata['base']['files']):
+    print("Asset link {}: {}".format( i, file['url']))
 
 # %% [markdown]
-# With this metadata object, we are ready to publish the asset into Ocean Protocol. The result will be an ID
+# ## Section 3 Publish the asset
+# With this metadata object prepared, we are ready to publish the asset into Ocean Protocol. The result will be an ID
 # string (DID) registered into the smart contract, and a DID Document stored in Aquarius. The asset URLS's are
-# encrypted.
+# encrypted upon publishing.
+
 # %%
 ddo = ocn.assets.create(metadata, publisher_acct)
 registered_did = ddo.did
 print("New asset registered at", registered_did)
-# %%
+# %% [markdown]
 # Inspect the new DDO. We can retrieve the DDO as a dictionary object, feel free to explore the DDO in the cell below!
 #%%
 ddo_dict = ddo.as_dictionary()
@@ -102,15 +117,18 @@ print("Services within this DDO:")
 for svc in ddo_dict['service']:
     print(svc['type'], svc['serviceEndpoint'])
 
-# %%
+# %% [markdown]
 # Note that the 'files' attribute has been replaced by the 'encryptedFiles' attribute!
 #%%
 assert 'files' not in ddo.metadata['base']
 print("Encryped 'files' attribute, everything safe and secure!")
 print("Encrypted files decrypt on purchase! [{}...] etc. ".format(ddo.metadata['base']['encryptedFiles'][:50]))
 
+
 # %% [markdown]
+# ## Section 4: Verify your asset
 # Now, let's verify that this asset exists in the MetaData storage
+# A call to assets.resolve() will call the Aquarius service  and retrieve the DID Document
 # %%
 ddo = ocn.assets.resolve(registered_did)
 print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did,ddo.metadata['base']['name']))
@@ -132,5 +150,8 @@ asset_id = squid_py.did.did_to_id(registered_did)
 owner = ocn._keeper.did_registry.contract_concise.getOwner(asset_id)
 print("Asset ID", asset_id, "owned by", owner)
 assert str.lower(owner) == str.lower(publisher_acct.address)
+
+# %% [markdown]
+# Next, let's search for our assets in Ocean Protocol
 
 

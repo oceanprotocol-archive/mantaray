@@ -1,44 +1,34 @@
 # %% [markdown]
 # # Getting Underway - wallets, passwords and tokens
 #
-# To interact in Ocean Protocol, you will need a wallet and you will fund it with some
-# Token to access the assets in the network.
+# To interact in Ocean Protocol, you will need an account, which you will fund with Token to access the assets
+# in the network.
 #
-# In this notebook, we will work with a class which *represents* a
-# User of Ocean Protocol.
+# In this notebook, we will demonstrate this behaviour with pre-loaded accounts.
 #
 # To use Ocean, a User requires
 # - A user account address
 # - A password
-#
-# With this information, the Ocean instance can be instantiated with the Ocean.main_account attribute.
-# This attribute enables the User to unlock event calls in the networks.
-# This class will be used in later scripts to simulate behaviour of actors on the network.
-# See the /script_fixtures directory for utilities such as the User() class
+# - Ocean Token
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
 #%%
 # Standard imports
-
 import logging
-from pathlib import Path
-import os
-import csv
+import random
+from pprint import pprint
+
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
-import random
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
 logging.info("Squid API version: {}".format(squid_py.__version__))
-from pprint import pprint
 # Setup logging to a higher level and not flood the console with debug messages
-manta_utils.logging.logger.setLevel('CRITICAL')
+# manta_utils.logging.logger.setLevel('CRITICAL')
 manta_utils.logging.logger.setLevel('INFO')
-from squid_py.keeper.web3_provider import Web3Provider
-# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
 
 #%%
 # Get the configuration file path for this environment
@@ -104,30 +94,19 @@ for i, acct in enumerate(ocn.accounts.list()):
     print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_password_exists, acct_balance.eth))
 
 # %%
-# Select an account with a password
+# Randomly select an account with a password
 main_account = random.choice([acct for acct in ocn.accounts.list() if manta_utils.user.password_map(acct.address, passwords)])
 
 # %% [markdown]
-# ### The User Account creed
-# *this is my account. there are many like it, but this one is mine.
+# ### It is never secure to send your password over an unsecured HTTP connection, this is for demonstration only!
+# To interact with Ocean Protocol, use a wallet provider or the MetaMask browser extension.
+# See our documentation page for setting up your Ethereum accounts!
 #
-# my account is my best friend. it is my life. i must master it as i must master my life.
-#
-# without me, my account is useless. without my account, i am useless. i must use my account true.*
-#
-# ### It is not secure to send your password over an unsecured HTTP connection, this is for demonstration only!
-#
-# One of these existing accounts will be selected as your **current active account**. A simple utility class `Account`, is used to
-# hold your address and password, the address is used to retrieve your balance in Ether and Ocean Token.
-#
-# Most of your interaction with the blockchain will require your Password.
+# Most of your interaction with the Ocean Protocol blockchain smart contracts will require your Password.
 
 # %% [markdown]
 # ## Requesting tokens
-# For development and testing, we have a magical function which will give you free Ocean Token!
-#
-# The result is a *transaction_hash*. This is your ticket to your *transaction receipt*, or in other words,
-# your proof that a transaction was completed (or not!).
+# For development and testing, we have a magical function which will give you free testnet Ocean Token!
 #
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
@@ -135,11 +114,14 @@ main_account = random.choice([acct for acct in ocn.accounts.list() if manta_util
 
 print("Starting Ocean balance:", ocn.accounts.balance(main_account).ocn)
 ocn.accounts.request_tokens(main_account, 1)
+
+#%%
+# Execute this after some time has passed to see the update!
 print("Updated Ocean balance:", ocn.accounts.balance(main_account).ocn)
 
 # %% [markdown]
 # ## Asynchronous interactions
-# Generally, many methods in the API will include a call to
+# Many methods in the API will include a call to
 # [.waitForTransactionReceipt(transaction_hash)](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.waitForTransactionReceiptj),
 # which explicitly pauses execution until the transaction has been mined. This will return the Transaction Receipt. When interacting
 # with the blockchain, things my take some time to execute!
