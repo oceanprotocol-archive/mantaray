@@ -1,48 +1,64 @@
 # %% [markdown]
 # # Pre-sail checklist - Python API for Ocean
 # With the Ocean Protocol components running, test the Squid API (Python API).
-# Instantiate the wrapper with your selected `config.ini` file, or use the default for this environment.
+# Instantiate the API with your selected `config.ini` file, or use the default for this environment.
 
+# %% [markdown]
+# ## Import the API, `squid-py`, and a simple utilities library `mantaray_utilities`.
 #%%
 # Standard imports
 import logging
-import os
+
 # Import mantaray and the Ocean API (squid)
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
 manta_utils.logging.logger.setLevel('CRITICAL')
-# For testing, set the desired environment:
-#os.environ['USE_K8S_CLUSTER'] = 'true'
+
+# %% [markdown]
+# In order to manage the different environments Mantaray runs in, we have a series of environment variables
+# which are used in the utilities library to resolve paths and keep behavior consistent. In the JupyterHub
+# deployment, all of this is taken care of for you.
 
 #%%
 # Get the configuration file path for this environment
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 
+CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 #%% [markdown]
-# ## Connect to Ocean with a configuration file
+# ## Connect to Ocean Protocal with the configuration file
 
 #%%
-# Instantiate Ocean
+# Load the configuration
 configuration = Config(CONFIG_INI_PATH)
+print("Configuration loaded. Will connect to a node at: ", configuration.keeper_url)
+
+# %% [markdown]
+# Feel free to inspect the `configuration` object.
+
+# %% [markdown]
+# From the configuration, instantiate the Ocean object, the primary interface to Ocean Protocol.
+# %%
+# Instantiate Ocean
 ocn = Ocean(configuration)
 
-# %%
-# The following cell will print some summary information of the Ocean connection
+# %% [markdown]
+# The following cell will print some summary information of the Ocean connection.
+#TODO: add pretty printing of the connection
+
 #%%
 print("***OCEAN***")
 print("{} accounts".format(len(ocn.accounts._accounts)))
 for i, account in enumerate(ocn.accounts._accounts):
     print(i, account.address)
 
-# A utility function is provided to summarize the Ocean class
-# manta_utils.asset_pretty_print.print_ocean(ocn)
-
 #%% [markdown]
-# ## Alternatively, connect to Ocean with a configuration dictionary
+# ## Alternatively, connect to Ocean with a configuration as dictionary
+# The configuration of the client (mantaray) can be inspected in the below code cells. The following configuration
+# is set for local testing.
+
 #%%
 config_dict = {
     'keeper-contracts': {
@@ -71,11 +87,13 @@ config_dict = {
 }
 # %%
 # You may modify the dictionary object and uncomment the next cell to test
-#%%
-# Instantiate Ocean
-configuration = Config(filename=None, options_dict=config_dict)
-ocn = Ocean(configuration)
-print("***OCEAN***")
-print("{} accounts".format(len(ocn.accounts._accounts)))
-for i, account in enumerate(ocn.accounts._accounts):
-    print(i, account.address)
+#%% [markdown]
+# ```
+# # Instantiate Ocean from the above dictionary
+# configuration = Config(filename=None, options_dict=config_dict)
+# ocn = Ocean(configuration)
+# print("***OCEAN***")
+# print("{} accounts".format(len(ocn.accounts._accounts)))
+# for i, account in enumerate(ocn.accounts._accounts):
+#     print(i, account.address)
+# ```
