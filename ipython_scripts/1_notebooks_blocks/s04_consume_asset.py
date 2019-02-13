@@ -10,6 +10,7 @@
 import logging
 from pprint import pprint
 import os
+from pathlib import Path
 import random
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -48,7 +49,6 @@ print("Consumer account address: ", consumer_acct.address)
 #%% [markdown]
 # ### Section 2: Find an asset
 #%%
-#%%
 # Use the Query function to get all existing assets
 basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 all_ddos = ocn.assets.query(basic_query)
@@ -69,21 +69,21 @@ pprint(this_asset)
 # %% [markdown]
 # Your account will need some Ocean Token to make real transactions
 # %%
-# ensure Ocean token balance
-if consumer_acct.ocean_balance < 50:
-    tx_hash = consumer_acct.request_tokens(50)
-    Web3Provider.get_web3().eth.waitForTransactionReceipt(tx_hash)
+if ocn.accounts.balance(consumer_acct).ocn == 0:
+    ocn.accounts.request_tokens(consumer_acct, 100)
+# %% [markdown]
+# Purchase the Asset!
+# %%
+
+# service_agreement_id = ocn.assets.order(this_asset.did, 'access', consumer_acct)
+#TODO: The service_definition_id will change to service_type
+service_agreement_id = ocn.assets.order(this_asset.did, '0', consumer_acct)
+print('got new service agreement id:', service_agreement_id)
 
 # %% [markdown]
-# Purchase
-# %%
-# Get the service definition ID
-service = this_ddo.get_service(service_type=squid_py.ServiceTypes.ASSET_ACCESS)
-assert squid_py.ServiceAgreement.SERVICE_DEFINITION_ID in service.as_dictionary()
-sa = squid_py.ServiceAgreement.from_service_dict(service.as_dictionary())
-
-# This will send the purchase request to Brizo which in turn will execute the agreement on-chain
-service_agreement_id = ocn.purchase_asset_service(this_ddo.did, sa.sa_definition_id, consumer_acct)
-print('got new service agreement id:', service_agreement_id)
+# The asset download is automatically initiated
+asset_path = Path.cwd() / ocn._config.downloads_path / f'datafile.{this_asset.asset_id}.0'
+assert asset_path.exists()
+print("Check for your downloaded asset in", asset_path)
 
 
