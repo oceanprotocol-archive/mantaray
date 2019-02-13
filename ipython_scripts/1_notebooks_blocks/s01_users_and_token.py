@@ -111,9 +111,10 @@ main_account = random.choice([acct for acct in ocn.accounts.list() if manta_util
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
 # %%
-
 print("Starting Ocean balance:", ocn.accounts.balance(main_account).ocn)
-ocn.accounts.request_tokens(main_account, 1)
+success = ocn.accounts.request_tokens(main_account, 1)
+# The result will be true or false
+assert success
 
 #%%
 # Execute this after some time has passed to see the update!

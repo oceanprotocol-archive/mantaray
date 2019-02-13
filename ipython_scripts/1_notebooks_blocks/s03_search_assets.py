@@ -126,7 +126,7 @@ print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
 if search_results:
     print("Selected asset:",search_results[print_match_idx])
-    manta_print.print_ddo(search_results[print_match_idx])
+    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
 # TODO: Update pretty-printer
 
 #%% [markdown]
@@ -138,12 +138,11 @@ if search_results:
 mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
 search_results = ocn.assets.query(full_paged_query)
-print("Found {} assets".format(len(search_results)))
+print("Asset exists search: Found {} assets".format(len(search_results)))
 print_match_idx = -1
 if search_results:
     print("Selected asset:",search_results[print_match_idx])
-    manta_print.print_ddo(search_results[print_match_idx])
-
+    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
 
 #%% [markdown]
 # #### Search in the 'name' attribute
@@ -154,12 +153,11 @@ match_this_name = "Ocean protocol white paper"
 mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$eq':match_this_name } }}}
 search_results = ocn.assets.query(mongo_query)
 
-print("Found {} assets".format(len(search_results)))
+print("Name attribute search: Found {} assets".format(len(search_results)))
 print_match_idx = -1
 if search_results:
     print("Selected asset:",search_results[print_match_idx])
-    manta_print.print_ddo(search_results[print_match_idx])
-
+    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
 # %% [markdown]
 # #### Search using a regular expression
 # Finally, let's find a substring within the name. We will use a Regex in MongoDB.
@@ -171,11 +169,11 @@ full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mon
 
 search_results = ocn.assets.query(full_paged_query)
 
-print("Found {} assets".format(len(search_results)))
+print("Regex search: Found {} assets".format(len(search_results)))
 print_match_idx = -1
 if search_results:
     print("Selected asset:",search_results[print_match_idx])
-    manta_print.print_ddo(search_results[print_match_idx])
+    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
 
 # %% [markdown]
 # ### Section 5: Cleaning the Ocean
