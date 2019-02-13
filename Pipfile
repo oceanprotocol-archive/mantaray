@@ -10,6 +10,7 @@ jupytext = "*"
 squid-py = "==0.4.2"
 requests = "*"
 mantaray-utilities = {editable = true,path = "/home/batman/ocn/mantaray_utilities"}
+ipykernel = "*"
 
 [requires]
 python_version = "3.6"
