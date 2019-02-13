@@ -82,7 +82,7 @@ print("Brizo access service Swagger API page (try it out!): {}/api/v1/docs/".for
 # First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius using the 'exists' tag.
 
 #%%
-# Use the Query function for now
+# Use the Query function to get all existing assets
 basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 all_ddos = ocn.assets.query(basic_query)
 assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"

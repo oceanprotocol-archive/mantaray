@@ -120,14 +120,14 @@ print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did,dd
 # %%
 random_did = 'did:op:9a3c2693c1f942b8a61cba7d212e5cd50c1b9a5299f74e39848e9b4c2148d453'
 try: ocn.assets.resolve(random_did)
-except Exception as e: print("This raises an error, as required:", e)
+except Exception as e: print("(This raises, as required)", e)
 
 # %% [markdown]
 # Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner.
 # Congratulations on publishing an Asset into Ocean Protocol!
 
 # %%
-# We need the pure ID string (a DID without the prefixes)
+# We need the pure ID string as in the DID registry (a DID without the prefixes)
 asset_id = squid_py.did.did_to_id(registered_did)
 owner = ocn._keeper.did_registry.contract_concise.getOwner(asset_id)
 print("Asset ID", asset_id, "owned by", owner)
