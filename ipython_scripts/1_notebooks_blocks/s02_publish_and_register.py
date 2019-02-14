@@ -15,6 +15,10 @@
 # 1. Registering the asset into the Blockchain (into the DID Registry)
 
 # %% [markdown]
+# <p><img src="https://raw.githubusercontent.com/oceanprotocol/mantaray/develop/doc/img/jupyter_cell.png" alt="drawing" width="400" align="center"/></p>
+# **Overall client and service architecture**
+#
+# %% [markdown]
 # ### Section 0: Import modules, connect the Ocean Protocol API
 
 #%%
