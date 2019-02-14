@@ -7,6 +7,7 @@ import pathlib
 import jupytext
 import logging
 import shutil
+import json
 # Get the IPython script root dir
 root_dir = pathlib.Path.cwd().joinpath("")
 path_ipy_root=root_dir.joinpath("ipython_scripts")
@@ -29,7 +30,18 @@ for the_file in path_jupyter_root.iterdir():
         # for the_sub_file in the_file.iterdir():
         #     shutil.rmtree(the_sub_file)
         #     the_sub_file.unlink()
+#%% Kernelspec - default kernel to load on notebook open
+kernelspec = """ {"kernelspec" : {
+   "display_name": "Manta Ray",
+   "language": "python",
+   "name": "mantaray"
+   }}
+""".replace("\n", "")
+kernel_spec_dict = json.loads(kernelspec)
 
+# string_ = '{"kernelspec":{"display_name": "Python 3", "language": "python", "name": "python3"}}'
+# json.loads(string_)
+# string_[13:16]
 #%%
 # Load the header
 header_lines=header_path.read_text()
@@ -67,12 +79,15 @@ for item in path_ipy_root.iterdir():
         # Parse the script to Jupyter format
         parsed = jupytext.reads(total_script_lines, ext='.py', format_name='percent')
 
+        parsed['metadata'].update(kernel_spec_dict)
+        logging.info("Added kernelspec".format())
+
         # Delete the file if it exists
         if out_path.exists():
             out_path.unlink()
         logging.info("Wrote {}".format(out_path))
 
-        # Write the
+        # Write the result
         jupytext.writef(parsed, out_path)
         processed_cnt +=1
 
