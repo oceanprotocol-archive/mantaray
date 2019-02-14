@@ -16,8 +16,7 @@
 
 # %% [markdown]
 # <p><img src="https://raw.githubusercontent.com/oceanprotocol/mantaray/develop/doc/img/jupyter_cell.png" alt="drawing" width="400" align="center"/></p>
-# **Overall client and service architecture**
-#
+# <p><b>Overall client and service architecture
 # %% [markdown]
 # ### Section 0: Import modules, connect the Ocean Protocol API
 
@@ -61,7 +60,8 @@ publisher_acct.password = password_map(publisher_acct.address, passwords)
 assert publisher_acct.password
 
 #%%
-print("Publisher account address {} with {} token".format(publisher_acct.address, ocn.accounts.balance(publisher_acct).ocn))
+print("Publisher account address {} with {} token".format(publisher_acct.address))
+print("Publisher account balance:", ocn.accounts.balance(publisher_acct).ocn)
 
 # %% [markdown]
 # Your account will need some Ocean Token to make real transactions, let's ensure that you are funded!
@@ -104,9 +104,10 @@ for i, file in enumerate(metadata['base']['files']):
 
 # %% [markdown]
 # ## Section 3 Publish the asset
-# With this metadata object prepared, we are ready to publish the asset into Ocean Protocol. The result will be an ID
-# string (DID) registered into the smart contract, and a DID Document stored in Aquarius. The asset URLS's are
-# encrypted upon publishing.
+# With this metadata object prepared, we are ready to publish the asset into Ocean Protocol.
+#
+# The result will be an ID string (DID) registered into the smart contract, and a DID Document stored in Aquarius.
+# The asset URLS's are encrypted upon publishing.
 
 # %%
 ddo = ocn.assets.create(metadata, publisher_acct)
@@ -131,7 +132,8 @@ print("Encrypted files decrypt on purchase! [{}...] etc. ".format(ddo.metadata['
 
 # %% [markdown]
 # ## Section 4: Verify your asset
-# Now, let's verify that this asset exists in the MetaData storage
+# Now, let's verify that this asset exists in the MetaData storage.
+#
 # A call to assets.resolve() will call the Aquarius service  and retrieve the DID Document
 # %%
 ddo = ocn.assets.resolve(registered_did)
@@ -146,6 +148,7 @@ except Exception as e: print("(This raises, as required)", e)
 
 # %% [markdown]
 # Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner.
+#
 # Congratulations on publishing an Asset into Ocean Protocol!
 
 # %%
