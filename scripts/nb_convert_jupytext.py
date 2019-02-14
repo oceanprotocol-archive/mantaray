@@ -78,3 +78,11 @@ for item in path_ipy_root.iterdir():
 
 
 logging.info("Wrote {} files".format(processed_cnt))
+logging.info("TODO: Add default kernelspec to all notebooks!".format())
+"""
+"kernelspec": {
+    "display_name": "mantaray",
+    "language": "python",
+    "name": "mantaray"
+},
+"""
