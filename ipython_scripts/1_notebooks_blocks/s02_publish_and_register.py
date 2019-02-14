@@ -16,7 +16,8 @@
 
 # %% [markdown]
 # <p><img src="https://raw.githubusercontent.com/oceanprotocol/mantaray/develop/doc/img/jupyter_cell.png" alt="drawing" width="400" align="center"/></p>
-# <p><b>Overall client and service architecture
+# <p><b>Overall client and service architecture</b></p>
+
 # %% [markdown]
 # ### Section 0: Import modules, connect the Ocean Protocol API
 
@@ -34,7 +35,7 @@ from mantaray_utilities.user import password_map
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
-
+from time import sleep
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
@@ -60,7 +61,7 @@ publisher_acct.password = password_map(publisher_acct.address, passwords)
 assert publisher_acct.password
 
 #%%
-print("Publisher account address {} with {} token".format(publisher_acct.address))
+print("Publisher account address: {}".format(publisher_acct.address))
 print("Publisher account balance:", ocn.accounts.balance(publisher_acct).ocn)
 
 # %% [markdown]
@@ -129,12 +130,15 @@ assert 'files' not in ddo.metadata['base']
 print("Encryped 'files' attribute, everything safe and secure!")
 print("Encrypted files decrypt on purchase! [{}...] etc. ".format(ddo.metadata['base']['encryptedFiles'][:50]))
 
-
 # %% [markdown]
 # ## Section 4: Verify your asset
 # Now, let's verify that this asset exists in the MetaData storage.
 #
-# A call to assets.resolve() will call the Aquarius service  and retrieve the DID Document
+# A call to assets.resolve() will call the Aquarius service and retrieve the DID Document
+#%%
+#TODO: Better handling based on reciept
+print("Wait for the transaction to complete")
+sleep(10)
 # %%
 ddo = ocn.assets.resolve(registered_did)
 print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did,ddo.metadata['base']['name']))
