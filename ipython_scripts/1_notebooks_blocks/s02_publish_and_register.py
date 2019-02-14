@@ -35,6 +35,7 @@ from mantaray_utilities.user import password_map
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
+manta_utils.logging.logger.setLevel('DEBUG')
 from time import sleep
 #%%
 # Get the configuration file path for this environment
@@ -135,9 +136,12 @@ print("Encrypted files decrypt on purchase! [{}...] etc. ".format(ddo.metadata['
 # Now, let's verify that this asset exists in the MetaData storage.
 #
 # A call to assets.resolve() will call the Aquarius service and retrieve the DID Document
-#%%
+#%% {HELLO:test}
+#+attr_jupyter: some cell metadata stuff
+#+attr_jupyter: some other metadata stuff
+
 #TODO: Better handling based on reciept
-print("Wait for the transaction to complete")
+print("Wait for the transaction to complete!")
 sleep(10)
 # %%
 ddo = ocn.assets.resolve(registered_did)
