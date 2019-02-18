@@ -12,8 +12,6 @@ from mantaray_utilities.user import password_map
 from pprint import pprint
 import requests
 # Setup logging
-manta_utils.logging.logger.setLevel('CRITICAL')
-manta_utils.logging.logger.setLevel('DEBUG')
 manta_utils.logging.logger.setLevel('INFO')
 from time import sleep
 #%%
