@@ -14,6 +14,7 @@ import requests
 # Setup logging
 manta_utils.logging.logger.setLevel('CRITICAL')
 manta_utils.logging.logger.setLevel('DEBUG')
+manta_utils.logging.logger.setLevel('INFO')
 from time import sleep
 #%%
 # Get the configuration file path for this environment
@@ -55,7 +56,6 @@ if ocn.accounts.balance(publisher_acct).ocn == 0:
 # GET METADATA
 # ######################################################################################################################
 # %%
-
 this_url = "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/metadata_OEP8.json"
 response = requests.get(this_url)
 if response.status_code == 200:
@@ -82,8 +82,24 @@ print("New asset registered at", registered_did)
 # CONSUME
 # ######################################################################################################################
 # %%
+# Use the Query function to get all existing assets
+basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+all_ddos = ocn.assets.query(basic_query)
+assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
+print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
+assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
+
+# Get a DID for testing
+selected_ddo = all_ddos[-1]
+selected_did = all_ddos[-1].did
+print("Selected asset name:", all_ddos[-1].metadata['base']['name'])
+print("Selected DID:",selected_did)
 
 # %% [markdown]
 #
+#%%
+service_agreement_id = ocn.assets.order(selected_ddo.did, '0', publisher_acct)
+print('New service agreement id:', service_agreement_id)
 #%%
 
