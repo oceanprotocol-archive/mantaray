@@ -75,7 +75,7 @@ if ocn.accounts.balance(consumer_acct).ocn == 0:
 # Purchase the Asset!
 # %%
 #TODO: The service_definition_id will change to service_type
-service_agreement_id = ocn.assets.order(this_asset.did, '0', consumer_acct)
+service_agreement_id = ocn.assets.order(this_asset.did, 'Access', consumer_acct)
 print('New service agreement id:', service_agreement_id)
 
 # %% [markdown]
