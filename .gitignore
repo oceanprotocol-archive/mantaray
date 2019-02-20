@@ -117,3 +117,4 @@ squid_py.db
 /consume-downloads/**/*.*
 passwords.csv
 
+downloads_spree/

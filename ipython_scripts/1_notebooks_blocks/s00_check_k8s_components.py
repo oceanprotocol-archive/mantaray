@@ -29,9 +29,9 @@ logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 #%%
 # For now, the endpoints are hard-coded by the dev-ops team.
 endpoints_dict = {
-    'aquarius': 'https://nginx-aquarius.dev-ocean.com:5000',
-    'brizo': 'https://nginx-brizo.dev-ocean.com:8030',
-    'Ethereum testnet (Nile)': 'https://nile.dev-ocean.com:8545',
+    'aquarius': 'https://nginx-aquarius.dev-ocean.com',
+    'brizo': 'https://nginx-brizo.dev-ocean.com',
+    'Ethereum testnet (Nile)': 'https://nile.dev-ocean.com',
     'secret_store' : 'https://secret-store.dev-ocean.com'
 }
 swagger_pages = dict()
@@ -56,7 +56,7 @@ print("Brizo Access API:", swagger_pages['brizo Swagger documentation'])
 flag_fail = False
 for endpoint in endpoints_dict:
     with manta_logging.LoggerCritical():
-        print("Checking {}".format(endpoint))
+        print("Checking {} at {}".format(endpoint, endpoints_dict[endpoint]))
         try:
             res = check_endpoint(endpoint, endpoints_dict[endpoint])
             if 'Content-Type' in res.headers:

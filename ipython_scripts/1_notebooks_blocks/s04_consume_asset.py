@@ -38,7 +38,7 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
 #%%
-# Get a publisher account
+# Get a consumer account
 path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
 passwords = manta_utils.user.load_passwords(path_passwords)
 
@@ -75,12 +75,12 @@ if ocn.accounts.balance(consumer_acct).ocn == 0:
 # Purchase the Asset!
 # %%
 #TODO: The service_definition_id will change to service_type
-service_agreement_id = ocn.assets.order(this_asset.did, '0', consumer_acct)
+service_agreement_id = ocn.assets.order(this_asset.did, 'Access', consumer_acct)
 print('New service agreement id:', service_agreement_id)
 
 # %% [markdown]
-# The asset download is automatically initiated
-# This takes time!
+# The asset download is automatically initiated, this will take time to complete!
+# %%
 asset_path = Path.cwd() / ocn._config.downloads_path / f'datafile.{this_asset.asset_id}.0'
 print("Check for your downloaded asset in", asset_path)
 print("This might not appear immediately - the transaction needs be mined and the download needs to complete!")
