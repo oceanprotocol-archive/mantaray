@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "88ac35fbf96fd1ebad16646d0999371908df6296fddf71a65f0c2d9e56faf261"
+            "sha256": "aef1202f6d49cd73f5f713e2c46cd59009711e85cea69298a9a6e1095663dc07"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -490,11 +490,11 @@
         },
         "squid-py": {
             "hashes": [
-                "sha256:435ec664fb793d4f8816aa2725c251f34956981e887ed93f9454fe2261a7e81a",
-                "sha256:5a942c410c92ebb8793dff3b3bd12aa62ca7720fee7dcc981477266e9033100a"
+                "sha256:373eb4a6b3d71a6d7a084a6f48ffd2a7229358b64479333698e6af2830f5281b",
+                "sha256:e617bff3ec7cd78e44f613175374aaa227914369bbe2f648b4652a417e5f4780"
             ],
             "index": "pypi",
-            "version": "==0.4.2"
+            "version": "==0.4.3"
         },
         "toolz": {
             "hashes": [
@@ -513,6 +513,13 @@
                 "sha256:e5f2585afccbff22390cddac29849df463b252b711aa2ce7c5f3f342a5b3b444"
             ],
             "version": "==5.1.1"
+        },
+        "tqdm": {
+            "hashes": [
+                "sha256:d385c95361699e5cf7622485d9b9eae2d4864b21cd5a2374a9c381ffed701021",
+                "sha256:e22977e3ebe961f72362f6ddfb9197cc531c9737aaf5f607ef09740c849ecd05"
+            ],
+            "version": "==4.31.1"
         },
         "traitlets": {
             "hashes": [
