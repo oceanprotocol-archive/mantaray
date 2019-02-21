@@ -37,8 +37,8 @@ from squid_py.config import Config
 import mantaray_utilities as manta_utils
 
 # Setup logging
-manta_utils.logging.logger.setLevel('CRITICAL')
-
+manta_utils.logging.logger.setLevel('INFO')
+print("squid-py Ocean API version:", squid_py.__version__)
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()

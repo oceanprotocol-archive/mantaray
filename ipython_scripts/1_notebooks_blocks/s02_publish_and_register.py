@@ -34,9 +34,10 @@ import mantaray_utilities as manta_utils
 from mantaray_utilities.user import password_map
 from pprint import pprint
 # Setup logging
-manta_utils.logging.logger.setLevel('CRITICAL')
-manta_utils.logging.logger.setLevel('DEBUG')
+manta_utils.logging.logger.setLevel('INFO')
 from time import sleep
+print("squid-py Ocean API version:", squid_py.__version__)
+
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()

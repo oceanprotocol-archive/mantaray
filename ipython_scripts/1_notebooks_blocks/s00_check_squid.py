@@ -10,10 +10,13 @@
 import logging
 
 # Import mantaray and the Ocean API (squid)
+import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
-manta_utils.logging.logger.setLevel('CRITICAL')
+manta_utils.logging.logger.setLevel('INFO')
+
+print("squid-py Ocean API version:", squid_py.__version__)
 
 # %% [markdown]
 # In order to manage the different environments Mantaray runs in, we have a series of environment variables

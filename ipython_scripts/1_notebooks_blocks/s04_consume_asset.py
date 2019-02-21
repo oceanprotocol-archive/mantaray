@@ -19,10 +19,11 @@ from squid_py.config import Config
 import mantaray_utilities as manta_utils
 from squid_py.keeper.web3_provider import Web3Provider
 # Setup logging
-manta_utils.logging.logger.setLevel('CRITICAL')
+manta_utils.logging.logger.setLevel('INFO')
 from mantaray_utilities.user import password_map
-# manta_utils.logging.logger.setLevel('DEBUG')
-# os.environ['USE_K8S_CLUSTER'] = 'True' # Enable this for testing local -> AWS setup
+
+print("squid-py Ocean API version:", squid_py.__version__)
+
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
@@ -64,7 +65,9 @@ print("Selected DID:",selected_did)
 #TODO: The Asset class does not offer much beyond DDO class
 #TODO: Term 'asset' is confusing here
 this_asset = ocn.assets.resolve(selected_did)
-pprint(this_asset)
+#pprint(this_asset)
+print(this_asset.metadata['base']['name'])
+print("Price:", this_asset.metadata['base']['price'])
 
 # %% [markdown]
 # Your account will need some Ocean Token to make real transactions
