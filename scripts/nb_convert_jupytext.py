@@ -34,7 +34,7 @@ for the_file in path_jupyter_root.iterdir():
 kernelspec = """ {"kernelspec" : {
    "display_name": "Manta Ray",
    "language": "python",
-   "name": "mantaray"
+   "name": "python3"
    }}
 """.replace("\n", "")
 kernel_spec_dict = json.loads(kernelspec)
