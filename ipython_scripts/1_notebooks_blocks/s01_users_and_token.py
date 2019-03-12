@@ -27,13 +27,11 @@ from squid_py.config import Config
 import mantaray_utilities as manta_utils
 logging.info("Squid API version: {}".format(squid_py.__version__))
 # Setup logging to a higher level and not flood the console with debug messages
-# manta_utils.logging.logger.setLevel('CRITICAL')
 manta_utils.logging.logger.setLevel('INFO')
-
+print("squid-py Ocean API version:", squid_py.__version__)
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
-# os.environ['USE_K8S_CLUSTER'] = 'true'
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
