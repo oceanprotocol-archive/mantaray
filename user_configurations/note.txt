@@ -1,1 +1,0 @@
-Ocean configuration files for simulated users are placed here.

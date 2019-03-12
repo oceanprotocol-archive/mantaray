@@ -1,147 +1,126 @@
 # %% [markdown]
 # # Getting Underway - wallets, passwords and tokens
 #
-# TODO: Note that this notebook will not completely execute since the Parity password file is *currently* not public.
+# To interact in Ocean Protocol, you will need an account, which you will fund with Token to access the assets
+# in the network.
 #
-# To interact in Ocean Protocol, you will need a wallet and you will fund it with some
-# Token to access the assets in the network.
-#
-# In this notebook, we will work with a class which *represents* a
-# User of Ocean Protocol.
+# In this notebook, we will demonstrate this behaviour with pre-loaded accounts.
 #
 # To use Ocean, a User requires
-# - A wallet address
+# - A user account address
 # - A password
-#
-# With this information, the Ocean instance can be instantiated with the Ocean.main_account attribute.
-# This attribute enables the User to unlock event calls in the networks.
-# This class will be used in later scripts to simulate behaviour of actors on the network.
-# See the /script_fixtures directory for utilities such as the User() class
+# - Ocean Token
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging
 #%%
 # Standard imports
-import random
-import os
-import names
 import logging
-from pathlib import Path
-import csv
+import random
+from pprint import pprint
+
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
 import squid_py
 from squid_py.ocean.ocean import Ocean
-
-import mantaray_utilities.config as manta_config
-import mantaray_utilities.logging as manta_logging
-import mantaray_utilities.user as manta_user
+from squid_py.config import Config
+import mantaray_utilities as manta_utils
 logging.info("Squid API version: {}".format(squid_py.__version__))
-
 # Setup logging to a higher level and not flood the console with debug messages
-manta_logging.logger.setLevel('CRITICAL')
-
+manta_utils.logging.logger.setLevel('INFO')
+print("squid-py Ocean API version:", squid_py.__version__)
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
-# os.environ['USE_K8S_CLUSTER'] = 'true'
-logging.critical("Deployment type: {}".format(manta_config.get_deployment_type()))
-CONFIG_INI_PATH = manta_config.get_config_file_path()
+logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
-#%% Utility class
-#TODO: Move this utility class to module
-class CaseInsensitiveDict(dict):
-    """User addresses are case"""
-    def __setitem__(self, key, value):
-        super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
-    def __getitem__(self, key):
-        return super(CaseInsensitiveDict, self).__getitem__(key.lower())
-
-#%% [markdown]
-# This section will load passwords and create seperate user accounts for each one.
-#TODO: This file is not currently uploaded until after security/scaling review
-
-#%% Get passwords from file
-PASSWORD_FILE = manta_config.get_project_path() / 'passwords.csv'
-PASSWORD_MAP = CaseInsensitiveDict() # New dict
-with open(PASSWORD_FILE, mode='r') as infile:
-    reader = csv.reader(infile)
-    for row in reader:
-        PASSWORD_MAP[row[0]] = row[1]
+# %% [markdown]
+# ## Section 1: Examine the configuration object
+#%%
+# The API can be configured with a file or a dictionary.
+# In this case, we will instantiate from file, which you may also inspect.
+# The configuration is a standard library [configparser.ConfigParser()](https://docs.python.org/3/library/configparser.html) object.
+print("Configuration file:", CONFIG_INI_PATH)
+configuration = Config(CONFIG_INI_PATH)
+pprint(configuration._sections)
 
 # %% [markdown]
-# ### Section 1: Instantiate the Ocean Protocol interface
+# Let's look at the 2 parameters that define your identity
+# The 20-byte 'parity.address' defines your account address
+# 'parity.password' is used to decrypt your private key and securely sign transactions
 #%%
-ocn = Ocean(CONFIG_INI_PATH)
-logging.info("Ocean smart contract node connected ".format())
-
-#%%
-# List the accounts created
-# ocn.accounts is a {address: Account} dict
-print(len(ocn.accounts), "ocean accounts available with following addresses:")
-for address in ocn.accounts:
-    acct = ocn.accounts[address]
-    print(acct.address)
+user1_address = configuration['keeper-contracts']['parity.address']
+user1_pass = configuration['keeper-contracts']['parity.password']
+print("Currently selected address:", user1_address)
+print("Associated password:", user1_pass)
 
 # %% [markdown]
-# ### Section 2: From accounts, to Users
-#
-# A simple wrapper for each address is used to represent a user.
-# See: [./script_fixtures/user.py](https://github.com/oceanprotocol/mantaray_utilities/blob/8e3128b49ec8ba00f4f8056a4c888e86b23a5c5c/mantaray_utilities/user.py#L13)
+# Alternatively, for the purposes of these demos, a list of passwords for local and cloud testing are available.
+# Several utility functions have been created to manage these passwords for testing multiple users.
 
-#%% [markdown]
-# Users are instantiated and listed
-#
-# Selected accounts are unlocked via password.
-# A password.csv file should be located in the project root directory, with each row containing <address>,<password>
-#
-# In the following cell, `num_users` specifies how many of the available acocunts will be processed.
-# The script will alternate between Data Scientist and Data Owner roles.
 #%%
-# Create some simulated users of Ocean Protocol
-# Alternate between Data Scientists (Consumers)
-# and Data Owners (providers)
-users = list()
-num_users = 4
-address_list = [acct for acct in ocn.accounts]
-for i, acct_address in enumerate(address_list[0:num_users]):
-    if i%2 == 0: role = 'Data Scientist'
-    else: role = 'Data Owner'
-    role = "User"
-    if acct_address.lower() in list(PASSWORD_MAP.keys()):
-        this_password = PASSWORD_MAP[acct_address]
+# Load the passwords file
+path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
+passwords = manta_utils.user.load_passwords(path_passwords)
+user1_pass = manta_utils.user.password_map(user1_address, passwords)
+
+# %% [markdown]
+# ## Section 2: Instantiate the Ocean API class with this configuration
+# The Ocean API has an attribute listing all created (simulated) accounts in your local node
+# %%
+ocn = Ocean(configuration)
+logging.critical("Ocean smart contract node connected ".format())
+
+# %% [markdown]
+# An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions.
+
+# %%
+# List the accounts in the network
+print(len(ocn.accounts.list()), "accounts exist")
+
+# Print a simple table listing accounts and balances
+print("{:<5} {:<45} {:<20} {:<12} {}".format("","Address", "Ocean Token Balance", "Password?", "ETH balance"))
+for i, acct in enumerate(ocn.accounts.list()):
+    acct_balance = ocn.accounts.balance(acct)
+    acct.password = manta_utils.user.password_map(acct.address, passwords)
+    if acct.password:
+        flg_password_exists = True
     else:
-        this_password = None
+        flg_password_exists = False
+    print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_password_exists, acct_balance.eth))
 
-    user = manta_user.User(names.get_full_name(), role, acct_address, this_password, CONFIG_INI_PATH)
-    users.append(user)
+# %%
+# Randomly select an account with a password
+main_account = random.choice([acct for acct in ocn.accounts.list() if manta_utils.user.password_map(acct.address, passwords)])
 
-# Select only unlocked accounts
-unlocked_users = [u for u in users if u.credentials]
-logging.info("Selected {} unlocked accounts for simulation.".format(len(unlocked_users)))
+# %% [markdown]
+# ### It is never secure to send your password over an unsecured HTTP connection, this is for demonstration only!
+# To interact with Ocean Protocol, use a wallet provider or the MetaMask browser extension.
+# See our documentation page for setting up your Ethereum accounts!
+#
+# Most of your interaction with the Ocean Protocol blockchain smart contracts will require your Password.
+
+# %% [markdown]
+# ## Requesting tokens
+# For development and testing, we have a magical function which will give you free testnet Ocean Token!
+#
+# Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
+# multiple times until it updates.
+# %%
+print("Starting Ocean balance:", ocn.accounts.balance(main_account).ocn)
+success = ocn.accounts.request_tokens(main_account, 1)
+# The result will be true or false
+assert success
 
 #%%
-# (Optional)
-# Delete the configuration files in the /user_configurations folder
-for f in Path('.').glob('user_configurations/*.ini'):
-    f.unlink()
+# Execute this after some time has passed to see the update!
+print("Updated Ocean balance:", ocn.accounts.balance(main_account).ocn)
 
-#%% [markdown]
-# List the users
-#%%
-for u in unlocked_users: print(u)
-
-#%% [markdown]
-# ### Section 3: Filling your chest with a bounty of ERC20 token
-# Get these users some Ocean token
-#%%
-for usr in unlocked_users:
-    if usr.account.ocean_balance == 0:
-        rcpt = usr.account.request_tokens(random.randint(0, 100))
-        usr.ocn._web3.eth.waitForTransactionReceipt(rcpt)
-
-#%% [markdown]
-# List the users, and notice the updated balance
-#%%
-for u in unlocked_users: print(u)
+# %% [markdown]
+# ## Asynchronous interactions
+# Many methods in the API will include a call to
+# [.waitForTransactionReceipt(transaction_hash)](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.waitForTransactionReceiptj),
+# which explicitly pauses execution until the transaction has been mined. This will return the Transaction Receipt. When interacting
+# with the blockchain, things my take some time to execute!

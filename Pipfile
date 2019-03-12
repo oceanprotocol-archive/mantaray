@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+jupytext = "*"
+
+[packages]
+squid-py = "==0.4.3"
+requests = "*"
+mantaray-utilities = {editable = true,path = "/home/batman/ocn/mantaray_utilities"}
+ipykernel = "*"
+
+[requires]
+python_version = "3.6"

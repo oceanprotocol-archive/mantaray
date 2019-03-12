@@ -1,0 +1,25 @@
+{
+  "name": "Manta Ray",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oceanprotocol/mantaray"
+  },
+  "dependencies": [
+    {
+      "name": "squid-py",
+      "version": "0.4.3"
+    },
+    {
+      "name": "aquarius",
+      "version": "0.1.8"
+    },
+    {
+      "name": "brizo",
+      "version": "0.2.1",
+    },
+    {
+      "name": "keeper-contracts",
+      "version": "0.6.12",
+    }
+  ]
+}
