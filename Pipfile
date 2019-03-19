@@ -7,7 +7,7 @@ verify_ssl = true
 jupytext = "*"
 
 [packages]
-squid-py = "==0.4.3"
+squid-py = "==0.5.2"
 requests = "*"
 mantaray-utilities = {editable = true,path = "/home/batman/ocn/mantaray_utilities"}
 ipykernel = "*"

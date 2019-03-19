@@ -64,6 +64,8 @@ print("Selected DID:",selected_did)
 #%% An Asset (DDO) can be also be resolved from a DID
 #TODO: The Asset class does not offer much beyond DDO class
 #TODO: Term 'asset' is confusing here
+
+selected_did = "did:op:9b89952a521e42c7843884dac8b8a66a44d9471597bd4ffdaa2283abef2219bc"
 this_asset = ocn.assets.resolve(selected_did)
 #pprint(this_asset)
 print(this_asset.metadata['base']['name'])
