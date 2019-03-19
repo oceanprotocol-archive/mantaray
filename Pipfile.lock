@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a7dce0acef17767a7c9423b1ec46eaafd446fe5e4e85711348d48b5e27010049"
+            "sha256": "845f1afe7e45742b010033fe32f9f9530ebf3fceb1a6e5cd79a5f750919fed5c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -124,10 +124,10 @@
         },
         "decorator": {
             "hashes": [
-                "sha256:33cd704aea07b4c28b3eb2c97d288a06918275dac0ecebdaf1bc8a48d98adb9e",
-                "sha256:cabb249f4710888a2fc0e13e9a16c343d932033718ff62e1e9bc93a9d3a9122b"
+                "sha256:86156361c50488b84a3f148056ea716ca587df2f0de1d34750d35c21312725de",
+                "sha256:f069f3a01830ca754ba5258fde2278454a0b5b79e0d7f5c13b3b97e57d4acff6"
             ],
-            "version": "==4.3.2"
+            "version": "==4.4.0"
         },
         "deprecated": {
             "hashes": [
@@ -261,10 +261,10 @@
         },
         "keeper-contracts": {
             "hashes": [
-                "sha256:164c1cfe32cf36cd6d9b6c3d73ed8d60a6ac52dc1d34b35021393b87e51ce618",
-                "sha256:aaf85cff7963f4d5bda4288047563583a2653810bb0eca91e4b0994aee70012e"
+                "sha256:1e13dd35e7e255dda312a944490f85bdf271047e5c3aa87b3a51b917581b686b",
+                "sha256:c77d94590e32d442718faf0bfb6f34dea94f98ba703853d8e28046a0d9ea0a37"
             ],
-            "version": "==0.8.5"
+            "version": "==0.8.6"
         },
         "lru-dict": {
             "hashes": [
@@ -497,11 +497,11 @@
         },
         "squid-py": {
             "hashes": [
-                "sha256:23f79e0a569ea68f0ef002c0661b1a58c46fdbe418dfd9e8be8df7d251da0140",
-                "sha256:84ba22f2647f0da440503ac67b40415831c3cf9f67f5bb3b72a84efaa2790dcb"
+                "sha256:83ae9fa71c48c93fd755b61c45ee49386751ea66b201d9c5e2513ac59aee1c69",
+                "sha256:f9a8641edab086acc8fa638e29738298f4e7d4886bcb5de6c3add96aca0a8b5a"
             ],
             "index": "pypi",
-            "version": "==0.5.2"
+            "version": "==0.5.3"
         },
         "toolz": {
             "hashes": [
@@ -591,10 +591,10 @@
         },
         "decorator": {
             "hashes": [
-                "sha256:33cd704aea07b4c28b3eb2c97d288a06918275dac0ecebdaf1bc8a48d98adb9e",
-                "sha256:cabb249f4710888a2fc0e13e9a16c343d932033718ff62e1e9bc93a9d3a9122b"
+                "sha256:86156361c50488b84a3f148056ea716ca587df2f0de1d34750d35c21312725de",
+                "sha256:f069f3a01830ca754ba5258fde2278454a0b5b79e0d7f5c13b3b97e57d4acff6"
             ],
-            "version": "==4.3.2"
+            "version": "==4.4.0"
         },
         "ipython-genutils": {
             "hashes": [

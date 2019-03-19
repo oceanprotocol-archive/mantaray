@@ -25,9 +25,9 @@ import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
-logging.info("Squid API version: {}".format(squid_py.__version__))
 # Setup logging to a higher level and not flood the console with debug messages
 manta_utils.logging.logger.setLevel('INFO')
+logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
 #%%
 # Get the configuration file path for this environment
@@ -89,7 +89,7 @@ for i, acct in enumerate(ocn.accounts.list()):
         flg_password_exists = True
     else:
         flg_password_exists = False
-    print("{:<5} {:<45} {:<20} {:<12} {}".format(i,acct.address, acct_balance.ocn, flg_password_exists, acct_balance.eth))
+    print("{:<5} {:<45} {:<20.0f} {:<12} {:0.0f}".format(i,acct.address, acct_balance.ocn/10**18, flg_password_exists, acct_balance.eth/10**18))
 
 # %%
 # Randomly select an account with a password
