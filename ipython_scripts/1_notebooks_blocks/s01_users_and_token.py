@@ -74,7 +74,8 @@ ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
 # %% [markdown]
-# An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions.
+# An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions. Similar to
+# Ethereum, Ocean Tokens are divisible into the smallest unit of 10^18 of 1 token.
 
 # %%
 # List the accounts in the network
@@ -109,14 +110,14 @@ main_account = random.choice([acct for acct in ocn.accounts.list() if manta_util
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
 # %%
-print("Starting Ocean balance:", ocn.accounts.balance(main_account).ocn)
+print("Starting Ocean balance: {:0.2f}".format(ocn.accounts.balance(main_account).ocn/10**18))
 success = ocn.accounts.request_tokens(main_account, 1)
 # The result will be true or false
 assert success
 
 #%%
 # Execute this after some time has passed to see the update!
-print("Updated Ocean balance:", ocn.accounts.balance(main_account).ocn)
+print("Updated Ocean balance: {:0.2f}".format(ocn.accounts.balance(main_account).ocn/10**18))
 
 # %% [markdown]
 # ## Asynchronous interactions

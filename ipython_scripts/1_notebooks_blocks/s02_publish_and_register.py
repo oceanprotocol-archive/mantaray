@@ -163,7 +163,7 @@ except Exception as e: print("(This raises, as required)", e)
 # %%
 # We need the pure ID string as in the DID registry (a DID without the prefixes)
 asset_id = squid_py.did.did_to_id(registered_did)
-owner = ocn._keeper.did_registry.contract_concise.getOwner(asset_id)
+owner = ocn._keeper.did_registry.contract_concise.getDIDOwner(asset_id)
 print("Asset ID", asset_id, "owned by", owner)
 assert str.lower(owner) == str.lower(publisher_acct.address)
 
