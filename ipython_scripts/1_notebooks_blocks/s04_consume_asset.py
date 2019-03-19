@@ -51,7 +51,7 @@ print("Consumer account address: ", consumer_acct.address)
 # ### Section 2: Find an asset
 #%%
 # Use the Query function to get all existing assets
-basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+basic_query = {"query":{"text":["Weather"]}}
 all_ddos = ocn.assets.query(basic_query)
 assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
 print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
