@@ -135,9 +135,11 @@ if search_results:
 # large databases of Ocean assets, and for front end development.
 
 #%%
-mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
-search_results = ocn.assets.query(full_paged_query)
+# TODO: Pagination fails?
+mongo_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+# mongo_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
+# full_paged_query = {"query": mongo_query}
+search_results = ocn.assets.query(mongo_query)
 print("Asset exists search: Found {} assets".format(len(search_results)))
 print_match_idx = -1
 if search_results:
@@ -163,10 +165,13 @@ if search_results:
 # #### Search using a regular expression
 # Finally, let's find a substring within the name. We will use a Regex in MongoDB.
 #%%
+# TODO: Pagination fails?
 
 match_this_substring = 'paper'
 mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':match_this_substring}}}}
-full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
+full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}}
+full_paged_query.update(mongo_query)
+# full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, mongo_query}
 
 search_results = ocn.assets.query(full_paged_query)
 
@@ -185,24 +190,25 @@ if search_results:
 
 #%%
 if 0:
+
     # Let's count how many ddo's are registered
-    all_dids = ocn.metadata_store.list_assets()
+    all_dids = ocn.assets._get_aquarius().list_assets()
     print("there are {} assets registered in the metadata store.".format(len(all_dids)))
 
     # let's delete the first ddo object.
-    first_ddo = all_dids[0]
-    print("selected ddo for deletion:", first_ddo)
-    ocn.metadata_store.retire_asset_metadata(first_ddo)
+    first_did = all_dids[0]
+    print("selected ddo for deletion:", first_did)
+    ocn.assets._get_aquarius().retire_asset_ddo(first_did)
 
     # again, let's count how many ddo's are registered
-    all_dids = ocn.metadata_store.list_assets()
+    all_dids = ocn.assets._get_aquarius().list_assets()
     print("there are now {} assets registered in the metadata store.".format(len(all_dids)))
 
 # %%
 # Deleting all assets!
 # Please don't delete all the assets, as other users may be testing the components!
 if 0:
-    all_dids = ocn.metadata_store.list_assets()
+    all_dids = ocn.assets._get_aquarius().list_assets()
     for i, did in enumerate(all_dids):
         print("Deleting DDO {} - {}".format(i, did))
-        ocn.metadata_store.retire_asset_ddo(did)
+        ocn.assets._get_aquarius().retire_asset_ddo(did)
