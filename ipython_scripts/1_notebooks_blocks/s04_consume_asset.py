@@ -19,8 +19,8 @@ from squid_py.config import Config
 import mantaray_utilities as manta_utils
 from squid_py.keeper.web3_provider import Web3Provider
 # Setup logging
-manta_utils.logging.logger.setLevel('INFO')
 from mantaray_utilities.user import password_map
+manta_utils.logging.logger.setLevel('INFO')
 
 print("squid-py Ocean API version:", squid_py.__version__)
 
@@ -61,12 +61,17 @@ assert len(all_ddos), "There are no assets registered, go to s03_publish_and_reg
 # Get a DID for testing
 selected_did = all_ddos[-1].did
 print("Selected DID:",selected_did)
-#%% An Asset (DDO) can be also be resolved from a DID
-#TODO: The Asset class does not offer much beyond DDO class
-#TODO: Term 'asset' is confusing here
 
-selected_did = "did:op:9b89952a521e42c7843884dac8b8a66a44d9471597bd4ffdaa2283abef2219bc"
+#%% [markdown]
+# Or alternatively, since the asset may be registered but not actually exist in Aquarius, you can
+# specify the asset below (i.e. the DID of the asset you previously registered)
+#%%
+
+selected_did = "did:op:58753591be7844b8a49f4c524005bba6c4962beb6e4a40eda3c18a9db8a726b4"
+#%% An Asset (DDO) can be also be resolved from a DID
+
 this_asset = ocn.assets.resolve(selected_did)
+
 #pprint(this_asset)
 print(this_asset.metadata['base']['name'])
 print("Price:", this_asset.metadata['base']['price'])
@@ -79,7 +84,8 @@ if ocn.accounts.balance(consumer_acct).ocn == 0:
 # %% [markdown]
 # Purchase the Asset!
 # %%
-#TODO: The service_definition_id will change to service_type
+
+manta_utils.logging.logger.setLevel('DEBUG')
 service_agreement_id = ocn.assets.order(this_asset.did, 'Access', consumer_acct)
 print('New service agreement id:', service_agreement_id)
 
