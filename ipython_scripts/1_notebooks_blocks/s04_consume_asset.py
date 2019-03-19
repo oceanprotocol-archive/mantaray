@@ -84,13 +84,53 @@ if ocn.accounts.balance(consumer_acct).ocn == 0:
 # %% [markdown]
 # Purchase the Asset!
 # %%
-
-manta_utils.logging.logger.setLevel('DEBUG')
+manta_utils.logging.logger.setLevel('INFO')
 service_agreement_id = ocn.assets.order(this_asset.did, 'Access', consumer_acct)
 print('New service agreement id:', service_agreement_id)
 
 # %% [markdown]
-# The asset download is automatically initiated, this will take time to complete!
+# The asset download is automatically initiated, this will take time to complete! There are several events
+# emitted by the blockchain node to show the progress of the transaction and fulfilled conditions.
+#%%
+def _log_event(event_name):
+    def _process_event(event):
+        print(f'Received event {event_name}: {event}')
+
+    return _process_event
+
+event = ocn._keeper.escrow_access_secretstore_template.subscribe_agreement_created(
+    service_agreement_id,
+    100,
+    _log_event(ocn._keeper.escrow_access_secretstore_template.AGREEMENT_CREATED_EVENT),
+    (),
+    wait=True
+)
+assert event, 'no event for EscrowAccessSecretStoreTemplate.AgreementCreated'
+
+event = keeper.lock_reward_condition.subscribe_condition_fulfilled(
+    service_agreement_id,
+    100,
+    _log_event(ocn._keeper.lock_reward_condition.FULFILLED_EVENT),
+    (),
+    wait=True
+)
+assert event, 'no event for LockRewardCondition.Fulfilled'
+
+event = keeper.escrow_reward_condition.subscribe_condition_fulfilled(
+    service_agreement_id,
+    100,
+    _log_event(ocn._keeper.escrow_reward_condition.FULFILLED_EVENT),
+    (),
+    wait=True
+)
+assert event, 'no event for EscrowReward.Fulfilled'
+
+ocn.agreements.is_access_granted(service_agreement_id, ddo.did, consumer_account.address)
+
+assert event, 'No event received for ServiceAgreement Fulfilled.'
+logging.info('Success buying asset.')
+
+
 # %%
 asset_path = Path.cwd() / ocn._config.downloads_path / f'datafile.{this_asset.asset_id}.0'
 print("Check for your downloaded asset in", asset_path)
