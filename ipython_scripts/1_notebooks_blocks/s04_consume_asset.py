@@ -1,37 +1,19 @@
-# %% [markdown]
-# Getting Underway - Downloading Datasets (Assets)
 
-# %% [markdown]
-# ### Section 0: Import modules, and setup logging
 
-#%%
-# Standard imports
 import logging
-from pprint import pprint
 import os
-import time
-from pathlib import Path
-import random
-# Import mantaray and the Ocean API (squid)
-import squid_py
-from squid_py import Metadata
-from squid_py.ocean.ocean import Ocean
-from squid_py.config import Config
+
+from squid_py import ConfigProvider, Metadata, Ocean
 from squid_py.agreements.service_agreement import ServiceAgreement
 from squid_py.agreements.service_types import ServiceTypes
-import mantaray_utilities as manta_utils
-from squid_py.keeper.web3_provider import Web3Provider
-# Setup logging
-from mantaray_utilities.user import password_map
-manta_utils.logging.logger.setLevel('INFO')
+from squid_py.keeper import Keeper
+import time
 
-print("squid-py Ocean API version:", squid_py.__version__)
-
-#%%
+os.environ['TEST_NILE'] = '1'
+#%% get_account_from_config
 from squid_py.accounts.account import Account
 from squid_py.keeper import Keeper
 from squid_py.keeper.web3_provider import Web3Provider
-
 
 def get_account_from_config(config, config_account_key, config_account_password_key):
     address = None
@@ -48,152 +30,101 @@ def get_account_from_config(config, config_account_key, config_account_password_
 
     return Account(address, password)
 
+#%% get_publisher_account
+def get_publisher_account(config):
+    acc = get_account_from_config(config, 'parity.address', 'parity.password')
+    if acc is None:
+        acc = Account(Keeper.get_instance().accounts[0])
+    return acc
 
 #%%
-# Get the configuration file path for this environment
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
-logging.critical("Squid API version: {}".format(squid_py.__version__))
+from squid_py import Config
+class ExampleConfig:
+    if 'TEST_NILE' in os.environ and os.environ['TEST_NILE'] == '1':
+        environment = 'TEST_NILE'
+        config_dict = {
+            "keeper-contracts": {
+                "keeper.url": "https://nile.dev-ocean.com",
+                "keeper.path": "artifacts",
+                "secret_store.url": "https://secret-store.dev-ocean.com",
+                "parity.url": "https://nile.dev-ocean.com",
+                "parity.address": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
+                "parity.password": "ocean_secret",
+                "parity.address1": "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
+                "parity.password1": "ocean_secret"
+            },
+            "resources": {
+                "aquarius.url": "https://nginx-aquarius.dev-ocean.com/",
+                "brizo.url": "https://nginx-brizo.dev-ocean.com/",
+                "storage.path": "squid_py.db",
+                "downloads.path": "consume-downloads"
+            }
+        }
+    else:
+        environment = 'TEST_LOCAL_SPREE'
+        config_dict = {
+            "keeper-contracts": {
+                "keeper.url": "http://localhost:8545",
+                "keeper.path": "artifacts",
+                "secret_store.url": "http://localhost:12001",
+                "parity.url": "http://localhost:8545",
+                "parity.address": "0x00bd138abd70e2f00903268f3db08f2d25677c9e",
+                "parity.password": "node0",
+                "parity.address1": "0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0",
+                "parity.password1": "secret"
+            },
+            "resources": {
+                "aquarius.url": "http://172.15.0.15:5000",
+                "brizo.url": "http://localhost:8030",
+                "storage.path": "squid_py.db",
+                "downloads.path": "consume-downloads"
+            }
+        }
 
-# %% [markdown]
-# ### Section 1: Instantiate a simulated User
-# A 'User' in an abstract class representing a user of Ocean Protocol
-#
+    @staticmethod
+    def get_config():
+        logging.info("Configuration loaded for environment '{}'".format(ExampleConfig.environment))
+        return Config(options_dict=ExampleConfig.config_dict)
+
 #%%
-configuration = Config(CONFIG_INI_PATH)
-ocn = Ocean(configuration)
-#%% Register an asset
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-passwords = manta_utils.user.load_passwords(path_passwords)
-
-publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
-publisher_acct.password = password_map(publisher_acct.address, passwords)
-assert publisher_acct.password
-ddo = ocn.assets.create(Metadata.get_example(), publisher_acct)
+ConfigProvider.set_config(ExampleConfig.get_config())
+config = ConfigProvider.get_config()
 
 
 #%%
-# Get a consumer account
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-passwords = manta_utils.user.load_passwords(path_passwords)
+# make ocean instance
+ocn = Ocean()
+acc = get_publisher_account(config)
+if not acc:
+    acc = ([acc for acc in ocn.accounts.list() if acc.password] or ocn.accounts.list())[0]
 
-consumer_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
-consumer_acct.password = password_map(consumer_acct.address, passwords)
-assert consumer_acct.password
-print("Consumer account address: ", consumer_acct.address)
+# Register ddo
+# ocn.templates.create(ocn.templates.access_template_id, acc)
+ddo = ocn.assets.create(Metadata.get_example(), acc)
+logging.info(f'registered ddo: {ddo.did}')
 
-#%% NEW FLOW
-service = ddo.get_service(service_type=ServiceTypes.ASSET_ACCESS)
-sa = ServiceAgreement.from_service_dict(service.as_dictionary())
+#%%
+keeper = Keeper.get_instance()
+cons_ocn = Ocean()
+consumer_account = get_account_from_config(config, 'parity.address1', 'parity.password1')
 
-agreement_id = ocn.assets.order(
-        ddo.did, sa.service_definition_id, consumer_acct)
-logging.info("Agreement ID:{}".format(agreement_id))
-logging.info("Sleep".format())
+#%%
+# This will send the purchase request to Brizo which in turn will execute the agreement on-chain
+# cons_ocn.accounts.request_tokens(consumer_account, 100)
+
+agreement_id = cons_ocn.assets.order(ddo.did, 'Access', consumer_account)
+logging.info('placed order: %s, %s', ddo.did, agreement_id)
+logging.info("SLEEP 30".format())
+
+# TODO: Event listening is still not working, for now just wait for blockchain manually
+
 time.sleep(30)
 ocn.assets.consume(
     agreement_id,
     ddo.did,
-    sa.service_definition_id,
-    consumer_acct,
-    ocn._config.downloads_path)
-logging.info('Success buying asset.')
-
-#%% [markdown]
-# ### Section 2: Find an asset
-#%%
-# # Use the Query function to get all existing assets
-# basic_query = {"query":{"text":["Weather"]}}
-# all_ddos = ocn.assets.query(basic_query)
-# assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
-# print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
-#
-# assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
-#
-# # Get a DID for testing
-# selected_did = all_ddos[-1].did
-# print("Selected DID:",selected_did)
-
-#%% [markdown]
-# Or alternatively, since the asset may be registered but not actually exist in Aquarius, you can
-# specify the asset below (i.e. the DID of the asset you previously registered)
-#%%
-
-# selected_did = "did:op:513fd16ffa854bf8a62c32ebd6f2f0933c39a45cde0346fdb864634c5dd849d7"
-#%% An Asset (DDO) can be also be resolved from a DID
-
-this_asset = ocn.assets.resolve(selected_did)
-
-#pprint(this_asset)
-print(this_asset.metadata['base']['name'])
-print("Price:", this_asset.metadata['base']['price'])
-
-# %% [markdown]
-# Your account will need some Ocean Token to make real transactions
-# %%
-if ocn.accounts.balance(consumer_acct).ocn == 0:
-    ocn.accounts.request_tokens(consumer_acct, 100)
-# %% [markdown]
-# Purchase the Asset!
-# %%
-manta_utils.logging.logger.setLevel('INFO')
-service_agreement_id = ocn.assets.order(this_asset.did, 'Access', consumer_acct)
-print('New service agreement id:', service_agreement_id)
-print('Waiting for blockchain transaction....')
-time.sleep(30)
-ocn.assets.consume(
-    service_agreement_id,
-    this_asset.did,
     'Access',
-    consumer_acct,
-    ocn._config.downloads_path)
+    consumer_account,
+    config.downloads_path)
 logging.info('Success buying asset.')
 
-# %% [markdown]
-# The asset download is automatically initiated, this will take time to complete! There are several events
-# emitted by the blockchain node to show the progress of the transaction and fulfilled conditions.
-#%%
-# def _log_event(event_name):
-#     def _process_event(event):
-#         print(f'Received event {event_name}: {event}')
-#
-#     return _process_event
-#
-# event = ocn._keeper.escrow_access_secretstore_template.subscribe_agreement_created(
-#     service_agreement_id,
-#     100,
-#     _log_event(ocn._keeper.escrow_access_secretstore_template.AGREEMENT_CREATED_EVENT),
-#     (),
-#     wait=True
-# )
-# assert event, 'no event for EscrowAccessSecretStoreTemplate.AgreementCreated'
-#
-# event = keeper.lock_reward_condition.subscribe_condition_fulfilled(
-#     service_agreement_id,
-#     100,
-#     _log_event(ocn._keeper.lock_reward_condition.FULFILLED_EVENT),
-#     (),
-#     wait=True
-# )
-# assert event, 'no event for LockRewardCondition.Fulfilled'
-#
-# event = keeper.escrow_reward_condition.subscribe_condition_fulfilled(
-#     service_agreement_id,
-#     100,
-#     _log_event(ocn._keeper.escrow_reward_condition.FULFILLED_EVENT),
-#     (),
-#     wait=True
-# )
-# assert event, 'no event for EscrowReward.Fulfilled'
-#
-# ocn.agreements.is_access_granted(service_agreement_id, ddo.did, consumer_account.address)
-#
-# assert event, 'No event received for ServiceAgreement Fulfilled.'
-# logging.info('Success buying asset.')
 
-
-# %%
-asset_path = Path.cwd() / ocn._config.downloads_path / f'datafile.{this_asset.asset_id}.0'
-print("Check for your downloaded asset in", asset_path)
-print("This might not appear immediately - the transaction needs be mined and the download needs to complete!")
