@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "845f1afe7e45742b010033fe32f9f9530ebf3fceb1a6e5cd79a5f750919fed5c"
+            "sha256": "4ec25a6893e8516bc2b584fbf7da4f49fc80051a1d5de6dbd736e2636e20a584"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -496,12 +496,8 @@
             "version": "==1.12.0"
         },
         "squid-py": {
-            "hashes": [
-                "sha256:83ae9fa71c48c93fd755b61c45ee49386751ea66b201d9c5e2513ac59aee1c69",
-                "sha256:f9a8641edab086acc8fa638e29738298f4e7d4886bcb5de6c3add96aca0a8b5a"
-            ],
-            "index": "pypi",
-            "version": "==0.5.3"
+            "editable": true,
+            "path": "/home/batman/ocn/squid-py"
         },
         "toolz": {
             "hashes": [
@@ -619,10 +615,10 @@
         },
         "jupytext": {
             "hashes": [
-                "sha256:66a8b2d4e4509989a9ea774bc505b32359553ee7125695eb30e5d6b2c58c2cc2"
+                "sha256:4075e0ac1a2ae17f43129fcc344fe4697aeeaf13ede88205c72fbab5ff1fe061"
             ],
             "index": "pypi",
-            "version": "==1.0.3"
+            "version": "==1.0.4"
         },
         "mock": {
             "hashes": [
