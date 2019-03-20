@@ -1,6 +1,5 @@
 # %% [markdown]
 # Getting Underway - Downloading Datasets (Assets)
-# In this notebook, TODO: description
 
 # %% [markdown]
 # ### Section 0: Import modules, and setup logging

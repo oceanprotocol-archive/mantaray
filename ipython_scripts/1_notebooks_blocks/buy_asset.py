@@ -1,5 +1,4 @@
-#  Copyright 2018 Ocean Protocol Foundation
-#  SPDX-License-Identifier: Apache-2.0
+
 
 import logging
 import os
@@ -37,7 +36,6 @@ def get_publisher_account(config):
     if acc is None:
         acc = Account(Keeper.get_instance().accounts[0])
     return acc
-
 
 #%%
 from squid_py import Config
@@ -119,14 +117,15 @@ cons_ocn.accounts.request_tokens(consumer_account, 100)
 sa = ServiceAgreement.from_service_dict(service.as_dictionary())
 
 agreement_id = cons_ocn.assets.order(
-    ddo.did, sa.service_definition_id, consumer_account)
+    ddo.did, 'Access', consumer_account)
 logging.info('placed order: %s, %s', ddo.did, agreement_id)
 logging.info("SLEEP 30".format())
+# TODO: Event listening is still not working, for now just wait for blockchain manually
 time.sleep(30)
 ocn.assets.consume(
     agreement_id,
     ddo.did,
-    sa.service_definition_id,
+    'Access',
     consumer_account,
     config.downloads_path)
 logging.info('Success buying asset.')
