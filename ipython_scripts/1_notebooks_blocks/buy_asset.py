@@ -16,7 +16,6 @@ from squid_py.accounts.account import Account
 from squid_py.keeper import Keeper
 from squid_py.keeper.web3_provider import Web3Provider
 
-
 def get_account_from_config(config, config_account_key, config_account_password_key):
     address = None
     if config.has_option('keeper-contracts', config_account_key):
@@ -89,27 +88,7 @@ class ExampleConfig:
         logging.info("Configuration loaded for environment '{}'".format(ExampleConfig.environment))
         return Config(options_dict=ExampleConfig.config_dict)
 
-
 #%%
-
-def _log_event(event_name):
-    def _process_event(event):
-        print(f'Received event {event_name}: {event}')
-
-    return _process_event
-
-
-if 'TEST_NILE' in os.environ and os.environ['TEST_NILE'] == '1':
-    ASYNC_DELAY = 5  # seconds
-else:
-    ASYNC_DELAY = 1  # seconds
-
-
-#%%
-"""
-Requires all ocean services running.
-
-"""
 ConfigProvider.set_config(ExampleConfig.get_config())
 config = ConfigProvider.get_config()
 
@@ -127,10 +106,10 @@ ddo = ocn.assets.create(Metadata.get_example(), acc)
 logging.info(f'registered ddo: {ddo.did}')
 
 #%%
-
 keeper = Keeper.get_instance()
 cons_ocn = Ocean()
 consumer_account = get_account_from_config(config, 'parity.address1', 'parity.password1')
+
 #%%
 
 # sign agreement using the registered asset did above
@@ -142,7 +121,6 @@ sa = ServiceAgreement.from_service_dict(service.as_dictionary())
 agreement_id = cons_ocn.assets.order(
     ddo.did, sa.service_definition_id, consumer_account)
 logging.info('placed order: %s, %s', ddo.did, agreement_id)
-#%%
 logging.info("SLEEP 30".format())
 time.sleep(30)
 ocn.assets.consume(
@@ -154,5 +132,3 @@ ocn.assets.consume(
 logging.info('Success buying asset.')
 
 
-if __name__ == '__main__':
-    buy_asset()
