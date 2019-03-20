@@ -1,15 +1,24 @@
 
-
 import logging
 import os
-
+os.environ['USE_K8S_CLUSTER'] = '1'
 from squid_py import ConfigProvider, Metadata, Ocean
-from squid_py.agreements.service_agreement import ServiceAgreement
-from squid_py.agreements.service_types import ServiceTypes
-from squid_py.keeper import Keeper
 import time
+import squid_py
 
-os.environ['TEST_NILE'] = '1'
+import mantaray_utilities as manta_utils
+from squid_py.keeper.web3_provider import Web3Provider
+# Setup logging
+from mantaray_utilities.user import password_map
+manta_utils.logging.logger.setLevel('INFO')
+import mantaray_utilities as manta_utils
+from squid_py.accounts.account import Account
+#%%
+CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
+logging.critical("Squid API version: {}".format(squid_py.__version__))
+
 #%% get_account_from_config
 from squid_py.accounts.account import Account
 from squid_py.keeper import Keeper
@@ -50,7 +59,7 @@ class ExampleConfig:
                 "parity.url": "https://nile.dev-ocean.com",
                 "parity.address": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
                 "parity.password": "ocean_secret",
-                "parity.address1": "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
+                "parity.address1": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
                 "parity.password1": "ocean_secret"
             },
             "resources": {
@@ -87,44 +96,41 @@ class ExampleConfig:
         return Config(options_dict=ExampleConfig.config_dict)
 
 #%%
-ConfigProvider.set_config(ExampleConfig.get_config())
-config = ConfigProvider.get_config()
-
+# ConfigProvider.set_config(ExampleConfig.get_config())
+# config = ConfigProvider.get_config()
 
 #%%
-# make ocean instance
-ocn = Ocean()
-acc = get_publisher_account(config)
-if not acc:
-    acc = ([acc for acc in ocn.accounts.list() if acc.password] or ocn.accounts.list())[0]
+
+configuration = Config(CONFIG_INI_PATH)
+
+publisher_acct = Account(configuration.get('keeper-contracts','parity.address'), configuration.get('keeper-contracts','parity.password'))
+consumer_acct = Account(configuration.get('keeper-contracts','parity.address2'), configuration.get('keeper-contracts','parity.password2'))
+#%%
+ocn = Ocean(configuration)
 
 # Register ddo
-# ocn.templates.create(ocn.templates.access_template_id, acc)
-ddo = ocn.assets.create(Metadata.get_example(), acc)
+ddo = ocn.assets.create(Metadata.get_example(), publisher_acct)
 logging.info(f'registered ddo: {ddo.did}')
 
 #%%
-keeper = Keeper.get_instance()
-cons_ocn = Ocean()
-consumer_account = get_account_from_config(config, 'parity.address1', 'parity.password1')
-
-#%%
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
-# cons_ocn.accounts.request_tokens(consumer_account, 100)
+ocn.accounts.request_tokens(consumer_acct, 100)
 
-agreement_id = cons_ocn.assets.order(ddo.did, 'Access', consumer_account)
+agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_acct)
 logging.info('placed order: %s, %s', ddo.did, agreement_id)
-logging.info("SLEEP 30".format())
 
 # TODO: Event listening is still not working, for now just wait for blockchain manually
 
-time.sleep(30)
+for i in range(10):
+    time.sleep(5)
+    print(i+1, "Waiting...")
+
 ocn.assets.consume(
     agreement_id,
     ddo.did,
     'Access',
-    consumer_account,
-    config.downloads_path)
+    consumer_acct,
+    configuration.downloads_path)
 logging.info('Success buying asset.')
 
 
