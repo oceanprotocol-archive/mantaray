@@ -103,8 +103,8 @@ class ExampleConfig:
 
 configuration = Config(CONFIG_INI_PATH)
 ConfigProvider.set_config(configuration)
-# publisher_acct = get_publisher_account(configuration)
-publisher_acct = Account(configuration.get('keeper-contracts','parity.address'), configuration.get('keeper-contracts','parity.password'))
+publisher_acct = get_publisher_account(configuration)
+# publisher_acct = Account(configuration.get('keeper-contracts','parity.address'), configuration.get('keeper-contracts','parity.password'))
 consumer_acct = Account(configuration.get('keeper-contracts','parity.address2'), configuration.get('keeper-contracts','parity.password2'))
 #%%
 # ocn = Ocean(configuration)
