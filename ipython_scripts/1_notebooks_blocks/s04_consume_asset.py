@@ -59,7 +59,7 @@ class ExampleConfig:
                 "parity.url": "https://nile.dev-ocean.com",
                 "parity.address": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
                 "parity.password": "ocean_secret",
-                "parity.address1": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
+                "parity.address1": "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
                 "parity.password1": "ocean_secret"
             },
             "resources": {
@@ -106,25 +106,29 @@ ConfigProvider.set_config(configuration)
 publisher_acct = get_publisher_account(configuration)
 # publisher_acct = Account(configuration.get('keeper-contracts','parity.address'), configuration.get('keeper-contracts','parity.password'))
 consumer_acct = Account(configuration.get('keeper-contracts','parity.address2'), configuration.get('keeper-contracts','parity.password2'))
+
+logging.info("Publisher account: {}".format(publisher_acct.address))
+logging.info("Consumer account: {}".format(consumer_acct.address))
 #%%
-# ocn = Ocean(configuration)
-ocn = Ocean()
+ocn = Ocean(configuration)
+# ocn = Ocean()
 # Register ddo
 ddo = ocn.assets.create(Metadata.get_example(), publisher_acct)
 logging.info(f'registered ddo: {ddo.did}')
 
 #%%
 # This will send the purchase request to Brizo which in turn will execute the agreement on-chain
-ocn.accounts.request_tokens(consumer_acct, 100)
+# ocn.accounts.request_tokens(consumer_acct, 100)
 ocn = Ocean(configuration)
 agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_acct)
 logging.info('placed order: %s, %s', ddo.did, agreement_id)
 
 # TODO: Event listening is still not working, for now just wait for blockchain manually
 
-for i in range(6):
-    time.sleep(5)
-    print(i+1, "Waiting...")
+for i in range(30):
+    time.sleep(1)
+    print(".")
+# print()
 
 ocn.assets.consume(
     agreement_id,

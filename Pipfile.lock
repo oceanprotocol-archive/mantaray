@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4ec25a6893e8516bc2b584fbf7da4f49fc80051a1d5de6dbd736e2636e20a584"
+            "sha256": "32011a0ac070a29e165822f48aacc2170de491a75e97d537bdd4a1487881f48e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -496,8 +496,12 @@
             "version": "==1.12.0"
         },
         "squid-py": {
-            "editable": true,
-            "path": "/home/batman/ocn/squid-py"
+            "hashes": [
+                "sha256:6a227c9dd1a5e5d7462d73f2a17d16960e2cf3734a64dea410d6f3fac12801c0",
+                "sha256:f7b3e851d9c8bcc8b48daa07442b9ae73ed333bc9b14491d85d247531756d7b3"
+            ],
+            "index": "pypi",
+            "version": "==0.5.4"
         },
         "toolz": {
             "hashes": [
