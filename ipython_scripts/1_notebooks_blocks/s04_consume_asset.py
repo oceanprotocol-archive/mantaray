@@ -1,89 +1,141 @@
-# %% [markdown]
-# Getting Underway - Downloading Datasets (Assets)
-# In this notebook, TODO: description
 
-# %% [markdown]
-# ### Section 0: Import modules, and setup logging
-
-#%%
-# Standard imports
 import logging
-from pprint import pprint
 import os
-from pathlib import Path
-import random
-# Import mantaray and the Ocean API (squid)
+os.environ['USE_K8S_CLUSTER'] = '1'
+from squid_py import ConfigProvider, Metadata, Ocean
+import time
 import squid_py
-from squid_py.ocean.ocean import Ocean
-from squid_py.config import Config
+
 import mantaray_utilities as manta_utils
 from squid_py.keeper.web3_provider import Web3Provider
 # Setup logging
-manta_utils.logging.logger.setLevel('INFO')
 from mantaray_utilities.user import password_map
-
-print("squid-py Ocean API version:", squid_py.__version__)
-
+manta_utils.logging.logger.setLevel('INFO')
+import mantaray_utilities as manta_utils
+from squid_py.accounts.account import Account
 #%%
-# Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
-# %% [markdown]
-# ### Section 1: Instantiate a simulated User
-# A 'User' in an abstract class representing a user of Ocean Protocol
-#
+#%% get_account_from_config
+from squid_py.accounts.account import Account
+from squid_py.keeper import Keeper
+from squid_py.keeper.web3_provider import Web3Provider
+
+def get_account_from_config(config, config_account_key, config_account_password_key):
+    address = None
+    if config.has_option('keeper-contracts', config_account_key):
+        address = config.get('keeper-contracts', config_account_key)
+        address = Web3Provider.get_web3().toChecksumAddress(address) if address else None
+
+    if not (address and address in Keeper.get_instance().accounts):
+        return None
+
+    password = None
+    if address and config.has_option('keeper-contracts', config_account_password_key):
+        password = config.get('keeper-contracts', config_account_password_key)
+
+    return Account(address, password)
+
+#%% get_publisher_account
+def get_publisher_account(config):
+    acc = get_account_from_config(config, 'parity.address', 'parity.password')
+    if acc is None:
+        acc = Account(Keeper.get_instance().accounts[0])
+    return acc
+
 #%%
+from squid_py import Config
+class ExampleConfig:
+    if 'TEST_NILE' in os.environ and os.environ['TEST_NILE'] == '1':
+        environment = 'TEST_NILE'
+        config_dict = {
+            "keeper-contracts": {
+                "keeper.url": "https://nile.dev-ocean.com",
+                "keeper.path": "artifacts",
+                "secret_store.url": "https://secret-store.dev-ocean.com",
+                "parity.url": "https://nile.dev-ocean.com",
+                "parity.address": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
+                "parity.password": "ocean_secret",
+                "parity.address1": "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
+                "parity.password1": "ocean_secret"
+            },
+            "resources": {
+                "aquarius.url": "https://nginx-aquarius.dev-ocean.com/",
+                "brizo.url": "https://nginx-brizo.dev-ocean.com/",
+                "storage.path": "squid_py.db",
+                "downloads.path": "consume-downloads"
+            }
+        }
+    else:
+        environment = 'TEST_LOCAL_SPREE'
+        config_dict = {
+            "keeper-contracts": {
+                "keeper.url": "http://localhost:8545",
+                "keeper.path": "artifacts",
+                "secret_store.url": "http://localhost:12001",
+                "parity.url": "http://localhost:8545",
+                "parity.address": "0x00bd138abd70e2f00903268f3db08f2d25677c9e",
+                "parity.password": "node0",
+                "parity.address1": "0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0",
+                "parity.password1": "secret"
+            },
+            "resources": {
+                "aquarius.url": "http://172.15.0.15:5000",
+                "brizo.url": "http://localhost:8030",
+                "storage.path": "squid_py.db",
+                "downloads.path": "consume-downloads"
+            }
+        }
+
+    @staticmethod
+    def get_config():
+        logging.info("Configuration loaded for environment '{}'".format(ExampleConfig.environment))
+        return Config(options_dict=ExampleConfig.config_dict)
+
+#%%
+# ConfigProvider.set_config(ExampleConfig.get_config())
+# config = ConfigProvider.get_config()
+
+#%%
+
 configuration = Config(CONFIG_INI_PATH)
+ConfigProvider.set_config(configuration)
+publisher_acct = get_publisher_account(configuration)
+# publisher_acct = Account(configuration.get('keeper-contracts','parity.address'), configuration.get('keeper-contracts','parity.password'))
+consumer_acct = Account(configuration.get('keeper-contracts','parity.address2'), configuration.get('keeper-contracts','parity.password2'))
+
+logging.info("Publisher account: {}".format(publisher_acct.address))
+logging.info("Consumer account: {}".format(consumer_acct.address))
+#%%
 ocn = Ocean(configuration)
+# ocn = Ocean()
+# Register ddo
+ddo = ocn.assets.create(Metadata.get_example(), publisher_acct)
+logging.info(f'registered ddo: {ddo.did}')
+
 #%%
-# Get a consumer account
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-passwords = manta_utils.user.load_passwords(path_passwords)
+# This will send the purchase request to Brizo which in turn will execute the agreement on-chain
+# ocn.accounts.request_tokens(consumer_acct, 100)
+ocn = Ocean(configuration)
+agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_acct)
+logging.info('placed order: %s, %s', ddo.did, agreement_id)
 
-consumer_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
-consumer_acct.password = password_map(consumer_acct.address, passwords)
-assert consumer_acct.password
-print("Consumer account address: ", consumer_acct.address)
-#%% [markdown]
-# ### Section 2: Find an asset
-#%%
-# Use the Query function to get all existing assets
-basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-all_ddos = ocn.assets.query(basic_query)
-assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
-print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
+# TODO: Event listening is still not working, for now just wait for blockchain manually
 
-assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
+for i in range(30):
+    time.sleep(1)
+    print(".")
+# print()
 
-# Get a DID for testing
-selected_did = all_ddos[-1].did
-print("Selected DID:",selected_did)
-#%% An Asset (DDO) can be also be resolved from a DID
-#TODO: The Asset class does not offer much beyond DDO class
-#TODO: Term 'asset' is confusing here
-this_asset = ocn.assets.resolve(selected_did)
-#pprint(this_asset)
-print(this_asset.metadata['base']['name'])
-print("Price:", this_asset.metadata['base']['price'])
+ocn.assets.consume(
+    agreement_id,
+    ddo.did,
+    'Access',
+    consumer_acct,
+    configuration.downloads_path)
+logging.info('Success buying asset.')
 
-# %% [markdown]
-# Your account will need some Ocean Token to make real transactions
-# %%
-if ocn.accounts.balance(consumer_acct).ocn == 0:
-    ocn.accounts.request_tokens(consumer_acct, 100)
-# %% [markdown]
-# Purchase the Asset!
-# %%
-#TODO: The service_definition_id will change to service_type
-service_agreement_id = ocn.assets.order(this_asset.did, 'Access', consumer_acct)
-print('New service agreement id:', service_agreement_id)
 
-# %% [markdown]
-# The asset download is automatically initiated, this will take time to complete!
-# %%
-asset_path = Path.cwd() / ocn._config.downloads_path / f'datafile.{this_asset.asset_id}.0'
-print("Check for your downloaded asset in", asset_path)
-print("This might not appear immediately - the transaction needs be mined and the download needs to complete!")

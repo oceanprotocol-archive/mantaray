@@ -105,76 +105,57 @@ print("Asset description: {} token".format(this_ddo.metadata['base']['descriptio
 
 # %% [markdown]
 # ### Section 4: Searching the Ocean
-# Aquarius supports query search. A list of [Asset class] is returned from a search call.
+# Aquarius supports query search. A list of [DDO] is returned from a search call.
 #
 # Currently, Aquarius is running MongoDB. For detailed query documentation, see the
 # [documentation](https://docs.mongodb.com/manual/reference/method/db.collection.find/)
 #
-# TODO: Wrap queries into Utilities for higher abstraction
+# The exposed query endpoint is a subset of the full MongoDB search capability. For the documentation on the
+# Current search implementation, see https://github.com/oceanprotocol/aquarius/blob/develop/docs/for_api_users/API.md
+
+#%%
+# Query syntax:
+# {
+#   "query": {"name_of_query":["parameters"]},
+#   "sort": {"field":1},
+#   "offset": 100,
+#   "page": 0
+# }
 
 #%% [markdown]
 # #### Select ALL assets
-# To get started, the following query will return all documents with a 'metadata' service.
-#
-# First, the pure mongoDB Query is built according to the documentation
-#
-# We are checking if the 'metadata' field exists, this should return **ALL** Assets.
+# To get started, the following query will return all documents with a 'price' between 0 and 20.
+# The syntax for this query, is a range of integers for the registered price.
 #%%
-basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-search_results = ocn.assets.query(basic_query)
+query = {"query":{"price":[0,20]}}
+search_results = ocn.assets.query(query)
 print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
-if search_results:
-    print("Selected asset:",search_results[print_match_idx])
-    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
-# TODO: Update pretty-printer
+for result in search_results:
+    print("Selected asset: {}, price:{}, {}".format(result.metadata['base']['name'],result.metadata['base']['price'], result.did ))
 
 #%% [markdown]
-# #### Pagination in MongoDB
-# The MongoDB search API supports pagination as well, this is especially useful when searching
-# large databases of Ocean assets, and for front end development.
-
+# #### Text search
+# Plain text search is supported, searching in all assets
 #%%
-mongo_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
-search_results = ocn.assets.query(full_paged_query)
-print("Asset exists search: Found {} assets".format(len(search_results)))
+query = {"query":{"text":["Weather"]}}
+search_results = ocn.assets.query(query)
+print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
-if search_results:
-    print("Selected asset:",search_results[print_match_idx])
-    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
+for result in search_results:
+    print("Selected asset: {}, price:{}, {}".format(result.metadata['base']['name'],result.metadata['base']['price'], result.did ))
+
 
 #%% [markdown]
-# #### Search in the 'name' attribute
-# Next, let's find an exact name within the 'metadata' of the Asset
-
+# #### Combined search
+# Multiple queries can be joined
 #%%
-match_this_name = "Ocean protocol white paper"
-mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$eq':match_this_name } }}}
-search_results = ocn.assets.query(mongo_query)
-
-print("Name attribute search: Found {} assets".format(len(search_results)))
+query = {"query":{"text":["Weather"],"price":[0,11]}}
+search_results = ocn.assets.query(query)
+print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
-if search_results:
-    print("Selected asset:",search_results[print_match_idx])
-    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
-
-# %% [markdown]
-# #### Search using a regular expression
-# Finally, let's find a substring within the name. We will use a Regex in MongoDB.
-#%%
-
-match_this_substring = 'paper'
-mongo_query = {"service":{"$elemMatch": {"metadata": {"$exists" : True }, "metadata.base.name": {'$regex':match_this_substring}}}}
-full_paged_query = {"offset": 100, "page": 0, "sort": {"value": 1}, "query": mongo_query}
-
-search_results = ocn.assets.query(full_paged_query)
-
-print("Regex search: Found {} assets".format(len(search_results)))
-print_match_idx = -1
-if search_results:
-    print("Selected asset:",search_results[print_match_idx])
-    manta_utils.asset_pretty_print.print_ddo(search_results[print_match_idx])
+for result in search_results:
+    print("Selected asset: {}, price:{}, {}".format(result.metadata['base']['name'],result.metadata['base']['price'], result.did ))
 
 # %% [markdown]
 # ### Section 5: Cleaning the Ocean
@@ -185,24 +166,25 @@ if search_results:
 
 #%%
 if 0:
+
     # Let's count how many ddo's are registered
-    all_dids = ocn.metadata_store.list_assets()
+    all_dids = ocn.assets._get_aquarius().list_assets()
     print("there are {} assets registered in the metadata store.".format(len(all_dids)))
 
     # let's delete the first ddo object.
-    first_ddo = all_dids[0]
-    print("selected ddo for deletion:", first_ddo)
-    ocn.metadata_store.retire_asset_metadata(first_ddo)
+    first_did = all_dids[0]
+    print("selected ddo for deletion:", first_did)
+    ocn.assets._get_aquarius().retire_asset_ddo(first_did)
 
     # again, let's count how many ddo's are registered
-    all_dids = ocn.metadata_store.list_assets()
+    all_dids = ocn.assets._get_aquarius().list_assets()
     print("there are now {} assets registered in the metadata store.".format(len(all_dids)))
 
 # %%
 # Deleting all assets!
 # Please don't delete all the assets, as other users may be testing the components!
 if 0:
-    all_dids = ocn.metadata_store.list_assets()
+    all_dids = ocn.assets._get_aquarius().list_assets()
     for i, did in enumerate(all_dids):
         print("Deleting DDO {} - {}".format(i, did))
-        ocn.metadata_store.retire_asset_ddo(did)
+        ocn.assets._get_aquarius().retire_asset_ddo(did)
