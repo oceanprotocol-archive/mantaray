@@ -82,50 +82,51 @@ def get_publisher_account(config):
 #     def get_config():
 #         logging.info("Configuration loaded for environment '{}'".format(ExampleConfig.environment))
 #         return Config(options_dict=ExampleConfig.config_dict)
+# #%%
+# config_dict = {
+#     "keeper-contracts": {
+#         "keeper.url": "https://nile.dev-ocean.com",
+#         "keeper.path": "artifacts",
+#         "secret_store.url": "https://secret-store.dev-ocean.com",
+#         "parity.url": "https://nile.dev-ocean.com",
+#         "parity.address": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
+#         "parity.password": "ocean_secret",
+#         "parity.address1": "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
+#         "parity.password1": "ocean_secret"
+#     },
+#     "resources": {
+#         "aquarius.url": "https://nginx-aquarius.dev-ocean.com/",
+#         "brizo.url": "https://nginx-brizo.dev-ocean.com/",
+#         "storage.path": "squid_py.db",
+#         "downloads.path": "consume-downloads"
+#     }
+# }
+#
+#
+# config_dict2 = {
+#     "keeper-contracts" : {
+#         "keeper.url" : "https://nile.dev-ocean.com",
+#         "keeper.path" : "artifacts_nile",
+#         "secret_store.url" : "https://secret-store.dev-ocean.com",
+#         "parity.url" : "https://nile.dev-ocean.com",
+#         "parity.address" : "0x413c9BA0A05B8A600899B41b0c62dd661e689354",
+#         "parity.password" : "ocean_secret",
+#         "parity.address1" : "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
+#         "parity.password1" : "ocean_secret",
+#     },
+#     "resources" : {
+#         "aquarius.url" : "https://nginx-aquarius.dev-ocean.com/",
+#         "brizo.url" : "https://nginx-brizo.dev-ocean.com/",
+#         "storage.path" : "squid_py.db",
+#         "downloads.path" : "downloads_nile",
+#         }
+# }
+#
 #%%
-config_dict = {
-    "keeper-contracts": {
-        "keeper.url": "https://nile.dev-ocean.com",
-        "keeper.path": "artifacts",
-        "secret_store.url": "https://secret-store.dev-ocean.com",
-        "parity.url": "https://nile.dev-ocean.com",
-        "parity.address": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
-        "parity.password": "ocean_secret",
-        "parity.address1": "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
-        "parity.password1": "ocean_secret"
-    },
-    "resources": {
-        "aquarius.url": "https://nginx-aquarius.dev-ocean.com/",
-        "brizo.url": "https://nginx-brizo.dev-ocean.com/",
-        "storage.path": "squid_py.db",
-        "downloads.path": "consume-downloads"
-    }
-}
+# config_from_dict = Config(options_dict=config_dict2)
+#
+# # config = config_from_dict
 
-
-config_dict2 = {
-    "keeper-contracts" : {
-        "keeper.url" : "https://nile.dev-ocean.com",
-        "keeper.path" : "artifacts_nile",
-        "secret_store.url" : "https://secret-store.dev-ocean.com",
-        "parity.url" : "https://nile.dev-ocean.com",
-        "parity.address" : "0x413c9BA0A05B8A600899B41b0c62dd661e689354",
-        "parity.password" : "ocean_secret",
-        "parity.address1" : "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
-        "parity.password1" : "ocean_secret",
-    },
-    "resources" : {
-        "aquarius.url" : "https://nginx-aquarius.dev-ocean.com/",
-        "brizo.url" : "https://nginx-brizo.dev-ocean.com/",
-        "storage.path" : "squid_py.db",
-        "downloads.path" : "downloads_nile",
-        }
-}
-
-#%%
-config_from_dict = Config(options_dict=config_dict2)
-
-# config = config_from_dict
 config = config_from_ini
 
 ConfigProvider.set_config(config)
