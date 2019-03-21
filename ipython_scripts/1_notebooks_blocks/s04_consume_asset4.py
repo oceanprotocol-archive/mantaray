@@ -46,11 +46,11 @@ for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
         artifact_dict = json.load(fp)
     assert artifact_dict['version'] == version_kc_installed, \
         "Version mismatch, {} {}".format(artifact_dict['version'], version_kc_installed)
-getCode(account, block_identifier=eth.defaultBlock)
 
 #%%
 # Assert code at this smart contract address
 from squid_py.keeper.web3_provider import Web3Provider
+ConfigProvider.set_config(config_from_ini)
 this_web3 = Web3Provider.get_web3()
 for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
     with open(path_artifact_file) as fp:
