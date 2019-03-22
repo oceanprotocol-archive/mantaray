@@ -1,6 +1,15 @@
+# %% [markdown]
+# Getting Underway - Downloading Datasets (Assets)
+# To complete the basic datascience workflow, this notebook will demonstrate how a user
+# can download an asset. Downloading an asset is a simple example of a Service Execution Agreement -
+# similar to a contract with a series of clauses. Each clause is secured on the blockchain, allowing for trustful
+# execution of a contract.
+#
+# In this notebook, an asset will be first published as before, and then ordered and downloaded.
+
+#%%
 import logging
 import os
-os.environ['USE_K8S_CLUSTER'] = '1'
 from squid_py import Metadata, Ocean
 
 import squid_py

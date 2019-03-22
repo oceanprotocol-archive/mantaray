@@ -158,7 +158,6 @@ except Exception as e: print("(This raises, as required)", e)
 # %% [markdown]
 # Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner.
 #
-# Congratulations on publishing an Asset into Ocean Protocol!
 
 # %%
 # We need the pure ID string as in the DID registry (a DID without the prefixes)
@@ -168,6 +167,8 @@ print("Asset ID", asset_id, "owned by", owner)
 assert str.lower(owner) == str.lower(publisher_acct.address)
 
 # %% [markdown]
+# Congratulations on publishing an Asset into Ocean Protocol!
+#
 # Next, let's search for our assets in Ocean Protocol
 
 
