@@ -87,12 +87,11 @@ config = config_from_ini
 # ConfigProvider.set_config(config)
 ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
+# %% [markdown]
+# Get Publisher account, and register an asset for testing
+
 #%%
-# Get Publisher account
-# publisher_account = get_publisher_account(config)
 publisher_account = get_account_from_config(config, 'parity.address', 'parity.password')
-if not publisher_account:
-    publisher_account = ([acc for acc in ocn.accounts.list() if acc.password] or ocn.accounts.list())[0]
 print("Publisher address: {}".format(publisher_account.address))
 print("Publisher   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
 print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).ocn/10**18))
@@ -102,18 +101,25 @@ print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).
 ddo = ocn.assets.create(Metadata.get_example(), publisher_account)
 logging.info(f'registered ddo: {ddo.did}')
 
+# %% [markdown]
+# Get Consumer account
 #%%
-
 consumer_account = get_account_from_config(config, 'parity.address1', 'parity.password1')
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
 assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in account {}".format(consumer_account.address)
+# Ensure the consumer always has 10 OCEAN
+if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
+    refill_amount = 10 - ocn.accounts.balance(consumer_account).ocn/10**18 < 10
+    ocn.accounts.request_tokens(consumer_account, refill_amount)
 
+# %% [markdown]
+# Initiate the agreement for accessing (downloading) the asset
 #%%
-
 agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
-logging.info('placed order: %s, %s', ddo.did, agreement_id)
+logging.info("Consumer has placed an order for asset {}".format(ddo.did))
+logging.info("The service agreement ID is {}".format(agreement_id))
 
 # %% [markdown]
 # In Ocean Protocol, downloading an asset is enforced by a contract.
@@ -126,15 +132,13 @@ subscribe_event("lock reward", keeper, agreement_id)
 subscribe_event("access secret store", keeper, agreement_id)
 subscribe_event("escrow reward", keeper, agreement_id)
 
+# %% [markdown]
+# Now that the agreement is signed, the consumer can download the asset.
 #%%
+
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
 
-ocn.assets.consume(
-    agreement_id,
-    ddo.did,
-    'Access',
-    consumer_account,
-    "downloads_nile")
+ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 logging.info('Success buying asset.')
 
 
