@@ -8,13 +8,18 @@
 #%%
 # Standard imports
 import logging
+import json
+import pip_api
+from pathlib import Path
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
+from squid_py import ConfigProvider
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
 manta_utils.logging.logger.setLevel('INFO')
+from squid_py.keeper.web3_provider import Web3Provider
 
 print("squid-py Ocean API version:", squid_py.__version__)
 
@@ -46,6 +51,34 @@ print("Configuration loaded. Will connect to a node at: ", configuration.keeper_
 # %%
 # Instantiate Ocean
 ocn = Ocean(configuration)
+
+# %% [markdown]
+# The following cell performs some sanity checks on versions of smart contracts.
+# %%
+# Assert versions of contract definitions (ABI files) match your installed keeper-contracts package version.
+version_kc_installed = 'v'+str(pip_api.installed_distributions()['keeper-contracts'].version)
+network_name = 'nile'
+folder_artifacts = configuration.get('keeper-contracts', 'keeper.path')
+path_artifacts = Path.cwd() / folder_artifacts
+assert path_artifacts.exists()
+for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
+    with open(path_artifact_file) as fp:
+        artifact_dict = json.load(fp)
+    assert artifact_dict['version'] == version_kc_installed, \
+        "Version mismatch, {} {}".format(artifact_dict['version'], version_kc_installed)
+logging.info("Contract ABI == installed version {}, confirmed".format(version_kc_installed))
+
+#%%
+# Assert code at this smart contract address
+from squid_py.keeper.web3_provider import Web3Provider
+ConfigProvider.set_config(configuration)
+this_web3 = Web3Provider.get_web3()
+for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
+    with open(path_artifact_file) as fp:
+        artifact_dict = json.load(fp)
+    code = this_web3.eth.getCode(artifact_dict['address'])
+    assert code, "No code found on-chain for {} at {}".format(path_artifact_file, artifact_dict['address'])
+logging.info("All {} ABI's confirmed to exist on-chain.".format(artifact_dict['version']))
 
 # %% [markdown]
 # The following cell will print some summary information of the Ocean connection.

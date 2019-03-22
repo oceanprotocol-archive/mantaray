@@ -1,7 +1,7 @@
 import logging
 import os
 os.environ['USE_K8S_CLUSTER'] = '1'
-from squid_py import ConfigProvider, Metadata, Ocean
+from squid_py import Metadata, Ocean
 
 import squid_py
 
@@ -23,52 +23,6 @@ logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 config_from_ini = Config(CONFIG_INI_PATH)
-
-# %% [markdown]
-# Until things are more stable, the following cell performs some sanity checks on versions
-
-#%%
-# Assert versions
-import pip_api
-import json
-from pathlib import Path
-
-version_kc_installed = 'v'+str(pip_api.installed_distributions()['keeper-contracts'].version)
-network_name = 'nile'
-folder_artifacts = config_from_ini.get('keeper-contracts', 'keeper.path')
-path_artifacts = Path.cwd() / folder_artifacts
-assert path_artifacts.exists()
-for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
-    with open(path_artifact_file) as fp:
-        artifact_dict = json.load(fp)
-    assert artifact_dict['version'] == version_kc_installed, \
-        "Version mismatch, {} {}".format(artifact_dict['version'], version_kc_installed)
-logging.info("Contract ABI and installed version {} confirmed".format(version_kc_installed))
-
-#%%
-# Assert code at this smart contract address
-from squid_py.keeper.web3_provider import Web3Provider
-ConfigProvider.set_config(config_from_ini)
-this_web3 = Web3Provider.get_web3()
-for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
-    with open(path_artifact_file) as fp:
-        artifact_dict = json.load(fp)
-    code = this_web3.eth.getCode(artifact_dict['address'])
-    assert code, "No code found on-chain for {} at {}".format(path_artifact_file, artifact_dict['address'])
-logging.info("All {} ABI's confirmed on-chain.".format(artifact_dict['version']))
-
-#%% get_account_from_config
-# from squid_py.accounts.account import Account
-# from squid_py.keeper import Keeper
-# from squid_py.keeper.web3_provider import Web3Provider
-#
-# def get_account_from_config(config, config_account_key, config_account_password_key):
-#     address = config.get('keeper-contracts', config_account_key)
-#     address = Web3Provider.get_web3().toChecksumAddress(address)
-#     password = config.get('keeper-contracts', config_account_password_key)
-#
-#     logging.info("Account:{}={} {}={} ".format(config_account_key, address,config_account_password_key, password))
-#     return Account(address, password)
 
 #%%
 ocn = Ocean(config_from_ini)
@@ -126,8 +80,6 @@ assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.
 
 ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 logging.info('Success buying asset.')
-
-
 
 #%%
 

@@ -48,17 +48,7 @@ for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
         "Version mismatch, {} {}".format(artifact_dict['version'], version_kc_installed)
 logging.info("Contract ABI and installed version {} confirmed".format(version_kc_installed))
 
-#%%
-# Assert code at this smart contract address
-from squid_py.keeper.web3_provider import Web3Provider
-ConfigProvider.set_config(config_from_ini)
-this_web3 = Web3Provider.get_web3()
-for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
-    with open(path_artifact_file) as fp:
-        artifact_dict = json.load(fp)
-    code = this_web3.eth.getCode(artifact_dict['address'])
-    assert code, "No code found on-chain for {} at {}".format(path_artifact_file, artifact_dict['address'])
-logging.info("All {} ABI's confirmed on-chain.".format(artifact_dict['version']))
+
 
 #%% get_account_from_config
 from squid_py.accounts.account import Account
