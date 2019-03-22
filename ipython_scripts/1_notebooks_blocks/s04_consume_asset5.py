@@ -1,26 +1,21 @@
-
 import logging
 import os
 os.environ['USE_K8S_CLUSTER'] = '1'
 from squid_py import ConfigProvider, Metadata, Ocean
-import time
+
 import squid_py
 
 import mantaray_utilities as manta_utils
-from squid_py.keeper.web3_provider import Web3Provider
+
 # Setup logging
 from mantaray_utilities.user import password_map
 from mantaray_utilities.blockchain import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
-from squid_py.accounts.account import Account
-from squid_py.agreements.service_agreement import ServiceAgreement
-from squid_py.agreements.service_types import ServiceTypes
 from squid_py import Config
 
-# import keeper
-
-
+# %% [markdown]
+# Get the configuration from the INI file
 #%%
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
@@ -75,23 +70,13 @@ def get_account_from_config(config, config_account_key, config_account_password_
     return Account(address, password)
 
 #%%
-def _log_event(event_name):
-    def _process_event(event):
-        print(f'Received event {event_name}.')
-
-    return _process_event
-
-#%%
-config = config_from_ini
-
-# ConfigProvider.set_config(config)
 ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
 # %% [markdown]
 # Get Publisher account, and register an asset for testing
 
 #%%
-publisher_account = get_account_from_config(config, 'parity.address', 'parity.password')
+publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
 print("Publisher address: {}".format(publisher_account.address))
 print("Publisher   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
 print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).ocn/10**18))
@@ -104,7 +89,7 @@ logging.info(f'registered ddo: {ddo.did}')
 # %% [markdown]
 # Get Consumer account
 #%%
-consumer_account = get_account_from_config(config, 'parity.address1', 'parity.password1')
+consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
