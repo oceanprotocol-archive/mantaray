@@ -10,6 +10,7 @@ import mantaray_utilities as manta_utils
 from squid_py.keeper.web3_provider import Web3Provider
 # Setup logging
 from mantaray_utilities.user import password_map
+from mantaray_utilities.blockchain import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py.accounts.account import Account
@@ -111,51 +112,21 @@ assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in
 
 #%%
 
-service = ddo.get_service(service_type=ServiceTypes.ASSET_ACCESS)
-# cons_ocn.accounts.request_tokens(consumer_account, 100)
-# ocn.accounts.request_tokens(consumer_account, 100)
-# sa = ServiceAgreement.from_service_dict(service.as_dictionary())
-
-agreement_id = ocn.assets.order(
-    ddo.did, 'Access', consumer_account)
+agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
 logging.info('placed order: %s, %s', ddo.did, agreement_id)
 
+# %% [markdown]
+# In Ocean Protocol, downloading an asset is enforced by a contract.
+# The contract conditions and clauses are set by the publisher. Conditions trigger events, which are monitored
+# to ensure the contract is successfully executed.
 #%%
-event = keeper.escrow_access_secretstore_template.subscribe_agreement_created(
-    agreement_id,
-    60,
-    _log_event(keeper.escrow_access_secretstore_template.AGREEMENT_CREATED_EVENT),
-    (),
-    wait=True
-)
-assert event, 'no event for EscrowAccessSecretStoreTemplate.AgreementCreated'
+# Listen to events in the download process
+subscribe_event("created agreement", keeper, agreement_id)
+subscribe_event("lock reward", keeper, agreement_id)
+subscribe_event("access secret store", keeper, agreement_id)
+subscribe_event("escrow reward", keeper, agreement_id)
 
-event = keeper.lock_reward_condition.subscribe_condition_fulfilled(
-    agreement_id,
-    60,
-    _log_event(keeper.lock_reward_condition.FULFILLED_EVENT),
-    (),
-    wait=True
-)
-assert event, 'no event for LockRewardCondition.Fulfilled'
-
-event = keeper.access_secret_store_condition.subscribe_condition_fulfilled(
-    agreement_id,
-    60,
-    _log_event(keeper.escrow_reward_condition.FULFILLED_EVENT),
-    (),
-    wait=True
-)
-assert event, 'no event for AccessSecretStoreCondition.Fulfilled'
-
-event = keeper.escrow_reward_condition.subscribe_condition_fulfilled(
-    agreement_id,
-    60,
-    _log_event(keeper.escrow_reward_condition.FULFILLED_EVENT),
-    (),
-    wait=True
-)
-assert event, 'no event for EscrowReward.Fulfilled'
+#%%
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
 
 ocn.assets.consume(
