@@ -69,6 +69,8 @@ def get_account_from_config(config, config_account_key, config_account_password_
     address = config.get('keeper-contracts', config_account_key)
     address = Web3Provider.get_web3().toChecksumAddress(address)
     password = config.get('keeper-contracts', config_account_password_key)
+
+    logging.info("Account:{}={} {}={} ".format(config_account_key, address,config_account_password_key, password))
     return Account(address, password)
 
 #%%
@@ -78,19 +80,7 @@ def _log_event(event_name):
 
     return _process_event
 
-# #%% get_publisher_account
-# def get_publisher_account(config):
-#     acc = get_account_from_config(config, 'parity.address', 'parity.password')
-#     if acc is None:
-#         acc = Account(Keeper.get_instance().accounts[0])
-#     return acc
-
-#
 #%%
-# config_from_dict = Config(options_dict=config_dict2)
-#
-# # config = config_from_dict
-
 config = config_from_ini
 
 # ConfigProvider.set_config(config)
@@ -114,17 +104,17 @@ logging.info(f'registered ddo: {ddo.did}')
 #%%
 
 consumer_account = get_account_from_config(config, 'parity.address1', 'parity.password1')
-print("Consumer address: {}".format(publisher_account.address))
-print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
-print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).ocn/10**18))
-
+print("Consumer address: {}".format(consumer_account.address))
+print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
+print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
+assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in account {}".format(consumer_account.address)
 
 #%%
 
 service = ddo.get_service(service_type=ServiceTypes.ASSET_ACCESS)
 # cons_ocn.accounts.request_tokens(consumer_account, 100)
 # ocn.accounts.request_tokens(consumer_account, 100)
-sa = ServiceAgreement.from_service_dict(service.as_dictionary())
+# sa = ServiceAgreement.from_service_dict(service.as_dictionary())
 
 agreement_id = ocn.assets.order(
     ddo.did, 'Access', consumer_account)
