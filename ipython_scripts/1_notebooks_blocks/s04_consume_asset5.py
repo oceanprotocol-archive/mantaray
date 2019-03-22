@@ -8,11 +8,12 @@ import squid_py
 import mantaray_utilities as manta_utils
 
 # Setup logging
-from mantaray_utilities.user import password_map
+from mantaray_utilities.user import get_account_from_config
 from mantaray_utilities.blockchain import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py import Config
+from squid_py.keeper import Keeper
 
 # %% [markdown]
 # Get the configuration from the INI file
@@ -57,17 +58,17 @@ for path_artifact_file in path_artifacts.glob("*.{}.json".format(network_name)):
 logging.info("All {} ABI's confirmed on-chain.".format(artifact_dict['version']))
 
 #%% get_account_from_config
-from squid_py.accounts.account import Account
-from squid_py.keeper import Keeper
-from squid_py.keeper.web3_provider import Web3Provider
-
-def get_account_from_config(config, config_account_key, config_account_password_key):
-    address = config.get('keeper-contracts', config_account_key)
-    address = Web3Provider.get_web3().toChecksumAddress(address)
-    password = config.get('keeper-contracts', config_account_password_key)
-
-    logging.info("Account:{}={} {}={} ".format(config_account_key, address,config_account_password_key, password))
-    return Account(address, password)
+# from squid_py.accounts.account import Account
+# from squid_py.keeper import Keeper
+# from squid_py.keeper.web3_provider import Web3Provider
+#
+# def get_account_from_config(config, config_account_key, config_account_password_key):
+#     address = config.get('keeper-contracts', config_account_key)
+#     address = Web3Provider.get_web3().toChecksumAddress(address)
+#     password = config.get('keeper-contracts', config_account_password_key)
+#
+#     logging.info("Account:{}={} {}={} ".format(config_account_key, address,config_account_password_key, password))
+#     return Account(address, password)
 
 #%%
 ocn = Ocean(config_from_ini)
@@ -125,5 +126,10 @@ assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.
 
 ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 logging.info('Success buying asset.')
+
+
+
+#%%
+
 
 
