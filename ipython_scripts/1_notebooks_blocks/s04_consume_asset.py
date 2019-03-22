@@ -1,141 +1,88 @@
-
 import logging
 import os
 os.environ['USE_K8S_CLUSTER'] = '1'
-from squid_py import ConfigProvider, Metadata, Ocean
-import time
+from squid_py import Metadata, Ocean
+
 import squid_py
 
 import mantaray_utilities as manta_utils
-from squid_py.keeper.web3_provider import Web3Provider
+
 # Setup logging
-from mantaray_utilities.user import password_map
+from mantaray_utilities.user import get_account_from_config
+from mantaray_utilities.blockchain import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
-from squid_py.accounts.account import Account
+from squid_py import Config
+from squid_py.keeper import Keeper
+
+# %% [markdown]
+# Get the configuration from the INI file
 #%%
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
-
-#%% get_account_from_config
-from squid_py.accounts.account import Account
-from squid_py.keeper import Keeper
-from squid_py.keeper.web3_provider import Web3Provider
-
-def get_account_from_config(config, config_account_key, config_account_password_key):
-    address = None
-    if config.has_option('keeper-contracts', config_account_key):
-        address = config.get('keeper-contracts', config_account_key)
-        address = Web3Provider.get_web3().toChecksumAddress(address) if address else None
-
-    if not (address and address in Keeper.get_instance().accounts):
-        return None
-
-    password = None
-    if address and config.has_option('keeper-contracts', config_account_password_key):
-        password = config.get('keeper-contracts', config_account_password_key)
-
-    return Account(address, password)
-
-#%% get_publisher_account
-def get_publisher_account(config):
-    acc = get_account_from_config(config, 'parity.address', 'parity.password')
-    if acc is None:
-        acc = Account(Keeper.get_instance().accounts[0])
-    return acc
+config_from_ini = Config(CONFIG_INI_PATH)
 
 #%%
-from squid_py import Config
-class ExampleConfig:
-    if 'TEST_NILE' in os.environ and os.environ['TEST_NILE'] == '1':
-        environment = 'TEST_NILE'
-        config_dict = {
-            "keeper-contracts": {
-                "keeper.url": "https://nile.dev-ocean.com",
-                "keeper.path": "artifacts",
-                "secret_store.url": "https://secret-store.dev-ocean.com",
-                "parity.url": "https://nile.dev-ocean.com",
-                "parity.address": "0x413c9ba0a05b8a600899b41b0c62dd661e689354",
-                "parity.password": "ocean_secret",
-                "parity.address1": "0x1322A6ef2c560107733bFc622Fe556961Cb430a5",
-                "parity.password1": "ocean_secret"
-            },
-            "resources": {
-                "aquarius.url": "https://nginx-aquarius.dev-ocean.com/",
-                "brizo.url": "https://nginx-brizo.dev-ocean.com/",
-                "storage.path": "squid_py.db",
-                "downloads.path": "consume-downloads"
-            }
-        }
-    else:
-        environment = 'TEST_LOCAL_SPREE'
-        config_dict = {
-            "keeper-contracts": {
-                "keeper.url": "http://localhost:8545",
-                "keeper.path": "artifacts",
-                "secret_store.url": "http://localhost:12001",
-                "parity.url": "http://localhost:8545",
-                "parity.address": "0x00bd138abd70e2f00903268f3db08f2d25677c9e",
-                "parity.password": "node0",
-                "parity.address1": "0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0",
-                "parity.password1": "secret"
-            },
-            "resources": {
-                "aquarius.url": "http://172.15.0.15:5000",
-                "brizo.url": "http://localhost:8030",
-                "storage.path": "squid_py.db",
-                "downloads.path": "consume-downloads"
-            }
-        }
+ocn = Ocean(config_from_ini)
+keeper = Keeper.get_instance()
 
-    @staticmethod
-    def get_config():
-        logging.info("Configuration loaded for environment '{}'".format(ExampleConfig.environment))
-        return Config(options_dict=ExampleConfig.config_dict)
+# %% [markdown]
+# Get Publisher account, and register an asset for testing
 
 #%%
-# ConfigProvider.set_config(ExampleConfig.get_config())
-# config = ConfigProvider.get_config()
+publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
+print("Publisher address: {}".format(publisher_account.address))
+print("Publisher   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
+print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).ocn/10**18))
 
 #%%
-
-configuration = Config(CONFIG_INI_PATH)
-ConfigProvider.set_config(configuration)
-publisher_acct = get_publisher_account(configuration)
-# publisher_acct = Account(configuration.get('keeper-contracts','parity.address'), configuration.get('keeper-contracts','parity.password'))
-consumer_acct = Account(configuration.get('keeper-contracts','parity.address2'), configuration.get('keeper-contracts','parity.password2'))
-
-logging.info("Publisher account: {}".format(publisher_acct.address))
-logging.info("Consumer account: {}".format(consumer_acct.address))
-#%%
-ocn = Ocean(configuration)
-# ocn = Ocean()
-# Register ddo
-ddo = ocn.assets.create(Metadata.get_example(), publisher_acct)
+# Register an asset
+ddo = ocn.assets.create(Metadata.get_example(), publisher_account)
 logging.info(f'registered ddo: {ddo.did}')
 
+# %% [markdown]
+# Get Consumer account
 #%%
-# This will send the purchase request to Brizo which in turn will execute the agreement on-chain
-# ocn.accounts.request_tokens(consumer_acct, 100)
-ocn = Ocean(configuration)
-agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_acct)
-logging.info('placed order: %s, %s', ddo.did, agreement_id)
+consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
+print("Consumer address: {}".format(consumer_account.address))
+print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
+print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
+assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in account {}".format(consumer_account.address)
+# Ensure the consumer always has 10 OCEAN
+if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
+    refill_amount = 10 - ocn.accounts.balance(consumer_account).ocn/10**18 < 10
+    ocn.accounts.request_tokens(consumer_account, refill_amount)
 
-# TODO: Event listening is still not working, for now just wait for blockchain manually
+# %% [markdown]
+# Initiate the agreement for accessing (downloading) the asset
+#%%
+agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
+logging.info("Consumer has placed an order for asset {}".format(ddo.did))
+logging.info("The service agreement ID is {}".format(agreement_id))
 
-for i in range(30):
-    time.sleep(1)
-    print(".")
-# print()
+# %% [markdown]
+# In Ocean Protocol, downloading an asset is enforced by a contract.
+# The contract conditions and clauses are set by the publisher. Conditions trigger events, which are monitored
+# to ensure the contract is successfully executed.
+#%%
+# Listen to events in the download process
+subscribe_event("created agreement", keeper, agreement_id)
+subscribe_event("lock reward", keeper, agreement_id)
+subscribe_event("access secret store", keeper, agreement_id)
+subscribe_event("escrow reward", keeper, agreement_id)
 
-ocn.assets.consume(
-    agreement_id,
-    ddo.did,
-    'Access',
-    consumer_acct,
-    configuration.downloads_path)
+# %% [markdown]
+# Now that the agreement is signed, the consumer can download the asset.
+#%%
+
+assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
+
+ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 logging.info('Success buying asset.')
+
+#%%
+
 
 
