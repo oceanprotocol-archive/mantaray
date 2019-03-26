@@ -31,8 +31,13 @@ def maintest():
     print(log_str, end="")
     with PATH_CONTROL_LOG.open('a') as f:
         f.write(log_str)
-
-schedule.every().day.at(START_TIME).do(job)
+if 0:
+    # For starting at a specific time
+    schedule.every().day.at(START_TIME).do(job)
+if 1:
+    # Start immediately on process start
+    schedule.every(INTERVAL).seconds.do(maintest)
+    START_TIME = datetime.datetime.now().isoformat()
 
 log_str = "Scheduler set to start at {} every {} seconds until {}\n".format(START_TIME, INTERVAL,  END_TIME)
 print("Current datetime:", datetime.datetime.now())
@@ -48,5 +53,6 @@ while 1:
         with PATH_CONTROL_LOG.open('a') as f:
             f.write(log_str)
         break
+    time.sleep(1)
 
 
