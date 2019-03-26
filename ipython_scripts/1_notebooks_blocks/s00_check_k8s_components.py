@@ -64,9 +64,9 @@ for endpoint in endpoints_dict:
                     if 'software' in res.json().keys() and 'version' in res.json().keys():
                         print("\t Success: {} v{}".format(res.json()['software'], res.json()['version']))
                 else:
-                    print("\t Success: <no status endpoint>")
+                    print("\t Success")
             else:
-                print("\t Success: <no status endpoint>")
+                print("\t Success")
         except:
             flag_fail = True
             print('\t Failed!')
