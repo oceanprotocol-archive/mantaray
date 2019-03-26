@@ -10,7 +10,7 @@ PATH_TEST_FLOW = Path.cwd() / 'ipython_scripts' / '1_notebooks_blocks' / 's04_co
 assert PATH_TEST_FLOW.exists(), "Can't find {}".format(PATH_TEST_FLOW)
 
 START_TIME = "12:17"
-END_TIME = "12:22"
+END_TIME = "20:00"
 END_HOUR = int(END_TIME.split(':')[0])
 END_MINUTE = int(END_TIME.split(':')[1])
 INTERVAL = 30
