@@ -11,9 +11,7 @@
 import logging
 import os
 from squid_py import Metadata, Ocean
-
 import squid_py
-
 import mantaray_utilities as manta_utils
 
 # Setup logging
