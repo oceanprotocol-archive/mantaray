@@ -23,7 +23,13 @@ manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py import Config
 from squid_py.keeper import Keeper
-
+from pathlib import Path
+import datetime
+#%% Add a file  handler
+path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+fh = logging.FileHandler(path_log_file)
+fh.setLevel(logging.DEBUG)
+manta_utils.logging.logger.addHandler(fh)
 # %% [markdown]
 # Get the configuration from the INI file
 #%%
