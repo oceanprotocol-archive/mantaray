@@ -33,10 +33,12 @@ def maintest():
         f.write(log_str)
 
 schedule.every().day.at(START_TIME).do(job)
+print("Scheduler set to start at {} every {} seconds until {}".format(START_TIME, INTERVAL,  END_TIME))
 
 while 1:
     schedule.run_pending()
     if datetime.datetime.now().hour >= END_HOUR and datetime.datetime.now().minute >= END_MINUTE:
+        print("END scheduled jobs")
         break
 
 
