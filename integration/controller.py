@@ -2,7 +2,6 @@ import schedule
 import time
 import datetime
 from pathlib import Path
-assert PATH_TEST_FLOW.exists(), PATH_TEST_FLOW
 import subprocess
 
 
@@ -11,10 +10,11 @@ assert PATH_TEST_FLOW.exists(), "Can't find {}".format(PATH_TEST_FLOW)
 
 def maintest():
     print("Hi",datetime.datetime.utcnow().isoformat())
+    subprocess.call(['python', PATH_TEST_FLOW])
 
-START_TIME = "10:37"
+START_TIME = "10:57"
 END_TIME = "10:38"
-INTERVAL = 2
+INTERVAL = 30
 
 def job():
     schedule.every(INTERVAL).seconds.do(maintest)
