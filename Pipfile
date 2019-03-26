@@ -13,6 +13,7 @@ ipykernel = "*"
 squid-py = "==0.5.4"
 pip-api = "*"
 keeper-contracts = "==0.8.7"
+schedule = "*"
 
 [requires]
 python_version = "3.6"
