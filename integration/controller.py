@@ -15,7 +15,10 @@ assert PATH_TEST_FLOW.exists(), "Can't find {}".format(PATH_TEST_FLOW)
 # Get the schedule variables
 # Testing start time
 if os.environ['DOCKER_START_TIME']:
-    START_TIME = os.environ['DOCKER_START_TIME']
+    if os.environ['DOCKER_START_TIME'] = 'now':
+        START_TIME = datetime.datetime.now().isoformat()
+    else:
+        START_TIME = os.environ['DOCKER_START_TIME']
 elif 0: # Enable for a manual start time
     START_TIME = "12:17"
 else: # Otherwise, just start now

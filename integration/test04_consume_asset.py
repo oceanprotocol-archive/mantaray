@@ -21,7 +21,7 @@ manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py import Config
 from squid_py.keeper import Keeper
-squid_py.accounts.account import Account
+from squid_py.accounts.account import Account
 from squid_py.keeper.web3_provider import Web3Provider
 from pathlib import Path
 import datetime
@@ -49,7 +49,6 @@ keeper = Keeper.get_instance()
 # Get Publisher account, and register an asset for testing
 
 #%%
-
 if os.environ['DOCKER_PUBLISHER_ADDR']:
     # Get the account from environment variables
     assert os.environ['DOCKER_PUBLISHER_PASS'], "No password provided for {}".format(os.environ['DOCKER_PUBLISHER_ADDR'])
