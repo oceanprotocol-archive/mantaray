@@ -13,6 +13,7 @@ PATH_TEST_FLOW = Path.cwd() / 'integration' / 'test04_consume_asset.py'
 assert PATH_TEST_FLOW.exists(), "Can't find {}".format(PATH_TEST_FLOW)
 
 DOCKER_STRICT = True # Strictly enforce the environment variables
+DOCKER_STRICT = False # Strictly enforce the environment variables
 if DOCKER_STRICT:
     assert 'DOCKER_START_TIME' in os.environ
     assert 'DOCKER_END_TIME' in os.environ
@@ -22,13 +23,14 @@ if DOCKER_STRICT:
 # Testing start time
 if 'DOCKER_START_TIME' in os.environ:
     if os.environ['DOCKER_START_TIME'] == 'now':
-        START_TIME = datetime.datetime.now().isoformat()
+        START_TIME = datetime.datetime.now().strftime("%H:%M")
+
     else:
         START_TIME = os.environ['DOCKER_START_TIME']
 elif 0: # Enable for a manual start time
     START_TIME = "12:17"
 else: # Otherwise, just start now
-    START_TIME = datetime.datetime.now().isoformat()
+    START_TIME = datetime.datetime.now().strftime("%H:%M")
 
 # Testing end time
 if 'DOCKER_END_TIME' in os.environ:
@@ -37,10 +39,12 @@ if 'DOCKER_END_TIME' in os.environ:
     END_MINUTE = int(END_TIME.split(':')[1])
 else: # Enable for a manual start time
     END_TIME = "20:00"
+    END_HOUR = int(END_TIME.split(':')[0])
+    END_MINUTE = int(END_TIME.split(':')[1])
 
 # Testing interval
 if 'DOCKER_INTERVAL' in os.environ:
-    INTERVAL = os.environ['DOCKER_INTERVAL']
+    INTERVAL = int(os.environ['DOCKER_INTERVAL'])
 else:
     INTERVAL = 30
 
@@ -69,8 +73,12 @@ def run_python_test_script():
 
 
 # Schedule the jobs
-schedule.every().day.at(START_TIME).do(schedule_at_interval)
-schedule.every(INTERVAL).seconds.do(maintest)
+try:
+    schedule.every().day.at(START_TIME).do(schedule_at_interval)
+except:
+    print(START_TIME)
+    raise
+schedule.every(INTERVAL).seconds.do(run_python_test_script)
 
 
 log_str = "Scheduler set to start at {} every {} seconds until {}\n".format(START_TIME, INTERVAL,  END_TIME)
