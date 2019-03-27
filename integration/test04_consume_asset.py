@@ -46,6 +46,14 @@ config_from_ini = Config(CONFIG_INI_PATH)
 ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
 
+#%%
+DOCKER_STRICT = True # Strictly enforce the environment variables
+if DOCKER_STRICT:
+    assert 'DOCKER_PUBLISHER_ADDR' in os.environ
+    assert 'DOCKER_PUBLISHER_PASS' in os.environ
+    assert 'DOCKER_CONSUMER_ADDR' in os.environ
+    assert 'DOCKER_CONSUMER_PASS' in os.environ
+
 # %% [markdown]
 # Get Publisher account, and register an asset for testing
 

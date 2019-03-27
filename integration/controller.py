@@ -14,7 +14,9 @@ assert PATH_TEST_FLOW.exists(), "Can't find {}".format(PATH_TEST_FLOW)
 
 DOCKER_STRICT = True # Strictly enforce the environment variables
 if DOCKER_STRICT:
-    'DOCKER_START_TIME', 'DOCKER_END_TIME'
+    assert 'DOCKER_START_TIME' in os.environ
+    assert 'DOCKER_END_TIME' in os.environ
+    assert 'DOCKER_INTERVAL' in os.environ
 
 # Get the schedule variables
 # Testing start time
