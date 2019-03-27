@@ -8,7 +8,7 @@ jupytext = "*"
 
 [packages]
 requests = "*"
-mantaray-utilities = {editable = true,path = "/home/batman/ocn/mantaray_utilities"}
+mantaray-utilities "*"
 ipykernel = "*"
 squid-py = "==0.5.4"
 pip-api = "*"
