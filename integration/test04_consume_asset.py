@@ -1,11 +1,12 @@
 # %% [markdown]
-# Getting Underway - Downloading Datasets (Assets)
-# To complete the basic datascience workflow, this notebook will demonstrate how a user
-# can download an asset. Downloading an asset is a simple example of a Service Execution Agreement -
-# similar to a contract with a series of clauses. Each clause is secured on the blockchain, allowing for trustful
-# execution of a contract.
-#
-# In this notebook, an asset will be first published as before, and then ordered and downloaded.
+# export USE_K8S_CLUSTER=true
+# export DOCKER_START_TIME=now
+# export DOCKER_END_TIME=20:00
+# export DOCKER_INTERVAL=30
+# export DOCKER_PUBLISHER_ADDR=0x413c9BA0A05B8A600899B41b0c62dd661e689354
+# export DOCKER_PUBLISHER_PASS=ocean_secret
+# export DOCKER_CONSUMER_ADDR=0x06C0035fE67Cce2B8862D63Dc315D8C8c72207cA
+# export DOCKER_CONSUMER_PASS=ocean_secret
 
 #%%
 import logging
@@ -49,7 +50,7 @@ keeper = Keeper.get_instance()
 # Get Publisher account, and register an asset for testing
 
 #%%
-if os.environ['DOCKER_PUBLISHER_ADDR']:
+if 'DOCKER_PUBLISHER_ADDR' in os.environ:
     # Get the account from environment variables
     assert os.environ['DOCKER_PUBLISHER_PASS'], "No password provided for {}".format(os.environ['DOCKER_PUBLISHER_ADDR'])
     address = os.environ['DOCKER_PUBLISHER_ADDR']
@@ -73,7 +74,7 @@ logging.info(f'registered ddo: {ddo.did}')
 # Get Consumer account
 #%%
 
-if os.environ['DOCKER_CONSUMER_ADDR']:
+if 'DOCKER_CONSUMER_ADDR' in os.environ:
     # Get the account from environment variables
     assert os.environ['DOCKER_CONSUMER_PASS'], "No password provided for {}".format(os.environ['DOCKER_PUBLISHER_ADDR'])
     address = os.environ['DOCKER_CONSUMER_ADDR']

@@ -9,13 +9,17 @@ import os
 PATH_CONTROL_LOG = Path.home() / 'Started performance test at {}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 # This is the test script to run
-PATH_TEST_FLOW = Path.cwd() / 'ipython_scripts' / '1_notebooks_blocks' / 's04_consume_asset.py'
+PATH_TEST_FLOW = Path.cwd() / 'integration' / 'test04_consume_asset.py'
 assert PATH_TEST_FLOW.exists(), "Can't find {}".format(PATH_TEST_FLOW)
+
+DOCKER_STRICT = True # Strictly enforce the environment variables
+if DOCKER_STRICT:
+    'DOCKER_START_TIME', 'DOCKER_END_TIME'
 
 # Get the schedule variables
 # Testing start time
-if os.environ['DOCKER_START_TIME']:
-    if os.environ['DOCKER_START_TIME'] = 'now':
+if 'DOCKER_START_TIME' in os.environ:
+    if os.environ['DOCKER_START_TIME'] == 'now':
         START_TIME = datetime.datetime.now().isoformat()
     else:
         START_TIME = os.environ['DOCKER_START_TIME']
@@ -25,7 +29,7 @@ else: # Otherwise, just start now
     START_TIME = datetime.datetime.now().isoformat()
 
 # Testing end time
-if os.environ['DOCKER_END_TIME']:
+if 'DOCKER_END_TIME' in os.environ:
     END_TIME = os.environ['DOCKER_END_TIME']
     END_HOUR = int(END_TIME.split(':')[0])
     END_MINUTE = int(END_TIME.split(':')[1])
@@ -33,7 +37,7 @@ else: # Enable for a manual start time
     END_TIME = "20:00"
 
 # Testing interval
-if os.environ['DOCKER_INTERVAL']:
+if 'DOCKER_INTERVAL' in os.environ:
     INTERVAL = os.environ['DOCKER_INTERVAL']
 else:
     INTERVAL = 30
