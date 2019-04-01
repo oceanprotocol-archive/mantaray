@@ -35,6 +35,7 @@ path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("
 fh = logging.FileHandler(path_log_file)
 fh.setLevel(logging.DEBUG)
 manta_utils.logging.logger.addHandler(fh)
+logging.info("Log file at: {}".format(path_log_file))
 # %% [markdown]
 # Get the configuration from the INI file
 #%%
