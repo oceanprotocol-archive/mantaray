@@ -28,6 +28,7 @@ from pathlib import Path
 import datetime
 
 #%% Set environment
+os.environ['USE_K8S_CLUSTER']='true'
 
 #%% Add a file  handler
 path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
