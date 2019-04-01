@@ -26,6 +26,9 @@ from squid_py.accounts.account import Account
 from squid_py.keeper.web3_provider import Web3Provider
 from pathlib import Path
 import datetime
+
+#%% Set environment
+
 #%% Add a file  handler
 path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 fh = logging.FileHandler(path_log_file)
