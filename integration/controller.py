@@ -80,13 +80,11 @@ except:
     raise
 schedule.every(INTERVAL).seconds.do(run_python_test_script)
 
-
 log_str = "Scheduler set to start at {} every {} seconds until {}\n".format(START_TIME, INTERVAL,  END_TIME)
 print("Current datetime:", datetime.datetime.now())
 print(log_str, end="")
 with PATH_CONTROL_LOG.open('a') as f:
     f.write(log_str)
-
 
 while 1:
     schedule.run_pending()
