@@ -14,9 +14,11 @@ RUN apk add --no-cache --update\
     python3-dev \
   && pip install virtualenv
 
-COPY .. /mantaray
+COPY . /mantaray
 WORKDIR /mantaray
+RUN mkdir /test_logs
 
+# Install packages
 RUN pip install mantaray-utilities
 RUN pip install schedule
 RUN pip install squid-py==0.5.11 --ignore-installed
@@ -31,8 +33,6 @@ ENV DOCKER_CONSUMER_ADDR='0x06C0035fE67Cce2B8862D63Dc315D8C8c72207cA'
 ENV DOCKER_CONSUMER_PASS='ocean_secret'
 
 ENTRYPOINT ["/mantaray/docker-entrypoint.sh"]
-
-
 
 # RUN pip install --force-reinstall --ignore-installed git+https://github.com/oceanprotocol/mantaray_utilities.git
 

@@ -6,7 +6,8 @@ import subprocess
 import os
 
 # Save the logs to this path
-PATH_CONTROL_LOG = Path.home() / 'Started performance test at {}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+PATH_CONTROL_LOG = Path('/test_logs') / 'Started performance test at {}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+print("Controller script started. Log file at", PATH_CONTROL_LOG)
 
 # This is the test script to run
 PATH_TEST_FLOW = Path.cwd() / 'integration' / 'test04_consume_asset.py'

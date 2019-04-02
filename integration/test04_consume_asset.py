@@ -31,7 +31,7 @@ import datetime
 os.environ['USE_K8S_CLUSTER']='true'
 
 #%% Add a file  handler
-path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+path_log_file = Path('/test_logs') / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 fh = logging.FileHandler(path_log_file)
 fh.setLevel(logging.DEBUG)
 manta_utils.logging.logger.addHandler(fh)
