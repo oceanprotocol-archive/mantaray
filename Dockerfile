@@ -14,12 +14,12 @@ RUN apk add --no-cache --update\
     python3-dev \
   && pip install virtualenv
 
-COPY . /mantaray
+COPY .. /mantaray
 WORKDIR /mantaray
 
 RUN pip install mantaray-utilities
 RUN pip install schedule
-RUN pip install squid-py --ignore-installed
+RUN pip install squid-py==0.5.11 --ignore-installed
 
 ENV USE_K8S_CLUSTER='true'
 ENV DOCKER_START_TIME='now'
