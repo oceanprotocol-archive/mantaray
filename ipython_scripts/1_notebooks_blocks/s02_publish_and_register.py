@@ -126,11 +126,12 @@ for svc in ddo_dict['service']:
     print(svc['type'], svc['serviceEndpoint'])
 
 # %% [markdown]
-# Note that the 'files' attribute has been replaced by the 'encryptedFiles' attribute!
+# Note that the 'files' attribute has been modified - all URL's are now removed, and a new 'encryptedFiles'
+# attribute is created to store the actual URLs.
 #%%
-assert 'files' not in ddo.metadata['base']
-print("Encryped 'files' attribute, everything safe and secure!")
-print("Encrypted files decrypt on purchase! [{}...] etc. ".format(ddo.metadata['base']['encryptedFiles'][:50]))
+for file_attrib in ddo.metadata['base']['files']:
+    assert 'url' not in file_attrib
+print("Encrypted files decrypt on purchase! Cipher text: [{}...] . ".format(ddo.metadata['base']['encryptedFiles'][:50]))
 
 # %% [markdown]
 # ## Section 4: Verify your asset
@@ -149,15 +150,7 @@ ddo = ocn.assets.resolve(registered_did)
 print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did,ddo.metadata['base']['name']))
 
 # %% [markdown]
-# For illustrative purposes, this is the error you can expect if the DID is *NOT* in the database
-# %%
-random_did = 'did:op:9a3c2693c1f942b8a61cba7d212e5cd50c1b9a5299f74e39848e9b4c2148d453'
-try: ocn.assets.resolve(random_did)
-except Exception as e: print("(This raises, as required)", e)
-
-# %% [markdown]
 # Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner.
-#
 
 # %%
 # We need the pure ID string as in the DID registry (a DID without the prefixes)
