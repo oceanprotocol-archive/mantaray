@@ -52,7 +52,8 @@ ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
 
 #%%
-DOCKER_STRICT = True # Strictly enforce the environment variables
+DOCKER_STRICT = False
+# DOCKER_STRICT = True # Strictly enforce the environment variables
 if DOCKER_STRICT:
     assert 'DOCKER_PUBLISHER_ADDR' in os.environ
     assert 'DOCKER_PUBLISHER_PASS' in os.environ
@@ -132,8 +133,6 @@ assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.
 
 ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 logging.info('Success buying asset.')
-
-#%%
 
 
 
