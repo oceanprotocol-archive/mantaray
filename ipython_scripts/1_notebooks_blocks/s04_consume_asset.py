@@ -7,6 +7,9 @@
 #
 # In this notebook, an asset will be first published as before, and then ordered and downloaded.
 
+# %% [markdown]
+# ### Section 0: Import modules, and setup logging
+
 #%%
 import logging
 import os
@@ -23,13 +26,15 @@ from squid_py import Config
 from squid_py.keeper import Keeper
 from pathlib import Path
 import datetime
-#%% Add a file  handler
+#%% Add a file handler
 path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 fh = logging.FileHandler(path_log_file)
 fh.setLevel(logging.DEBUG)
 manta_utils.logging.logger.addHandler(fh)
+
 # %% [markdown]
-# Get the configuration from the INI file
+# ## Section 1: Get the configuration from the INI file
+
 #%%
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
@@ -38,6 +43,7 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 config_from_ini = Config(CONFIG_INI_PATH)
 
 #%% [markdown]
+# ## Section 2: Delegate access of your asset to the marketplace
 # When we publish a register a DDO to a marketplace, we assign several services and conditions on those services.
 # By default, the permission to grant access will lie with you, the publisher. As a publisher, you would need to
 # run the services component (brizo), in order to manage access to your assets.
@@ -49,11 +55,14 @@ config_from_ini = Config(CONFIG_INI_PATH)
 #%%
 MARKET_PLACE_PROVIDER_ADDRESS = '0x413c9BA0A05B8A600899B41b0c62dd661e689354'
 
+#%% [markdown]
+# ## Section 3: Instantiate Ocean
 #%%
 ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
 
 # %% [markdown]
+# ## Section 4: Get Publisher and Consumer accounts
 # Get Publisher account, and register an asset for testing
 
 #%%
