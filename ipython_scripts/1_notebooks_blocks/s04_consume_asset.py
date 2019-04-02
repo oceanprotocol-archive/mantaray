@@ -91,7 +91,7 @@ if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
     ocn.accounts.request_tokens(consumer_account, refill_amount)
 
 # %% [markdown]
-# ## Initiate the agreement for accessing (downloading) the asset, wait for condition events
+# ## Section 6: Initiate the agreement for accessing (downloading) the asset, wait for condition events
 #%%
 agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
 logging.info("Consumer has placed an order for asset {}".format(ddo.did))
