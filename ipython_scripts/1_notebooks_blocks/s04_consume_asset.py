@@ -62,8 +62,9 @@ ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
 
 # %% [markdown]
-# ## Section 4: Get Publisher and Consumer accounts
-# Get Publisher account, and register an asset for testing
+# ## Section 4: Get Publisher and register an asset for testing the download
+# Of course, you can download your own asset, one that you have created, or
+# one that you have found via the search api. All you need is the DID of the asset.
 
 #%%
 publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
@@ -77,7 +78,7 @@ ddo = ocn.assets.create(Metadata.get_example(), publisher_account, providers=[MA
 logging.info(f'registered ddo: {ddo.did}')
 
 # %% [markdown]
-# Get Consumer account
+# ## Section 5: Get Consumer account, ensure token balance
 #%%
 consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
 print("Consumer address: {}".format(consumer_account.address))
@@ -90,7 +91,7 @@ if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
     ocn.accounts.request_tokens(consumer_account, refill_amount)
 
 # %% [markdown]
-# Initiate the agreement for accessing (downloading) the asset
+# ## Initiate the agreement for accessing (downloading) the asset, wait for condition events
 #%%
 agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
 logging.info("Consumer has placed an order for asset {}".format(ddo.did))
@@ -109,8 +110,8 @@ subscribe_event("escrow reward", keeper, agreement_id)
 
 # %% [markdown]
 # Now that the agreement is signed, the consumer can download the asset.
-#%%
 
+#%%
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
 
 ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
