@@ -37,6 +37,18 @@ logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 config_from_ini = Config(CONFIG_INI_PATH)
 
+#%% [markdown]
+# When we publish a register a DDO to a marketplace, we assign several services and conditions on those services.
+# By default, the permission to grant access will lie with you, the publisher. As a publisher, you would need to
+# run the services component (brizo), in order to manage access to your assets.
+#
+# However, for the case of a marketplace, we will delegate permission to grant access to these services to the market
+# place on our behalf. Therefore, we will need the public address of the marketplace component. Of course, the
+# conditions are defined ultimately by you, the publisher.
+
+#%%
+MARKET_PLACE_PROVIDER_ADDRESS = '0x413c9BA0A05B8A600899B41b0c62dd661e689354'
+
 #%%
 ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
@@ -52,7 +64,7 @@ print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).
 
 #%%
 # Register an asset
-ddo = ocn.assets.create(Metadata.get_example(), publisher_account)
+ddo = ocn.assets.create(Metadata.get_example(), publisher_account, providers=[MARKET_PLACE_PROVIDER_ADDRESS])
 logging.info(f'registered ddo: {ddo.did}')
 
 # %% [markdown]
