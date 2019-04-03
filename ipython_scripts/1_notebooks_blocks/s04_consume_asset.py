@@ -53,7 +53,7 @@ config_from_ini = Config(CONFIG_INI_PATH)
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-MARKET_PLACE_PROVIDER_ADDRESS = '0x413c9BA0A05B8A600899B41b0c62dd661e689354'
+MARKET_PLACE_PROVIDER_ADDRESS = '0x376817c638d2a04f475a73af37f7b51a2862d567'
 
 #%% [markdown]
 # ## Section 3: Instantiate Ocean

@@ -30,19 +30,6 @@ manta_utils.logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
 
-#%% DEBUG
-from pathlib import Path
-import os
-os.environ["USE_K8S_CLUSTER"] = "true"
-
-os.environ["PASSWORD_PATH"] = ".nile_passwords"
-path_pass = Path.cwd() / os.environ["PASSWORD_PATH"]
-assert path_pass.exists()
-
-os.environ["ADDRESSES_PATH"] = "mantaray_accounts.txt"
-path_addresses = Path.cwd() / os.environ["ADDRESSES_PATH"]
-assert path_addresses.exists()
-
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
@@ -107,14 +94,14 @@ for i, acct in enumerate(ocn.accounts.list()):
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
 # %%
-print("Starting Ocean balance: {:0.2f}".format(ocn.accounts.balance(main_account).ocn/10**18))
-success = ocn.accounts.request_tokens(main_account, 1)
+print("Starting Ocean balance: {:0.2f}".format(ocn.accounts.balance(selected_account).ocn/10**18))
+success = ocn.accounts.request_tokens(selected_account, 1)
 # The result will be true or false
 assert success
 
 #%%
 # Execute this after some time has passed to see the update!
-print("Updated Ocean balance: {:0.2f}".format(ocn.accounts.balance(main_account).ocn/10**18))
+print("Updated Ocean balance: {:0.2f}".format(ocn.accounts.balance(selected_account).ocn/10**18))
 
 # %% [markdown]
 # ## Asynchronous interactions

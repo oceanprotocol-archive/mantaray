@@ -55,24 +55,28 @@ ocn = Ocean(configuration)
 
 #%%
 # Get a publisher account
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-passwords = manta_utils.user.load_passwords(path_passwords)
 
-publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
-publisher_acct.password = password_map(publisher_acct.address, passwords)
-assert publisher_acct.password
+publisher_acct = manta_utils.user.get_account_by_index(ocn,0)
+
+# path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
+# passwords = manta_utils.user.load_passwords(path_passwords)
+#
+# publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
+# publisher_acct.password = password_map(publisher_acct.address, passwords)
+# assert publisher_acct.password
 
 #%%
 print("Publisher account address: {}".format(publisher_acct.address))
-print("Publisher account balance:", ocn.accounts.balance(publisher_acct).ocn)
+print("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/10**18))
+print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/10**18))
 
 # %% [markdown]
 # Your account will need some Ocean Token to make real transactions, let's ensure that you are funded!
 
 # %%
 # ensure Ocean token balance
-if ocn.accounts.balance(publisher_acct).ocn == 0:
-    ocn.accounts.request_tokens(publisher_acct, 100)
+# if ocn.accounts.balance(publisher_acct).ocn == 0:
+#     ocn.accounts.request_tokens(publisher_acct, 100)
 
 #%% [markdown]
 # ### Section 2: Create the Metadata for your asset
