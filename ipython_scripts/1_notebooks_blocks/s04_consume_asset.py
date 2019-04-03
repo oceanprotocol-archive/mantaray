@@ -92,7 +92,8 @@ print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).oc
 assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in account {}".format(consumer_account.address)
 # Ensure the consumer always has 10 OCEAN
 if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
-    refill_amount = 10 - ocn.accounts.balance(consumer_account).ocn/10**18 < 10
+    refill_amount = int(10 - ocn.accounts.balance(consumer_account).ocn/10**18)
+    logging.info("Requesting {} tokens".format(refill_amount))
     ocn.accounts.request_tokens(consumer_account, refill_amount)
 
 # %% [markdown]
