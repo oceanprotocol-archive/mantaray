@@ -26,6 +26,8 @@ from squid_py import Config
 from squid_py.keeper import Keeper
 from pathlib import Path
 import datetime
+import web3
+
 #%% Add a file handler
 path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 fh = logging.FileHandler(path_log_file)
@@ -53,7 +55,7 @@ config_from_ini = Config(CONFIG_INI_PATH)
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-MARKET_PLACE_PROVIDER_ADDRESS = '0x376817c638d2a04f475a73af37f7b51a2862d567'
+MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f475a73af37f7b51a2862d567')
 
 #%% [markdown]
 # ## Section 3: Instantiate Ocean
@@ -67,7 +69,9 @@ keeper = Keeper.get_instance()
 # one that you have found via the search api. All you need is the DID of the asset.
 
 #%%
-publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
+publisher_account = manta_utils.user.get_account_by_index(ocn,0)
+
+# publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
 print("Publisher address: {}".format(publisher_account.address))
 print("Publisher   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
 print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).ocn/10**18))
@@ -80,7 +84,8 @@ logging.info(f'registered ddo: {ddo.did}')
 # %% [markdown]
 # ## Section 5: Get Consumer account, ensure token balance
 #%%
-consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
+# consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
+consumer_account = manta_utils.user.get_account_by_index(ocn,1)
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
