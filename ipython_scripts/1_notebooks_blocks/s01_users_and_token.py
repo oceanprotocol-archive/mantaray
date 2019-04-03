@@ -29,6 +29,19 @@ import mantaray_utilities as manta_utils
 manta_utils.logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
+
+#%% DEBUG
+from pathlib import Path
+import os
+os.environ["USE_K8S_CLUSTER"] = "true"
+
+os.environ["PASSWORD_PATH"] = ".nile_passwords"
+path_pass = Path.cwd() / os.environ["PASSWORD_PATH"]
+assert path_pass.exists()
+
+os.environ["ADDRESSES_PATH"] = "mantaray_accounts.txt"
+path_addresses = Path.cwd() / os.environ["ADDRESSES_PATH"]
+
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
@@ -51,10 +64,10 @@ pprint(configuration._sections)
 # The 20-byte 'parity.address' defines your account address
 # 'parity.password' is used to decrypt your private key and securely sign transactions
 #%%
-user1_address = configuration['keeper-contracts']['parity.address']
-user1_pass = configuration['keeper-contracts']['parity.password']
-print("Currently selected address:", user1_address)
-print("Associated password:", user1_pass)
+# user1_address = configuration['keeper-contracts']['parity.address']
+# user1_pass = configuration['keeper-contracts']['parity.password']
+# print("Currently selected address:", user1_address)
+# print("Associated password:", user1_pass)
 
 # %% [markdown]
 # Alternatively, for the purposes of these demos, a list of passwords for local and cloud testing are available.
@@ -62,9 +75,11 @@ print("Associated password:", user1_pass)
 
 #%%
 # Load the passwords file
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-passwords = manta_utils.user.load_passwords(path_passwords)
-user1_pass = manta_utils.user.password_map(user1_address, passwords)
+# path_passwords = manta_utils.config.get_project_path() / '.nile_passwords'
+# passwords = manta_utils.user.load_passwords_environ()
+
+# passwords = manta_utils.user.load_passwords(path_passwords)
+# user1_pass = manta_utils.user.password_map(user1_address, passwords)
 
 # %% [markdown]
 # ## Section 2: Instantiate the Ocean API class with this configuration
@@ -72,7 +87,8 @@ user1_pass = manta_utils.user.password_map(user1_address, passwords)
 # %%
 ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
-
+manta_utils.user.get_account(ocn)
+raise
 # %% [markdown]
 # An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions. Similar to
 # Ethereum, Ocean Tokens are divisible into the smallest unit of 10^18 of 1 token.
@@ -80,21 +96,19 @@ logging.critical("Ocean smart contract node connected ".format())
 # %%
 # List the accounts in the network
 print(len(ocn.accounts.list()), "accounts exist")
+print("Listing first 10 accounts")
 
-# Print a simple table listing accounts and balances
-print("{:<5} {:<45} {:<20} {:<12} {}".format("","Address", "Ocean Token Balance", "Password?", "ETH balance"))
+# Print a simple table listing the first 10 accounts and balances
+print("{:<5} {:<45} {:<20}  {}".format("","Address", "Ocean Token Balance", "ETH balance"))
 for i, acct in enumerate(ocn.accounts.list()):
     acct_balance = ocn.accounts.balance(acct)
-    acct.password = manta_utils.user.password_map(acct.address, passwords)
-    if acct.password:
-        flg_password_exists = True
-    else:
-        flg_password_exists = False
-    print("{:<5} {:<45} {:<20.0f} {:<12} {:0.0f}".format(i,acct.address, acct_balance.ocn/10**18, flg_password_exists, acct_balance.eth/10**18))
+    print("{:<5} {:<45} {:<20.0f}  {:0.0f}".format(i,acct.address, acct_balance.ocn/10**18, acct_balance.eth/10**18))
+    if i == 9: break
 
 # %%
-# Randomly select an account with a password
-main_account = random.choice([acct for acct in ocn.accounts.list() if manta_utils.user.password_map(acct.address, passwords)])
+# Randomly select an account
+# main_account = random.choice([acct for acct in ocn.accounts.list() if manta_utils.user.password_map(acct.address, passwords)])
+main_account = manta_utils.user.get_account(ocn.accounts.list(), )
 
 # %% [markdown]
 # ### It is never secure to send your password over an unsecured HTTP connection, this is for demonstration only!
