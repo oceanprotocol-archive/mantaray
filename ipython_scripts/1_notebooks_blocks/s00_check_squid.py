@@ -54,6 +54,7 @@ print("Configuration loaded. Will connect to a node at: ", configuration.keeper_
 ocn = Ocean(configuration)
 
 # %% [markdown]
+# ## Assert that your contract ABI files match those in the test network
 # The following cell performs some sanity checks on versions of smart contracts. The smart contract signatures
 # are placed in an 'artifacts' folder. When you pip-install the squid-py API, these artifacts are located in the
 # virtual environment, and you don't need to worry about them. For demonstration purposes, I've moved the artifacts

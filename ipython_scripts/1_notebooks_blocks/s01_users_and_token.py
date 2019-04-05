@@ -29,6 +29,7 @@ import mantaray_utilities as manta_utils
 manta_utils.logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
+
 #%%
 # Get the configuration file path for this environment
 # You can specify your own configuration file at any time, and pass it to the Ocean class.
@@ -47,26 +48,6 @@ configuration = Config(CONFIG_INI_PATH)
 pprint(configuration._sections)
 
 # %% [markdown]
-# Let's look at the 2 parameters that define your identity
-# The 20-byte 'parity.address' defines your account address
-# 'parity.password' is used to decrypt your private key and securely sign transactions
-#%%
-user1_address = configuration['keeper-contracts']['parity.address']
-user1_pass = configuration['keeper-contracts']['parity.password']
-print("Currently selected address:", user1_address)
-print("Associated password:", user1_pass)
-
-# %% [markdown]
-# Alternatively, for the purposes of these demos, a list of passwords for local and cloud testing are available.
-# Several utility functions have been created to manage these passwords for testing multiple users.
-
-#%%
-# Load the passwords file
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-passwords = manta_utils.user.load_passwords(path_passwords)
-user1_pass = manta_utils.user.password_map(user1_address, passwords)
-
-# %% [markdown]
 # ## Section 2: Instantiate the Ocean API class with this configuration
 # The Ocean API has an attribute listing all created (simulated) accounts in your local node
 # %%
@@ -74,34 +55,37 @@ ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
 # %% [markdown]
+# ## Section 3: A 'borrowed' user account
+# For the purposes of these tutorials, we will borrow one of the accounts to play with the test network. A simple
+# wrapper utility will return an account:
+
+#%%
+selected_account = manta_utils.user.get_account(ocn)
+print("Selected account address:", selected_account.address)
+
+# %% [markdown]
 # An account has a balance of Ocean Token, Ethereum, and requires a password to sign any transactions. Similar to
-# Ethereum, Ocean Tokens are divisible into the smallest unit of 10^18 of 1 token.
+# Ethereum, Ocean Tokens are divisible into the smallest unit of 10^18 of 1 token. There are several accounts
+# in the test network as listed below:
 
 # %%
 # List the accounts in the network
 print(len(ocn.accounts.list()), "accounts exist")
+print("Listing first 10 accounts")
 
-# Print a simple table listing accounts and balances
-print("{:<5} {:<45} {:<20} {:<12} {}".format("","Address", "Ocean Token Balance", "Password?", "ETH balance"))
+# Print a simple table listing the first 10 accounts and balances
+print("{:<5} {:<45} {:<20}  {}".format("","Address", "Ocean Token Balance", "ETH balance"))
 for i, acct in enumerate(ocn.accounts.list()):
     acct_balance = ocn.accounts.balance(acct)
-    acct.password = manta_utils.user.password_map(acct.address, passwords)
-    if acct.password:
-        flg_password_exists = True
-    else:
-        flg_password_exists = False
-    print("{:<5} {:<45} {:<20.0f} {:<12} {:0.0f}".format(i,acct.address, acct_balance.ocn/10**18, flg_password_exists, acct_balance.eth/10**18))
-
-# %%
-# Randomly select an account with a password
-main_account = random.choice([acct for acct in ocn.accounts.list() if manta_utils.user.password_map(acct.address, passwords)])
+    print("{:<5} {:<45} {:<20.0f}  {:0.0f}".format(i,acct.address, acct_balance.ocn/10**18, acct_balance.eth/10**18))
+    if i == 9: break
 
 # %% [markdown]
 # ### It is never secure to send your password over an unsecured HTTP connection, this is for demonstration only!
-# To interact with Ocean Protocol, use a wallet provider or the MetaMask browser extension.
+# ### In a real application, you should always hold your private key locally, secure in a wallet, or use MetaMask
+#
 # See our documentation page for setting up your Ethereum accounts!
 #
-# Most of your interaction with the Ocean Protocol blockchain smart contracts will require your Password.
 
 # %% [markdown]
 # ## Requesting tokens
@@ -110,14 +94,14 @@ main_account = random.choice([acct for acct in ocn.accounts.list() if manta_util
 # Your balance should be increased by 1 - but only after the block has been mined! Try printing your balance
 # multiple times until it updates.
 # %%
-print("Starting Ocean balance: {:0.2f}".format(ocn.accounts.balance(main_account).ocn/10**18))
-success = ocn.accounts.request_tokens(main_account, 1)
+print("Starting Ocean balance: {:0.2f}".format(ocn.accounts.balance(selected_account).ocn/10**18))
+success = ocn.accounts.request_tokens(selected_account, 1)
 # The result will be true or false
 assert success
 
 #%%
 # Execute this after some time has passed to see the update!
-print("Updated Ocean balance: {:0.2f}".format(ocn.accounts.balance(main_account).ocn/10**18))
+print("Updated Ocean balance: {:0.2f}".format(ocn.accounts.balance(selected_account).ocn/10**18))
 
 # %% [markdown]
 # ## Asynchronous interactions
