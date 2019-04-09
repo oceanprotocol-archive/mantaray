@@ -61,14 +61,11 @@ ocn = Ocean(configuration)
 
 #%%
 print("Aquarius metadata service URL: {}".format(configuration.aquarius_url))
-print("Aquarius metadata service Swagger API page (try it out!): {}/api/v1/docs/".format(configuration.aquarius_url))
 
 # %% [markdown]
 # Similarly, the access control service is called Brizo, and will manage any access requests for an asset.
 #%%
 print("Brizo access service URL: {}".format(configuration.get('resources','brizo.url')))
-print("Brizo access service Swagger API page (try it out!): {}/api/v1/docs/".format(configuration.get('resources','brizo.url')))
-#TODO: Swagger page is still broken
 
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
