@@ -63,8 +63,6 @@ ocn = Ocean(configuration)
 # (Aquarius metadata store)[https://github.com/oceanprotocol/aquarius/tree/develop/aquarius]
 #
 # (MongoDB driver)[https://github.com/oceanprotocol/oceandb-mongodb-driver]
-#%%
-print("Aquarius metadata database service URL: {}".format(configuration.aquarius_url))
 
 # %% [markdown]
 # ### Section 2: Test search
@@ -72,25 +70,13 @@ print("Aquarius metadata database service URL: {}".format(configuration.aquarius
 all_ddos = ocn.assets.search({'asdf'})
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
-# First, we will retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius using the 'exists' tag.
-# This is an example of the low level MongoDB API.
-#TODO: Seperate this into utils library, generally a user would not want to list all assets, could be a large list!
-
+# First, we will retrieve a list of DID's (Decentralized IDentifiers) from Aquarius matching any string.
+# The query is limited to 100 results by default, this limit can be increased.
 #%%
-
-text
-
-Retrieve all the values that match with the text sent.
-
-all_ddos = ocn.assets.query({"text":['']},)
-len(all_ddos)
-
-
 # Use the Query function to get all existing assets
-basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-all_ddos = ocn.assets.query(basic_query)
+all_ddos = ocn.assets.query({"text":['']},)
 assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
-print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
+print("Found the first {} assets registered in the metadata store.".format(len(all_ddos)))
 
 # %% [markdown]
 # Aquarius is a document store, with the key being the DID, and the document being the DDO
@@ -112,7 +98,7 @@ print("Asset price: {} token".format(this_ddo.metadata['base']['price']))
 print("Asset description: {} token".format(this_ddo.metadata['base']['description']))
 
 # %% [markdown]
-# ### Section 4: Searching the Ocean
+# ### Section 3: Searching the Ocean
 # Aquarius supports query search. A list of [DDO] is returned from a search call.
 #
 # Currently, Aquarius is running MongoDB. For detailed query documentation, see the
@@ -121,26 +107,17 @@ print("Asset description: {} token".format(this_ddo.metadata['base']['descriptio
 # The exposed query endpoint is a subset of the full MongoDB search capability. For the documentation on the
 # Current search implementation, see https://github.com/oceanprotocol/aquarius/blob/develop/docs/for_api_users/API.md
 
-#%%
-# Query syntax:
-# {
-#   "query": {"name_of_query":["parameters"]},
-#   "sort": {"field":1},
-#   "offset": 100,
-#   "page": 0
-# }
-
 #%% [markdown]
-# #### Select ALL assets
+# #### Filter on price
 # To get started, the following query will return all documents with a 'price' between 0 and 20.
 # The syntax for this query, is a range of integers for the registered price.
 #%%
-query = {"query":{"price":[0,20]}}
+price_filter = [5,20]
+query = {"query":{"price":price_filter}}
 search_results = ocn.assets.query(query)
-print("Found {} assets".format(len(search_results)))
-print_match_idx = -1
-for result in search_results:
-    print("Selected asset: {}, price:{}, {}".format(result.metadata['base']['name'],result.metadata['base']['price'], result.did ))
+print("Found {} assets matching price interval {}".format(len(search_results),price_filter))
+all_prices = [result.metadata['base']['price'] for result in search_results]
+print("Average price in this set: {:0.2f}".format(sum(all_prices)/len(all_prices)))
 
 #%% [markdown]
 # #### Text search
@@ -149,14 +126,15 @@ for result in search_results:
 query = {"query":{"text":["Weather"]}}
 search_results = ocn.assets.query(query)
 print("Found {} assets".format(len(search_results)))
-print_match_idx = -1
-for result in search_results:
-    print("Selected asset: {}, price:{}, {}".format(result.metadata['base']['name'],result.metadata['base']['price'], result.did ))
 
+all_names = [result.metadata['base']['name'] for result in search_results]
+from collections import Counter
+for name, count in dict(Counter(all_names)).items():
+    print("Found {} of '{}'".format(count, name))
 
 #%% [markdown]
 # #### Combined search
-# Multiple queries can be joined
+# Multiple queries can be joined to create more complex filters
 #%%
 query = {"query":{"text":["Weather"],"price":[0,11]}}
 search_results = ocn.assets.query(query)
@@ -164,35 +142,3 @@ print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
 for result in search_results:
     print("Selected asset: {}, price:{}, {}".format(result.metadata['base']['name'],result.metadata['base']['price'], result.did ))
-
-# %% [markdown]
-# ### Section 5: Cleaning the Ocean
-# A DID is registered on the blockchain, and can be resolved to a DID Document (DDO) as presented above.
-#
-# Since the DDO exists on Aquarius and not in the blockchain, the DDO itself can be deleted. The DID trace can never be
-# deleted from the blockchain.
-
-#%%
-if 0:
-
-    # Let's count how many ddo's are registered
-    all_dids = ocn.assets._get_aquarius().list_assets()
-    print("there are {} assets registered in the metadata store.".format(len(all_dids)))
-
-    # let's delete the first ddo object.
-    first_did = all_dids[0]
-    print("selected ddo for deletion:", first_did)
-    ocn.assets._get_aquarius().retire_asset_ddo(first_did)
-
-    # again, let's count how many ddo's are registered
-    all_dids = ocn.assets._get_aquarius().list_assets()
-    print("there are now {} assets registered in the metadata store.".format(len(all_dids)))
-
-# %%
-# Deleting all assets!
-# Please don't delete all the assets, as other users may be testing the components!
-if 0:
-    all_dids = ocn.assets._get_aquarius().list_assets()
-    for i, did in enumerate(all_dids):
-        print("Deleting DDO {} - {}".format(i, did))
-        ocn.assets._get_aquarius().retire_asset_ddo(did)
