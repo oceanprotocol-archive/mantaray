@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "48a5a250ec3a2b7c887af0d6416ca0468e24c059165a87e3fe45f5935892ffb0"
+            "sha256": "e3c784b8ca0fc2bdf11a262b908ab0766f2924bcc1c039d8a6644eccc549b243"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -454,10 +454,10 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:32b0891edff07e28efe91284ed9c31e123d84bea3fd98e1f72be2508f43ef8d9",
-                "sha256:d5f05e487007e29e03409f9398d074e158d920d36eb82eaf66fb1136b0c5374c"
+                "sha256:303879e36b721603cc54604edcac9d20401bdbe31e1e4fdee5b9f98d5d31dfda",
+                "sha256:d747dd3d23d77ef44c6a3526e274af6efeb0a6f1afd5a69ba4d5be4098c8e141"
             ],
-            "version": "==2018.9"
+            "version": "==2019.1"
         },
         "pyyaml": {
             "hashes": [
@@ -531,11 +531,11 @@
         },
         "squid-py": {
             "hashes": [
-                "sha256:3909ca3be86fb2e02372960175f405f4578aa2745612d03a80c6b3de43fd5ee5",
-                "sha256:f60b700ac791eee704465a31e12c49eb233c3cb734d3068e354dd7fd7d1d3e31"
+                "sha256:cb7dfaf487bfdcc1f68a645cd2511b4e590f1a0257cf60d332ce52deaa13899f",
+                "sha256:d3789112df3330d648cbedd4b6a442178f674b9d30605480e20af16bd036a541"
             ],
             "index": "pypi",
-            "version": "==0.5.13"
+            "version": "==0.5.14"
         },
         "toolz": {
             "hashes": [
@@ -653,10 +653,10 @@
         },
         "jupytext": {
             "hashes": [
-                "sha256:81dd92303fe87dc7246222bf7ac86b2a9861d7e93c7b2c4303bac1ac094698e5"
+                "sha256:1903f5103c3e0a0b1204df2bad8e49981bb51b1c7e8923d4884ad2b872f1c1a8"
             ],
             "index": "pypi",
-            "version": "==1.0.5"
+            "version": "==1.1.0"
         },
         "mock": {
             "hashes": [
@@ -704,10 +704,10 @@
         },
         "testfixtures": {
             "hashes": [
-                "sha256:79b1c1ae5407750406eaf4407ea0d4c0d50b60bec3f85494c6401e072e7d2239",
-                "sha256:fc52e99561141e2e10fd79f3a565502238adcb90f6e2a7634abceef2d2c17bf7"
+                "sha256:6b79324f35852eaacd4f5f440b20ee1b98df23001ff88db8b8bde3746f753f0a",
+                "sha256:c0028d2acd45e6604d359b806132af05815d64e882cf995fa45e6814ddaade13"
             ],
-            "version": "==6.6.2"
+            "version": "==6.7.0"
         },
         "traitlets": {
             "hashes": [

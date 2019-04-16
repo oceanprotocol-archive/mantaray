@@ -77,6 +77,15 @@ all_ddos = ocn.assets.search({'asdf'})
 #TODO: Seperate this into utils library, generally a user would not want to list all assets, could be a large list!
 
 #%%
+
+text
+
+Retrieve all the values that match with the text sent.
+
+all_ddos = ocn.assets.query({"text":['']},)
+len(all_ddos)
+
+
 # Use the Query function to get all existing assets
 basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
 all_ddos = ocn.assets.query(basic_query)
