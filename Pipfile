@@ -10,7 +10,7 @@ jupytext = "*"
 requests = "*"
 mantaray-utilities = "*"
 ipykernel = "*"
-squid-py = "==0.5.11"
+squid-py = "==0.5.14"
 pip-api = "*"
 schedule = "*"
 
