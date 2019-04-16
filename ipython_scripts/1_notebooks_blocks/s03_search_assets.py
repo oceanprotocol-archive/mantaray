@@ -57,20 +57,22 @@ ocn = Ocean(configuration)
 
 #%% [markdown]
 # The Metadata store is a database wrapped with a REST API.
+# The database is accessed with a driver, currently Mongo DB is implemented.
 # For more details of functionality, see the documentation and our Swagger API page.
-
+#
+# (Aquarius metadata store)[https://github.com/oceanprotocol/aquarius/tree/develop/aquarius]
+#
+# (MongoDB driver)[https://github.com/oceanprotocol/oceandb-mongodb-driver]
 #%%
-print("Aquarius metadata service URL: {}".format(configuration.aquarius_url))
+print("Aquarius metadata database service URL: {}".format(configuration.aquarius_url))
 
 # %% [markdown]
-# Similarly, the access control service is called Brizo, and will manage any access requests for an asset.
+# ### Section 2: Test search
 #%%
-print("Brizo access service URL: {}".format(configuration.get('resources','brizo.url')))
-
+all_ddos = ocn.assets.search({'asdf'})
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
-# All stored assets can be listed. This is typically not done in production, as the list would be too large.
-# First retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius using the 'exists' tag.
+# First, we will retrieve a list of all DID's (Decentralized IDentifiers) from Aquarius using the 'exists' tag.
 # This is an example of the low level MongoDB API.
 #TODO: Seperate this into utils library, generally a user would not want to list all assets, could be a large list!
 
