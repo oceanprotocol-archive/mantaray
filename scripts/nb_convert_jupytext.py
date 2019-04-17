@@ -77,7 +77,7 @@ for item in path_ipy_root.iterdir():
         ))
 
         # Parse the script to Jupyter format
-        parsed = jupytext.reads(total_script_lines, ext='.py', format_name='percent')
+        parsed = jupytext.reads(total_script_lines, fmt='.py', format_name='percent')
 
         parsed['metadata'].update(kernel_spec_dict)
         logging.info("Added kernelspec".format())
