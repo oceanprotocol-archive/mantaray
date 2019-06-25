@@ -60,6 +60,10 @@ ocn = Ocean(configuration)
 # virtual environment, and you don't need to worry about them. For demonstration purposes, I've moved the artifacts
 # into the project folder here.
 
+
+from mantaray_utilities import assert_contracts
+manta_utils.assert_contracts.assert_contract_ABI_versions()
+
 # %%
 # Assert versions of contract definitions (ABI files) match your installed keeper-contracts package version.
 version_kc_installed = 'v'+str(pip_api.installed_distributions()['keeper-contracts'].version)
