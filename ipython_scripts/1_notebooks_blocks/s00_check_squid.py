@@ -33,7 +33,8 @@ print("squid-py Ocean API version:", squid_py.__version__)
 # Get the configuration file path for this environment
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+# CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+config_file = os.environ['OCEAN_CONFIG_PATH']
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 #%% [markdown]
@@ -41,9 +42,10 @@ logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 
 #%%
 # Load the configuration
-configuration = Config(CONFIG_INI_PATH)
+# configuration = Config('.config_nile.ini')
+configuration = Config(os.environ['CONFIG_INI_PATH'])
 print("Configuration loaded. Will connect to a node at: ", configuration.keeper_url)
-
+squid_py.ConfigProvider.set_config(configuration)
 # %% [markdown]
 # Feel free to inspect the `configuration` object.
 
