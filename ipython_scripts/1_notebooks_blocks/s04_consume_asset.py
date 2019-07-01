@@ -29,10 +29,10 @@ import datetime
 import web3
 
 #%% Add a file handler
-path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-fh = logging.FileHandler(path_log_file)
-fh.setLevel(logging.DEBUG)
-manta_utils.logging.logger.addHandler(fh)
+# path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+# fh = logging.FileHandler(path_log_file)
+# fh.setLevel(logging.DEBUG)
+# manta_utils.logging.logger.addHandler(fh)
 
 # %% [markdown]
 # ## Section 1: Get the configuration from the INI file
@@ -61,7 +61,8 @@ ocn = Ocean(configuration)
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f475a73af37f7b51a2862d567')
+# MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f475a73af37f7b51a2862d567')
+MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x4aaab179035dc57b35e2ce066919048686f82972')
 
 #%% [markdown]
 # ## Section 3: Instantiate Ocean
