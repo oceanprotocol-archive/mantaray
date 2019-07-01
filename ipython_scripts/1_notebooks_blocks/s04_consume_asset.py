@@ -38,11 +38,17 @@ manta_utils.logging.logger.addHandler(fh)
 # ## Section 1: Get the configuration from the INI file
 
 #%%
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+# Get the configuration file path for this environment
+config_file = os.environ['OCEAN_CONFIG_PATH']
+logging.critical("Configuration file selected: {}".format(config_file))
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
-config_from_ini = Config(CONFIG_INI_PATH)
+
+#%%
+# Instantiate Ocean with the default configuration file.
+configuration = Config(config_file)
+squid_py.ConfigProvider.set_config(configuration)
+ocn = Ocean(configuration)
 
 #%% [markdown]
 # ## Section 2: Delegate access of your asset to the marketplace
@@ -60,7 +66,6 @@ MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f4
 #%% [markdown]
 # ## Section 3: Instantiate Ocean
 #%%
-ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
 
 # %% [markdown]
