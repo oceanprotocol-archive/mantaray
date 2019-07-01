@@ -14,6 +14,7 @@ import requests
 # Setup logging
 manta_utils.logging.logger.setLevel('INFO')
 from time import sleep
+
 #%%
 # Get the configuration file path for this environment
 CONFIG_INI_PATH = manta_utils.config.get_config_file_path()

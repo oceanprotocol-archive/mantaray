@@ -40,8 +40,9 @@ endpoints_dict = {
     'aquarius': config['resources']['aquarius.url'],
     'brizo': config['resources']['brizo.url'],
     'Ethereum node': config['keeper-contracts']['keeper.url'],
-    'secret_store' : config['keeper-contracts']['secret_store.url']
+    'secret_store': config['keeper-contracts']['secret_store.url'],
 }
+
 swagger_pages = dict()
 swagger_pages['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
 swagger_pages['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
