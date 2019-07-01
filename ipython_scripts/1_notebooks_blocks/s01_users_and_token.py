@@ -32,18 +32,17 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%
-# Get the configuration file
+# Get the configuration file path for this environment
 config_file = os.environ['OCEAN_CONFIG_PATH']
 logging.critical("Configuration file selected: {}".format(config_file))
+logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+logging.critical("Squid API version: {}".format(squid_py.__version__))
+
+#%%
+# Instantiate Ocean with the default configuration file.
 configuration = Config(config_file)
 squid_py.ConfigProvider.set_config(configuration)
-
-# %% [markdown]
-# From the configuration, instantiate the Ocean object, the interface to Ocean Protocol.
-# %%
-# Instantiate Ocean
-squid_py.ConfigProvider.set_config(configuration)
-# ocn = Ocean(configuration)
+ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
 # %% [markdown]
