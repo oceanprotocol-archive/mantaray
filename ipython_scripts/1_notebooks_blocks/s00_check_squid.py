@@ -64,6 +64,7 @@ ocn = Ocean(configuration)
 
 from mantaray_utilities import assert_contracts
 manta_utils.assert_contracts.assert_contract_ABI_versions(ocn, 'nile')
+manta_utils.assert_contracts.assert_contract_code(ocn, 'nile')
 
 # %% [markdown]
 # The following cell will print some summary information of the Ocean connection.
