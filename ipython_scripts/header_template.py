@@ -10,5 +10,3 @@
 # <p>Component compatibility (Nile): Brizo v0.3.12, Aquarius v0.3.4, Nile testnet smart contracts 0.10.3</p>
 # <p><a href="https://github.com/oceanprotocol/mantaray">mantaray on Github</a></p>
 # <p>
-
-
