@@ -35,7 +35,7 @@ logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_
 
 # CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
 config_file = os.environ['OCEAN_CONFIG_PATH']
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
+logging.critical("Configuration file selected: {}".format(config_file))
 
 #%% [markdown]
 # ## Connect to Ocean Protocal with the configuration file
@@ -43,7 +43,7 @@ logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 #%%
 # Load the configuration
 # configuration = Config('.config_nile.ini')
-configuration = Config(os.environ['CONFIG_INI_PATH'])
+configuration = Config(config_file)
 print("Configuration loaded. Will connect to a node at: ", configuration.keeper_url)
 squid_py.ConfigProvider.set_config(configuration)
 # %% [markdown]
@@ -61,7 +61,6 @@ ocn = Ocean(configuration)
 # are placed in an 'artifacts' folder. When you pip-install the squid-py API, these artifacts are located in the
 # virtual environment, and you don't need to worry about them. For demonstration purposes, I've moved the artifacts
 # into the project folder here.
-
 
 from mantaray_utilities import assert_contracts
 manta_utils.assert_contracts.assert_contract_ABI_versions()
