@@ -15,13 +15,21 @@ import mantaray_utilities.logging as manta_logging
 #%%
 # For this test, set the configuration environment variable for kubernetes.
 # here it is hard-coded for IPython execution, but in general, it is set in your system environment.
-manta_config.name_deployment_type()
-os.environ['USE_K8S_CLUSTER'] = 'true'
+# manta_config.name_deployment_type()
+# os.environ['USE_K8S_CLUSTER'] = 'true'
+
 manta_logging.logger.setLevel('INFO')
 
 # Get the configuration file path for this environment
-CONFIG_INI_PATH = manta_config.get_config_file_path()
+# CONFIG_INI_PATH = manta_config.get_config_file_path()
+CONFIG_INI_PATH = os.environ['OCEAN_CONFIG_PATH']
+
 logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
+
+import configparser
+config = configparser.ConfigParser()
+config.read(CONFIG_INI_PATH)
+
 
 # %%
 # The endpoints (microservices) are defined in the below dictionary
@@ -29,10 +37,10 @@ logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
 #%%
 # For now, the endpoints are hard-coded by the dev-ops team.
 endpoints_dict = {
-    'aquarius': 'https://nginx-aquarius.dev-ocean.com',
-    'brizo': 'https://nginx-brizo.dev-ocean.com',
-    'Ethereum testnet (Nile)': 'https://nile.dev-ocean.com',
-    'secret_store' : 'https://secret-store.dev-ocean.com'
+    'aquarius': config['resources']['aquarius.url'],
+    'brizo': config['resources']['brizo.url'],
+    'Ethereum node': config['keeper-contracts']['keeper.url'],
+    'secret_store' : config['keeper-contracts']['secret_store.url']
 }
 swagger_pages = dict()
 swagger_pages['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
