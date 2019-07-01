@@ -46,11 +46,12 @@ logging.critical("Configuration file selected: {}".format(config_file))
 configuration = Config(config_file)
 print("Configuration loaded. Will connect to a node at: ", configuration.keeper_url)
 squid_py.ConfigProvider.set_config(configuration)
+
 # %% [markdown]
 # Feel free to inspect the `configuration` object.
 
 # %% [markdown]
-# From the configuration, instantiate the Ocean object, the primary interface to Ocean Protocol.
+# From the configuration, instantiate the Ocean object, the interface to Ocean Protocol.
 # %%
 # Instantiate Ocean
 ocn = Ocean(configuration)
@@ -68,7 +69,6 @@ manta_utils.assert_contracts.assert_contract_code(ocn, 'nile')
 
 # %% [markdown]
 # The following cell will print some summary information of the Ocean connection.
-#TODO: add pretty printing of the connection
 
 #%%
 print("***OCEAN***")
@@ -78,44 +78,3 @@ for i, account in enumerate(ocn.accounts._accounts):
 
 #%% [markdown]
 # ## Alternatively, connect to Ocean with a configuration as dictionary
-# The configuration of the client (mantaray) can be inspected in the below code cells. The following configuration
-# is set for local testing.
-
-#%%
-config_dict = {
-    'keeper-contracts': {
-        # Point to an Ethereum RPC client. Note that Squid learns the name of the network to work with from this client.
-        'keeper.url': 'http://localhost:8545',
-        # Specify the keeper contracts artifacts folder (has the smart contracts definitions json files). When you
-        # install the package, the artifacts are automatically picked up from the `keeper-contracts` Python
-        # dependency unless you are using a local ethereum network.
-        'keeper.path': 'artifacts',
-        'secret_store.url': 'http://localhost:12001',
-        'parity.url': 'http://localhost:8545',
-        'parity.address': '',
-        'parity.password': '',
-
-    },
-    'resources': {
-        # aquarius is the metadata store. It stores the assets DDO/DID-document
-        'aquarius.url': 'http://localhost:5000',
-        # Brizo is the publisher's agent. It serves purchase and requests for both data access and compute services
-        'brizo.url': 'http://localhost:8030',
-        # points to the local database file used for storing temporary information (for instance, pending service agreements).
-        'storage.path': 'squid_py.db',
-        # Where to store downloaded asset files
-        'downloads.path': 'consume-downloads'
-    }
-}
-# %%
-# You may modify the dictionary object and uncomment the next cell to test
-#%% [markdown]
-# ```
-# # Instantiate Ocean from the above dictionary
-# configuration = Config(filename=None, options_dict=config_dict)
-# ocn = Ocean(configuration)
-# print("***OCEAN***")
-# print("{} accounts".format(len(ocn.accounts._accounts)))
-# for i, account in enumerate(ocn.accounts._accounts):
-#     print(i, account.address)
-# ```

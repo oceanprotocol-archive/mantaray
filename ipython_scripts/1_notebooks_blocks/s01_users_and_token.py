@@ -16,6 +16,7 @@
 #%%
 # Standard imports
 import logging
+import os
 import random
 from pprint import pprint
 
@@ -31,27 +32,18 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%
-# Get the configuration file path for this environment
-# You can specify your own configuration file at any time, and pass it to the Ocean class.
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
+# Get the configuration file
+config_file = os.environ['OCEAN_CONFIG_PATH']
+logging.critical("Configuration file selected: {}".format(config_file))
+configuration = Config(config_file)
+squid_py.ConfigProvider.set_config(configuration)
 
 # %% [markdown]
-# ## Section 1: Examine the configuration object
-#%%
-# The API can be configured with a file or a dictionary.
-# In this case, we will instantiate from file, which you may also inspect.
-# The configuration is a standard library [configparser.ConfigParser()](https://docs.python.org/3/library/configparser.html) object.
-print("Configuration file:", CONFIG_INI_PATH)
-configuration = Config(CONFIG_INI_PATH)
-pprint(configuration._sections)
-
-# %% [markdown]
-# ## Section 2: Instantiate the Ocean API class with this configuration
-# The Ocean API has an attribute listing all created (simulated) accounts in your local node
+# From the configuration, instantiate the Ocean object, the interface to Ocean Protocol.
 # %%
-ocn = Ocean(configuration)
+# Instantiate Ocean
+squid_py.ConfigProvider.set_config(configuration)
+# ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
 # %% [markdown]
@@ -85,7 +77,6 @@ for i, acct in enumerate(ocn.accounts.list()):
 # ### In a real application, you should always hold your private key locally, secure in a wallet, or use MetaMask
 #
 # See our documentation page for setting up your Ethereum accounts!
-#
 
 # %% [markdown]
 # ## Requesting tokens
