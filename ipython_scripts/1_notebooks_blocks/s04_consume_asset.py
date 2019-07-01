@@ -115,7 +115,7 @@ logging.info("The service agreement ID is {}".format(agreement_id))
 # to ensure the contract is successfully executed.
 #%%
 # Listen to events in the download process
-subscribe_event("created agreement", keeper, agreement_id)
+# subscribe_event("created agreement", keeper, agreement_id)
 # subscribe_event("lock reward", keeper, agreement_id)
 # subscribe_event("access secret store", keeper, agreement_id)
 # subscribe_event("escrow reward", keeper, agreement_id)
