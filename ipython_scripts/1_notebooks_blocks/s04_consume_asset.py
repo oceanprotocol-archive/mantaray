@@ -61,8 +61,8 @@ ocn = Ocean(configuration)
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-# MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f475a73af37f7b51a2862d567')
-MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x4aaab179035dc57b35e2ce066919048686f82972')
+MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f475a73af37f7b51a2862d567')
+# MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x4aaab179035dc57b35e2ce066919048686f82972')
 
 #%% [markdown]
 # ## Section 3: Instantiate Ocean
@@ -109,6 +109,9 @@ agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
 logging.info("Consumer has placed an order for asset {}".format(ddo.did))
 logging.info("The service agreement ID is {}".format(agreement_id))
 
+ocn.keeper.escrow_access_secretstore_template.get_agreement_data(agreement_id)
+ocn.keeper.did_registry.is_did_provider(ddo.asset_id, MARKET_PLACE_PROVIDER_ADDRESS)
+
 # %% [markdown]
 # In Ocean Protocol, downloading an asset is enforced by a contract.
 # The contract conditions and clauses are set by the publisher. Conditions trigger events, which are monitored
@@ -116,7 +119,7 @@ logging.info("The service agreement ID is {}".format(agreement_id))
 #%%
 # Listen to events in the download process
 # subscribe_event("created agreement", keeper, agreement_id)
-# subscribe_event("lock reward", keeper, agreement_id)
+subscribe_event("lock reward", keeper, agreement_id)
 # subscribe_event("access secret store", keeper, agreement_id)
 # subscribe_event("escrow reward", keeper, agreement_id)
 
@@ -125,7 +128,7 @@ logging.info("The service agreement ID is {}".format(agreement_id))
 
 #%%
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
-
+ocn.agreements.status(agreement_id)
 ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 
 logging.info('Success buying asset.')
