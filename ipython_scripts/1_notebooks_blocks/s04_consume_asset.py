@@ -86,7 +86,9 @@ print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).
 # Register an asset
 ddo = ocn.assets.create(Metadata.get_example(), publisher_account, providers=[MARKET_PLACE_PROVIDER_ADDRESS])
 logging.info(f'registered ddo: {ddo.did}')
-
+asset_price = int(ddo.metadata['base']['price']) / 10**18
+asset_name = ddo.metadata['base']['name']
+print("Registered {} for {} OCN".format(asset_name, asset_price))
 # %% [markdown]
 # ## Section 5: Get Consumer account, ensure token balance
 #%%
@@ -95,9 +97,9 @@ consumer_account = manta_utils.user.get_account_by_index(ocn,1)
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
-assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in account {}".format(consumer_account.address)
+assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
 # Ensure the consumer always has 10 OCEAN
-if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
+if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price:
     refill_amount = int(10 - ocn.accounts.balance(consumer_account).ocn/10**18)
     logging.info("Requesting {} tokens".format(refill_amount))
     ocn.accounts.request_tokens(consumer_account, refill_amount)
