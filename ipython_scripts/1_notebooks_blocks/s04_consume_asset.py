@@ -98,8 +98,8 @@ print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
 assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
-# Ensure the consumer always has 10 OCEAN
-if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price:
+# Ensure the consumer always has enough Ocean Token (with a margin)
+if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
     refill_amount = int(10 - ocn.accounts.balance(consumer_account).ocn/10**18)
     logging.info("Requesting {} tokens".format(refill_amount))
     ocn.accounts.request_tokens(consumer_account, refill_amount)
