@@ -125,10 +125,10 @@ ocn.keeper.did_registry.is_did_provider(ddo.asset_id, MARKET_PLACE_PROVIDER_ADDR
 # to ensure the contract is successfully executed.
 #%%
 # Listen to events in the download process
-# subscribe_event("created agreement", keeper, agreement_id)
+subscribe_event("created agreement", keeper, agreement_id)
 subscribe_event("lock reward", keeper, agreement_id)
-# subscribe_event("access secret store", keeper, agreement_id)
-# subscribe_event("escrow reward", keeper, agreement_id)
+subscribe_event("access secret store", keeper, agreement_id)
+subscribe_event("escrow reward", keeper, agreement_id)
 
 # %% [markdown]
 # Now that the agreement is signed, the consumer can download the asset.
