@@ -39,14 +39,19 @@ import web3
 
 #%%
 # Get the configuration file path for this environment
-config_file = os.environ['OCEAN_CONFIG_PATH']
-logging.critical("Configuration file selected: {}".format(config_file))
+OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
+
+# The Market Place will be delegated to provide access to your assets, so we need the address
+MARKET_PLACE_PROVIDER_ADDRESS = os.environ['MARKET_PLACE_PROVIDER_ADDRESS']
+
+logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
-
+logging.info("MARKET_PLACE_PROVIDER_ADDRESS:{}".format(MARKET_PLACE_PROVIDER_ADDRESS))
 #%%
 # Instantiate Ocean with the default configuration file.
-configuration = Config(config_file)
+configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
 
@@ -61,8 +66,8 @@ ocn = Ocean(configuration)
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f475a73af37f7b51a2862d567')
-# MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x4aaab179035dc57b35e2ce066919048686f82972')
+
+MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress(MARKET_PLACE_PROVIDER_ADDRESS)
 
 #%% [markdown]
 # ## Section 3: Instantiate Ocean
