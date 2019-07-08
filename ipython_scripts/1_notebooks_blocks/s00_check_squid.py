@@ -36,12 +36,11 @@ assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFI
 logging.info("OCEAN_CONFIG_PATH:{}".format(OCEAN_CONFIG_PATH))
 
 #%% [markdown]
-# ## Connect to Ocean Protocal with the configuration file
+# ## Connect to Ocean Protocol with the configuration file
 
 #%%
 # Load the configuration
-# configuration = Config('.config_nile.ini')
-configuration = Config(config_file)
+configuration = Config(OCEAN_CONFIG_PATH)
 print("Configuration loaded. Will connect to a node at: ", configuration.keeper_url)
 squid_py.ConfigProvider.set_config(configuration)
 
