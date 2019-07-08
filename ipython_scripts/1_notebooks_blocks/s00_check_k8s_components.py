@@ -8,8 +8,9 @@
 import requests
 import os
 import logging
+from pathlib import Path
 
-import mantaray_utilities.config as manta_config
+# import mantaray_utilities.config as manta_config
 import mantaray_utilities.logging as manta_logging
 
 #%%
@@ -21,15 +22,13 @@ import mantaray_utilities.logging as manta_logging
 manta_logging.logger.setLevel('INFO')
 
 # Get the configuration file path for this environment
-# CONFIG_INI_PATH = manta_config.get_config_file_path()
-CONFIG_INI_PATH = os.environ['OCEAN_CONFIG_PATH']
-
-logging.info("Configuration file selected: {}".format(CONFIG_INI_PATH))
+OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+assert OCEAN_CONFIG_PATH.exists()
+logging.info("OCEAN_CONFIG_PATH:{}".format(OCEAN_CONFIG_PATH))
 
 import configparser
 config = configparser.ConfigParser()
-config.read(CONFIG_INI_PATH)
-
+config.read(OCEAN_CONFIG_PATH)
 
 # %%
 # The endpoints (microservices) are defined in the below dictionary

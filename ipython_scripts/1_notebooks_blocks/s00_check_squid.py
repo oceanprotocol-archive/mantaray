@@ -31,11 +31,9 @@ print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%
 # Get the configuration file path for this environment
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-
-# CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
-config_file = os.environ['OCEAN_CONFIG_PATH']
-logging.critical("Configuration file selected: {}".format(config_file))
+OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
+logging.info("OCEAN_CONFIG_PATH:{}".format(OCEAN_CONFIG_PATH))
 
 #%% [markdown]
 # ## Connect to Ocean Protocal with the configuration file
