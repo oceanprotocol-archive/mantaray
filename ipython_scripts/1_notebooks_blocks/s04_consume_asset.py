@@ -19,7 +19,7 @@ import mantaray_utilities as manta_utils
 
 # Setup logging
 from mantaray_utilities.user import get_account_from_config
-from mantaray_utilities.blockchain import subscribe_event
+from mantaray_utilities.events_async import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py import Config
@@ -27,6 +27,8 @@ from squid_py.keeper import Keeper
 from pathlib import Path
 import datetime
 import web3
+import asyncio
+
 
 #%% Add a file handler
 # path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -125,6 +127,23 @@ ocn.keeper.did_registry.is_did_provider(ddo.asset_id, MARKET_PLACE_PROVIDER_ADDR
 # to ensure the contract is successfully executed.
 #%%
 # Listen to events in the download process
+
+# loop = asyncio.get_event_loop()
+# task1 = loop.create_task(subscribe_event("created agreement", keeper, agreement_id))
+# task2 = loop.create_task(subscribe_event("lock reward", keeper, agreement_id))
+task1 = subscribe_event("created agreement", keeper, agreement_id)
+task2 = subscribe_event("lock reward", keeper, agreement_id)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(asyncio.wait([task1, task2]))
+loop.close()
+
+# group1 = asyncio.gather( task1, task2, )
+# results = loop.run_until_complete(group1)
+# loop.close()
+import time
+time.sleep(60)
+raise
 subscribe_event("created agreement", keeper, agreement_id)
 subscribe_event("lock reward", keeper, agreement_id)
 subscribe_event("access secret store", keeper, agreement_id)
@@ -136,7 +155,7 @@ subscribe_event("escrow reward", keeper, agreement_id)
 #%%
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
 ocn.agreements.status(agreement_id)
-ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
+# ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 
 logging.info('Success buying asset.')
 

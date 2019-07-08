@@ -10,9 +10,9 @@ jupytext = "*"
 requests = "*"
 ipykernel = "*"
 squid-py = "==0.6.13"
-mantaray-utilities = {editable = true,path = "/home/batman/ocn/mantaray_utilities"}
 pip-api = "*"
 schedule = "*"
+mantaray-utilities = {editable = true,path = "/home/batman/ocn/mantaray_utilities"}
 
 [requires]
 python_version = "3.6"
