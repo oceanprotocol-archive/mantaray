@@ -125,52 +125,7 @@ ocn.keeper.did_registry.is_did_provider(ddo.asset_id, MARKET_PLACE_PROVIDER_ADDR
 # In Ocean Protocol, downloading an asset is enforced by a contract.
 # The contract conditions and clauses are set by the publisher. Conditions trigger events, which are monitored
 # to ensure the contract is successfully executed.
-
-#%% TESTING
-import random
-async def coro(tag):
-    print(">", tag)
-    await asyncio.sleep(random.uniform(0.5, 5))
-    print("<", tag)
-    return tag
-
-loop = asyncio.get_event_loop()
-
-tasks = [coro(i) for i in range(1, 11)]
-
-print("Get all other results:")
-finished, unfinished = loop.run_until_complete(asyncio.wait(tasks))
-print(finished)
-print(unfinished)
-
-for task in finished:
-    print(task.result())
-raise
-
-#%%
-# Listen to events in the download process
-
-# loop = asyncio.get_event_loop()
-# task1 = loop.create_task(subscribe_event("created agreement", keeper, agreement_id))
-# task2 = loop.create_task(subscribe_event("lock reward", keeper, agreement_id))
-# task1 = subscribe_event("created agreement", keeper, agreement_id)
-# task2 = subscribe_event("lock reward", keeper, agreement_id)
-
-
-
-
-print("task1",task1)
-print("task2",task2)
-
-loop.run_until_complete(asyncio.wait([task1, task2]))
-loop.close()
-
-# group1 = asyncio.gather( task1, task2, )
-# results = loop.run_until_complete(group1)
-# loop.close()
-import time
-time.sleep(60)
-raise
+e
 subscribe_event("created agreement", keeper, agreement_id)
 subscribe_event("lock reward", keeper, agreement_id)
 subscribe_event("access secret store", keeper, agreement_id)
