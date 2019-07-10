@@ -35,6 +35,16 @@ Designed to be used with an interactive Python shell, for example the IPython
 Read–Eval–Print Loop (REPL) found in [Jupyter Notebooks](http://jupyter.org/)
 and other editors.
 
+This repo is the source for the front-end facing notebooks. Here's a high level overview; 
+1. First, scripts are written and tested here in this repo, using the `%%` format to deliniate code cells. Testing is done against local components (see the [barge](https://github.com/oceanprotocol/barge) project) or the deployed endpoints in AWS kubernetes. 
+1. Next, the [jupytext](https://github.com/mwouts/jupytext) parser is used to create .ipynb notebooks. 
+1. These notebooks are manually copied into a new [front-facing repo](https://github.com/oceanprotocol/mantaray_jupyter). It is this repo that is pulled into each JupyterLab instance, to keep things clean and simple for the end user. 
+1. The [jupyterhub-helm-configuration](https://github.com/oceanprotocol/jupyterhub-helm-configuration) repo controls the creation of jupyterlab instances (using a [JupyterHub](https://jupyter.org/hub) cluster). 
+1. A docker image of [jupyterhub-helm-configuration](https://github.com/oceanprotocol/jupyterhub-helm-configuration) is created and controls the git-pull of the notebooks, as well as any environment configuration (installation of all dependencies). (See the `Dockerfile` and the `post-start.sh` script in this repo for details.)
+1. Now, for each user, a new container is instantiated (essentially a dedicated virtual machine) from the Dockerfile. The post-start script then pulls the latest notebooks and makes any other changes. 
+
+One consequence of the above flow is that once the container and connected disk image are created, they cannot be automatically updated to new versions. 
+
 ## Installation
 
 The primary use of Mantaray is an easy way to get starting with Ocean Protocol. Visit [datascience.oceanprotocol.com](https://datascience.oceanprotocol.com/) to test these scripts in a pre-configured Jupyter Lab environment! 

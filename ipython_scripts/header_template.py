@@ -8,5 +8,6 @@
 # <p>Version 0.5.2 - beta</p>
 # <p>Package compatibility: squid-py v0.6.13, keeper-contracts 0.10.3, utilities 0.2.2,
 # <p>Component compatibility (Nile): Brizo v0.3.12, Aquarius v0.3.4, Nile testnet smart contracts 0.10.3</p>
+
 # <p><a href="https://github.com/oceanprotocol/mantaray">mantaray on Github</a></p>
 # <p>
