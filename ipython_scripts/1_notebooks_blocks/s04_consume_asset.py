@@ -143,4 +143,3 @@ assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.
 ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 
 logging.info('Success buying asset.')
-
