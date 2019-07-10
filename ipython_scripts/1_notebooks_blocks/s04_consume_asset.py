@@ -107,7 +107,8 @@ print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).oc
 assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
 # Ensure the consumer always has enough Ocean Token (with a margin)
 if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
-    refill_amount = int(10 - ocn.accounts.balance(consumer_account).ocn/10**18)
+    logging.info("Insufficient Ocean Token balance for this asset!".format())
+    refill_amount = int(15 - ocn.accounts.balance(consumer_account).ocn/10**18)
     logging.info("Requesting {} tokens".format(refill_amount))
     ocn.accounts.request_tokens(consumer_account, refill_amount)
 
@@ -118,14 +119,12 @@ agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
 logging.info("Consumer has placed an order for asset {}".format(ddo.did))
 logging.info("The service agreement ID is {}".format(agreement_id))
 
-ocn.keeper.escrow_access_secretstore_template.get_agreement_data(agreement_id)
-ocn.keeper.did_registry.is_did_provider(ddo.asset_id, MARKET_PLACE_PROVIDER_ADDRESS)
-
 # %% [markdown]
 # In Ocean Protocol, downloading an asset is enforced by a contract.
 # The contract conditions and clauses are set by the publisher. Conditions trigger events, which are monitored
 # to ensure the contract is successfully executed.
 
+# %%
 subscribe_event("created agreement", keeper, agreement_id)
 subscribe_event("lock reward", keeper, agreement_id)
 subscribe_event("access secret store", keeper, agreement_id)
