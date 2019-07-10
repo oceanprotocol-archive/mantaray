@@ -24,7 +24,8 @@
 #%%
 # Standard imports
 import logging
-
+import os
+from pathlib import Path
 # Import mantaray and the Ocean API (squid)
 import random
 import squid_py
@@ -40,14 +41,17 @@ print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%
 # Get the configuration file path for this environment
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
+
+logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 #%%
 # Instantiate Ocean with the default configuration file.
-configuration = Config(CONFIG_INI_PATH)
+configuration = Config(OCEAN_CONFIG_PATH)
+squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
 
 # %% [markdown]
@@ -97,7 +101,7 @@ pprint(metadata)
 # Alter the metadata object at any time before publishing.
 #%%
 print("Price of Asset:", metadata['base']['price'])
-metadata['base']['price'] = 9
+metadata['base']['price'] = "9" # Note that price is a string
 print("Updated price of Asset:", metadata['base']['price'])
 
 #%% [markdown]

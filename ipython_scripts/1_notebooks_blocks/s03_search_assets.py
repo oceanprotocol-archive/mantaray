@@ -29,6 +29,8 @@
 #%%
 # Standard imports
 import logging
+import os
+from pathlib import Path
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
@@ -41,15 +43,19 @@ manta_utils.logging.logger.setLevel('INFO')
 print("squid-py Ocean API version:", squid_py.__version__)
 #%%
 # Get the configuration file path for this environment
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
+
+logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 #%%
-# Instantiate Ocean from configuration file
-configuration = Config(CONFIG_INI_PATH)
+# Instantiate Ocean with the default configuration file.
+configuration = Config(OCEAN_CONFIG_PATH)
+squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
+
 # %% [markdown]
 # ### Section 1: Assets are stored in the Metadata store (Aquarius) as a DDO
 # Anyone can search assets in the public metadata stores. Anyone can start their own metadata instance for thier
@@ -67,7 +73,6 @@ ocn = Ocean(configuration)
 # %% [markdown]
 # ### Section 2: Test search
 #%%
-all_ddos = ocn.assets.search({'asdf'})
 # %% [markdown]
 # ### Section 2: Listing registered asset metadata in Aquarius
 # First, we will retrieve a list of DID's (Decentralized IDentifiers) from Aquarius matching any string.

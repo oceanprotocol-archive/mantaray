@@ -16,8 +16,8 @@
 #%%
 # Standard imports
 import logging
-import random
-from pprint import pprint
+import os
+from pathlib import Path
 
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
@@ -25,6 +25,7 @@ import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
+
 # Setup logging to a higher level and not flood the console with debug messages
 manta_utils.logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))
@@ -32,32 +33,26 @@ print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%
 # Get the configuration file path for this environment
-# You can specify your own configuration file at any time, and pass it to the Ocean class.
+OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
+
+logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
+logging.critical("Squid API version: {}".format(squid_py.__version__))
 
-# %% [markdown]
-# ## Section 1: Examine the configuration object
 #%%
-# The API can be configured with a file or a dictionary.
-# In this case, we will instantiate from file, which you may also inspect.
-# The configuration is a standard library [configparser.ConfigParser()](https://docs.python.org/3/library/configparser.html) object.
-print("Configuration file:", CONFIG_INI_PATH)
-configuration = Config(CONFIG_INI_PATH)
-pprint(configuration._sections)
-
-# %% [markdown]
-# ## Section 2: Instantiate the Ocean API class with this configuration
-# The Ocean API has an attribute listing all created (simulated) accounts in your local node
-# %%
+# Instantiate Ocean with the default configuration file.
+configuration = Config(OCEAN_CONFIG_PATH)
+squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
 
 # %% [markdown]
 # ## Section 3: A 'borrowed' user account
 # For the purposes of these tutorials, we will borrow one of the accounts to play with the test network. A simple
-# wrapper utility will return an account:
+# wrapper utility will return an account. The `get_account()` utility will select an account at random from Ocean.accounts.
+# This account will be matched with the corresponding password contained in the PASSWORD_PATH environment variable.
+# The PASSWORD_PATH file is a CSV of address,password lines.
 
 #%%
 selected_account = manta_utils.user.get_account(ocn)
@@ -85,7 +80,6 @@ for i, acct in enumerate(ocn.accounts.list()):
 # ### In a real application, you should always hold your private key locally, secure in a wallet, or use MetaMask
 #
 # See our documentation page for setting up your Ethereum accounts!
-#
 
 # %% [markdown]
 # ## Requesting tokens

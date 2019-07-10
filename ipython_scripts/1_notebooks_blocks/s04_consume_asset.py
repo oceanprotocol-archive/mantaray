@@ -19,7 +19,7 @@ import mantaray_utilities as manta_utils
 
 # Setup logging
 from mantaray_utilities.user import get_account_from_config
-from mantaray_utilities.blockchain import subscribe_event
+from mantaray_utilities.events import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py import Config
@@ -27,22 +27,35 @@ from squid_py.keeper import Keeper
 from pathlib import Path
 import datetime
 import web3
+import asyncio
+
 
 #%% Add a file handler
-path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-fh = logging.FileHandler(path_log_file)
-fh.setLevel(logging.DEBUG)
-manta_utils.logging.logger.addHandler(fh)
+# path_log_file = Path.home() / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+# fh = logging.FileHandler(path_log_file)
+# fh.setLevel(logging.DEBUG)
+# manta_utils.logging.logger.addHandler(fh)
 
 # %% [markdown]
 # ## Section 1: Get the configuration from the INI file
 
 #%%
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+# Get the configuration file path for this environment
+OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
+
+# The Market Place will be delegated to provide access to your assets, so we need the address
+MARKET_PLACE_PROVIDER_ADDRESS = os.environ['MARKET_PLACE_PROVIDER_ADDRESS']
+
+logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
-config_from_ini = Config(CONFIG_INI_PATH)
+logging.info("MARKET_PLACE_PROVIDER_ADDRESS:{}".format(MARKET_PLACE_PROVIDER_ADDRESS))
+#%%
+# Instantiate Ocean with the default configuration file.
+configuration = Config(OCEAN_CONFIG_PATH)
+squid_py.ConfigProvider.set_config(configuration)
+ocn = Ocean(configuration)
 
 #%% [markdown]
 # ## Section 2: Delegate access of your asset to the marketplace
@@ -55,12 +68,11 @@ config_from_ini = Config(CONFIG_INI_PATH)
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress('0x376817c638d2a04f475a73af37f7b51a2862d567')
+MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress(MARKET_PLACE_PROVIDER_ADDRESS)
 
 #%% [markdown]
 # ## Section 3: Instantiate Ocean
 #%%
-ocn = Ocean(config_from_ini)
 keeper = Keeper.get_instance()
 
 # %% [markdown]
@@ -80,6 +92,9 @@ print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).
 # Register an asset
 ddo = ocn.assets.create(Metadata.get_example(), publisher_account, providers=[MARKET_PLACE_PROVIDER_ADDRESS])
 logging.info(f'registered ddo: {ddo.did}')
+asset_price = int(ddo.metadata['base']['price']) / 10**18
+asset_name = ddo.metadata['base']['name']
+print("Registered {} for {} OCN".format(asset_name, asset_price))
 
 # %% [markdown]
 # ## Section 5: Get Consumer account, ensure token balance
@@ -89,9 +104,9 @@ consumer_account = manta_utils.user.get_account_by_index(ocn,1)
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
-assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in account {}".format(consumer_account.address)
-# Ensure the consumer always has 10 OCEAN
-if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
+assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
+# Ensure the consumer always has enough Ocean Token (with a margin)
+if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
     refill_amount = int(10 - ocn.accounts.balance(consumer_account).ocn/10**18)
     logging.info("Requesting {} tokens".format(refill_amount))
     ocn.accounts.request_tokens(consumer_account, refill_amount)
@@ -103,23 +118,28 @@ agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
 logging.info("Consumer has placed an order for asset {}".format(ddo.did))
 logging.info("The service agreement ID is {}".format(agreement_id))
 
+ocn.keeper.escrow_access_secretstore_template.get_agreement_data(agreement_id)
+ocn.keeper.did_registry.is_did_provider(ddo.asset_id, MARKET_PLACE_PROVIDER_ADDRESS)
+
 # %% [markdown]
 # In Ocean Protocol, downloading an asset is enforced by a contract.
 # The contract conditions and clauses are set by the publisher. Conditions trigger events, which are monitored
 # to ensure the contract is successfully executed.
-#%%
-# Listen to events in the download process
+
 subscribe_event("created agreement", keeper, agreement_id)
 subscribe_event("lock reward", keeper, agreement_id)
 subscribe_event("access secret store", keeper, agreement_id)
 subscribe_event("escrow reward", keeper, agreement_id)
 
 # %% [markdown]
+# Now wait for all events to complete!
+
+# %% [markdown]
 # Now that the agreement is signed, the consumer can download the asset.
 
 #%%
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
-
+# ocn.agreements.status(agreement_id)
 ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
-logging.info('Success buying asset.')
 
+logging.info('Success buying asset.')

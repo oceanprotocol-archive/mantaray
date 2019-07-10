@@ -6,9 +6,8 @@
 # <h1><center>Ocean Protocol - Manta Ray project</center></h1>
 # <h3><center>Decentralized Data Science and Engineering, powered by Ocean Protocol</center></h3>
 # <p>Version 0.5.2 - beta</p>
-# <p>Package compatibility: squid-py v0.5.14, keeper-contracts 0.9.0, utilities 0.2.1,
-# <p>Component compatibility: Brizo v0.3.5, Aquarius v0.2.2, Nile testnet smart contracts 0.9.0</p>
+# <p>Package compatibility: squid-py v0.6.13, keeper-contracts 0.10.3, utilities 0.2.2,
+# <p>Component compatibility (Nile): Brizo v0.3.12, Aquarius v0.3.4, Nile testnet smart contracts 0.10.3</p>
+
 # <p><a href="https://github.com/oceanprotocol/mantaray">mantaray on Github</a></p>
 # <p>
-
-
