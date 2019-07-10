@@ -19,7 +19,7 @@ import mantaray_utilities as manta_utils
 
 # Setup logging
 from mantaray_utilities.user import get_account_from_config
-from mantaray_utilities.events_async import subscribe_event
+from mantaray_utilities.events import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py import Config
@@ -68,7 +68,6 @@ ocn = Ocean(configuration)
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-
 MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress(MARKET_PLACE_PROVIDER_ADDRESS)
 
 #%% [markdown]
@@ -96,6 +95,7 @@ logging.info(f'registered ddo: {ddo.did}')
 asset_price = int(ddo.metadata['base']['price']) / 10**18
 asset_name = ddo.metadata['base']['name']
 print("Registered {} for {} OCN".format(asset_name, asset_price))
+
 # %% [markdown]
 # ## Section 5: Get Consumer account, ensure token balance
 #%%
@@ -125,19 +125,22 @@ ocn.keeper.did_registry.is_did_provider(ddo.asset_id, MARKET_PLACE_PROVIDER_ADDR
 # In Ocean Protocol, downloading an asset is enforced by a contract.
 # The contract conditions and clauses are set by the publisher. Conditions trigger events, which are monitored
 # to ensure the contract is successfully executed.
-e
+
 subscribe_event("created agreement", keeper, agreement_id)
 subscribe_event("lock reward", keeper, agreement_id)
 subscribe_event("access secret store", keeper, agreement_id)
 subscribe_event("escrow reward", keeper, agreement_id)
 
 # %% [markdown]
+# Now wait for all events to complete!
+
+# %% [markdown]
 # Now that the agreement is signed, the consumer can download the asset.
 
 #%%
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
-ocn.agreements.status(agreement_id)
-# ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
+# ocn.agreements.status(agreement_id)
+ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
 
 logging.info('Success buying asset.')
 
