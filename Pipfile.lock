@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2e4620232ec6697055bf24170fbf14a176a1229937c73415d105a46664b19b72"
+            "sha256": "b278a4697f53ce9d78bfff40a5f07faa36f3aca5c5e3e9aed79df36f7e062d9f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -244,10 +244,10 @@
         },
         "jupyter-client": {
             "hashes": [
-                "sha256:11168db0695776d7f6131dbede538435893c94a0c4b51b0206d5ab27e3df6915",
-                "sha256:7bd4bd1baac00e21aa171d2b5f61e709e80810ff43eafe0c266ff2ebe4a5c734"
+                "sha256:73a809a2964afa07adcc1521537fddb58c2ffbb7e84d53dc5901cf80480465b3",
+                "sha256:98e8af5edff5d24e4d31e73bc21043130ae9d955a91aa93fc0bc3b1d0f7b5880"
             ],
-            "version": "==5.3.0"
+            "version": "==5.3.1"
         },
         "jupyter-core": {
             "hashes": [
@@ -310,11 +310,11 @@
         },
         "pip-api": {
             "hashes": [
-                "sha256:37d7998d22c90ffc33cc8207a98f646946ffa5181ebc9eab3b2ac5ab9ddf8f11",
-                "sha256:d3ab4b42582a740255fa122cb6166c2b46ad0f80a9d5bd6c1f74814cf21bd817"
+                "sha256:5266d9c8c9585e6fdeaf5d78f17b4e68dd2d657103fb24b80b629f70fac26712",
+                "sha256:6eeb656fb1a4df791c40c16e22e6107025b6a1ee912e2dbc66d684bafc8ef57c"
             ],
             "index": "pypi",
-            "version": "==0.0.11"
+            "version": "==0.0.12"
         },
         "prompt-toolkit": {
             "hashes": [
@@ -510,11 +510,11 @@
         },
         "squid-py": {
             "hashes": [
-                "sha256:55a3a259d6769383db613bbf6b1c9c30578cc6ec2c1418719dac77d31f2aa34a",
-                "sha256:f007febd60a416506870b5eba1b8401a0b433efec0389bb5e1d8f9f8d4be3f91"
+                "sha256:5c2104b677874979386446cdad60719cd930f3ecbb781835a6803526db59bd05",
+                "sha256:bd67d2f4e22befb608c412948c5da66846c42518bf2e4556db75d377a5d1ef77"
             ],
             "index": "pypi",
-            "version": "==0.6.13"
+            "version": "==0.6.15"
         },
         "toolz": {
             "hashes": [
