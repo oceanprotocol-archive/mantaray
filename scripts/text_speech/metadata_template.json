@@ -1,0 +1,50 @@
+{
+   "additionalInformation":{
+      "structuredMarkup":[
+         {
+            "mediaType":"application/ld+json",
+            "uri":"http://skos.um.es/unescothes/C01194/jsonld"
+         },
+         {
+            "mediaType":"text/turtle",
+            "uri":"http://skos.um.es/unescothes/C01194/turtle"
+         }
+      ],
+      "updateFrequency":"yearly"
+   },
+   "base":{
+      "author":"EthBerlinZwei Hacker 1",
+      "categories":[
+         "EthBerlin audio"
+      ],
+      "copyrightHolder":"EthBerlinZwei Hacker 1",
+      "dateCreated":"2012-10-10T17:00:00Z",
+      "description":"Audio file for testing text to speech",
+      "files":[
+         {
+            "checksum":"efb2c764274b745f5fc37f97c6b0e761",
+            "checksumType":"MD5",
+            "contentLength":4535431,
+            "index":0,
+            "resourceId":"access-log2018-02-13-15-17-29-18386C502CAEA932",
+            "url":"https://public-data-seeding.s3.eu-central-1.amazonaws.com/Test+Video+/out-audio.wav"
+         }
+      ],
+      "inLanguage":"en",
+      "license":"CC-BY",
+      "links":[
+      ],
+      "name":"Ocean protocol white paper",
+      "price":"10000000000000000000",
+      "tags":[
+         "EthBerlinZwei"
+      ],
+      "type":"audio",
+      "workExample":"audio"
+   },
+   "curation":{
+      "numVotes":123,
+      "rating":0.93,
+      "schema":"Binary Voting"
+   }
+}

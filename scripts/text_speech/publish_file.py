@@ -23,42 +23,43 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.debug("Logging started")
 
-
-
 #%%
 # Standard imports
 import os
 from pathlib import Path
+import json
+from time import sleep
+# Ocean imports
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 from pprint import pprint
-# Setup logging
-from time import sleep
-
+import mantaray_utilities as manta_utils
+from mantaray_utilities.user import password_map
 logging.info("squid-py Ocean API version:".format(squid_py.__version__))
 
-def password_map(address, password_dict):
-    """Simple utility to match lowercase addresses to the password dictionary
+#%% CONFIG
 
-    :param address:
-    :param password_dict:
-    :return:
-    """
-    lower_case_pw_dict = {k.lower(): v for k, v in password_dict.items()}
-    if str.lower(address) in lower_case_pw_dict:
-        password = lower_case_pw_dict[str.lower(address)]
-        return password
-    else:
-        return False
+OCEAN_CONFIG_PATH = Path().cwd() / 'config_nile.ini'
+assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
+os.environ['OCEAN_CONFIG_PATH'] = str(OCEAN_CONFIG_PATH)
+
+PASSWORD_PATH=Path().cwd() / ".nile_passwords"
+assert PASSWORD_PATH.exists()
+os.environ["PASSWORD_PATH"] = str(PASSWORD_PATH)
+
+MARKET_PLACE_PROVIDER_ADDRESS="0x376817c638d2a04f475a73af37f7b51a2862d567"
+os.environ["MARKET_PLACE_PROVIDER_ADDRESS"] = MARKET_PLACE_PROVIDER_ADDRESS
+
+JSON_TEMPLATE = Path().cwd() / 'metadata_template.json'
+assert JSON_TEMPLATE.exists()
+
 
 #%%
 # Get the configuration file path for this environment
-OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
-assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+# logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 #%%
@@ -67,60 +68,30 @@ configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
 
-# %% [markdown]
-# ### Section 1: A publisher account in Ocean
-
 #%%
 # Get a publisher account
 
 publisher_acct = manta_utils.user.get_account_by_index(ocn,0)
-
-# path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-# passwords = manta_utils.user.load_passwords(path_passwords)
-#
-# publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
-# publisher_acct.password = password_map(publisher_acct.address, passwords)
-# assert publisher_acct.password
 
 #%%
 print("Publisher account address: {}".format(publisher_acct.address))
 print("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/10**18))
 print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/10**18))
 
-# %% [markdown]
-# Your account will need some Ocean Token to make real transactions, let's ensure that you are funded!
-
-# %%
-# ensure Ocean token balance
-# if ocn.accounts.balance(publisher_acct).ocn == 0:
-#     ocn.accounts.request_tokens(publisher_acct, 100)
-
-#%% [markdown]
-# ### Section 2: Create the Metadata for your asset
-# The metadata is a key-value set of attributes which describe your asset
-#
-# A more complex use case is to manually generate your metadata conforming to Ocean standard, but for demonstration purposes,
-# a utility in squid-py is used to generate a sample Meta Data dictionary.
-
 #%%
 # Get a simple example of Meta Data from the library directly
 metadata = squid_py.ddo.metadata.Metadata.get_example()
 print('Name of asset:', metadata['base']['name'])
 # Print the entire (JSON) dictionary
-pprint(metadata)
 
-# %% [markdown]
-# Note that the price is included in the Metadata! This will be purchase price you are placing on the asset. You can
-# Alter the metadata object at any time before publishing.
+with open(JSON_TEMPLATE, 'r') as f:
+    metadata = json.load(f)
+pprint(metadata)
+# raise
 #%%
 print("Price of Asset:", metadata['base']['price'])
 metadata['base']['price'] = "1" # Note that price is a string
 print("Updated price of Asset:", metadata['base']['price'])
-
-#%% [markdown]
-# Let's inspect another important component of your metadata - the actual asset files. The files of an asset are
-# described by valid URL's. You are responsible for ensuring the URL's are alive. Files may have additional
-# information, including a checksum, length, content type, etc.
 
 #%%
 for i, file in enumerate(metadata['base']['files']):
