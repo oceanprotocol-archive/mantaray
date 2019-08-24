@@ -1,27 +1,27 @@
 import sys
 
 import logging
-loggers_dict = logging.Logger.manager.loggerDict
-
-logger = logging.getLogger()
-logger.handlers = []
-
-# Set level
-logger.setLevel(logging.DEBUG)
-
-# FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-# FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
-FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
-
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-DATE_FMT = "%Y-%m-%d %H:%M:%S"
-formatter = logging.Formatter(FORMAT, DATE_FMT)
-
-# Create handler and assign
-handler = logging.StreamHandler(sys.stderr)
-handler.setFormatter(formatter)
-logger.handlers = [handler]
-logger.debug("Logging started")
+# loggers_dict = logging.Logger.manager.loggerDict
+#
+# logger = logging.getLogger()
+# logger.handlers = []
+#
+# # Set level
+# logger.setLevel(logging.DEBUG)
+#
+# # FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
+# # FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
+# FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
+#
+# DATE_FMT = "%Y-%m-%d %H:%M:%S"
+# DATE_FMT = "%Y-%m-%d %H:%M:%S"
+# formatter = logging.Formatter(FORMAT, DATE_FMT)
+#
+# # Create handler and assign
+# handler = logging.StreamHandler(sys.stderr)
+# handler.setFormatter(formatter)
+# logger.handlers = [handler]
+# logger.debug("Logging started")
 
 #%%
 # Standard imports
@@ -36,7 +36,6 @@ from squid_py.config import Config
 from pprint import pprint
 import mantaray_utilities as manta_utils
 from mantaray_utilities.user import password_map
-logging.info("squid-py Ocean API version:".format(squid_py.__version__))
 
 #%% CONFIG
 
@@ -55,12 +54,31 @@ JSON_TEMPLATE = Path().cwd() / 'metadata_template.json'
 assert JSON_TEMPLATE.exists()
 
 
+#%% ARGPARSE
+import argparse
+parser = argparse.ArgumentParser(description='Videos to images')
+parser.add_argument('--url', type=str, help='URL for input audio file')
+parser.add_argument('--price', type=int, help='Selling price in Ocean token')
+
+args = parser.parse_args()
+logging.info("************************************************************".format())
+logging.info("*** ETHBERLINZWEI HACKATHON                              ***".format())
+logging.info("*** SPEECH2TEXT                                          ***".format())
+logging.info("*** STEP 1 - CLIENT REGISTERS A CLIP INTO OCEAN PROTOCOL ***".format())
+logging.info("************************************************************".format())
+
+logging.info("".format())
+logging.info("(Step 1.1 not implemented - upload audio file from client to storage)".format())
+logging.info("Publishing Audio to NILE network: {}".format(args.url))
+logging.info("Will set price to {} OCEAN".format(args.price))
+logging.info("".format())
+
 #%%
 # Get the configuration file path for this environment
 
-logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
+logging.info("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 # logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
-logging.critical("Squid API version: {}".format(squid_py.__version__))
+logging.info("Squid API version: {}".format(squid_py.__version__))
 
 #%%
 # Instantiate Ocean with the default configuration file.
@@ -74,65 +92,28 @@ ocn = Ocean(configuration)
 publisher_acct = manta_utils.user.get_account_by_index(ocn,0)
 
 #%%
-print("Publisher account address: {}".format(publisher_acct.address))
-print("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/10**18))
-print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/10**18))
+logging.info("Publisher account address: {}".format(publisher_acct.address))
+logging.info("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/10**18))
+logging.info("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/10**18))
 
-#%%
-# Get a simple example of Meta Data from the library directly
-metadata = squid_py.ddo.metadata.Metadata.get_example()
-print('Name of asset:', metadata['base']['name'])
-# Print the entire (JSON) dictionary
 
-with open(JSON_TEMPLATE, 'r') as f:
-    metadata = json.load(f)
-pprint(metadata)
-# raise
-#%%
-print("Price of Asset:", metadata['base']['price'])
-metadata['base']['price'] = "1" # Note that price is a string
-print("Updated price of Asset:", metadata['base']['price'])
+def publish(url, price):
+    # metadata = squid_py.ddo.metadata.Metadata.get_example()
+    # print('Name of asset:', metadata['base']['name'])
+    with open(JSON_TEMPLATE, 'r') as f:
+        metadata = json.load(f)
 
-#%%
-for i, file in enumerate(metadata['base']['files']):
-    print("Asset link {}: {}".format( i, file['url']))
+    metadata['base']['files'][0]['url'] = url
+    metadata['base']['price'] = str(price)
 
-# %% [markdown]
-# ## Section 3 Publish the asset
-# With this metadata object prepared, we are ready to publish the asset into Ocean Protocol.
-#
-# The result will be an ID string (DID) registered into the smart contract, and a DID Document stored in Aquarius.
-# The asset URLS's are encrypted upon publishing.
+    ddo = ocn.assets.create(metadata, publisher_acct)
+    registered_did = ddo.did
+    logging.info("New asset registered at {}".format(str(registered_did)))
+    logging.info("Asset name: {}".format(metadata['base']['name']))
+    logging.info("Encrypted files to secret store, cipher text: [{}...] . ".format(ddo.metadata['base']['encryptedFiles'][:50]))
+    return registered_did
 
-# %%
-ddo = ocn.assets.create(metadata, publisher_acct)
-registered_did = ddo.did
-print("New asset registered at", registered_did)
-# %% [markdown]
-# Inspect the new DDO. We can retrieve the DDO as a dictionary object, feel free to explore the DDO in the cell below!
-#%%
-ddo_dict = ddo.as_dictionary()
-print("DID:", ddo.did)
-print("Services within this DDO:")
-for svc in ddo_dict['service']:
-    print(svc['type'], svc['serviceEndpoint'])
-
-# %% [markdown]
-# Note that the 'files' attribute has been modified - all URL's are now removed, and a new 'encryptedFiles'
-# attribute is created to store the actual URLs.
-#%%
-for file_attrib in ddo.metadata['base']['files']:
-    assert 'url' not in file_attrib
-print("Encrypted files decrypt on purchase! Cipher text: [{}...] . ".format(ddo.metadata['base']['encryptedFiles'][:50]))
-
-# %% [markdown]
-# ## Section 4: Verify your asset
-# Now, let's verify that this asset exists in the MetaData storage.
-#
-# A call to assets.resolve() will call the Aquarius service and retrieve the DID Document
-#%% {HELLO:test}
-#+attr_jupyter: some cell metadata stuff
-#+attr_jupyter: some other metadata stuff
+registered_did = publish(args.url, args.price)
 
 #TODO: Better handling based on reciept
 print("Wait for the transaction to complete!")
@@ -152,19 +133,6 @@ print("Asset ID", asset_id, "owned by", owner)
 assert str.lower(owner) == str.lower(publisher_acct.address)
 
 
-
-
-
-#%%
-
-import argparse
-parser = argparse.ArgumentParser(description='Videos to images')
-parser.add_argument('--input', type=str, help='Input dir for videos')
-parser.add_argument('outtext', type=str, help='Output dir for image')
-
-args = parser.parse_args()
-
-print(args.audio)
 
 
 
