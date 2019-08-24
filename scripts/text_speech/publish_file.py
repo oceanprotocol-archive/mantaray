@@ -1,43 +1,56 @@
-# %% [markdown]
-# # Getting Underway - Publishing assets
-# In this notebook, we will explore how to publish an Asset using Ocean Protocol. An Asset consists of several files
-# which are kept private, and optionally other links which are open (samples, descriptions, etc.).
-#
-# A publisher will require access to two services;
-# 1. A service to store the MetaData of the asset (part of the DDO) - 'Aquarius'
-# 1. A service to manage permissioned access to the assets - 'Brizo'
-#
-# The publishing of an asset consists of;
-# 1. Preparing the asset files locally
-# 1. Preparing the metadata of the asset
-# 1. Uploading assets or otherwise making them available as URL's
-# 1. Registering the metadata and service endpoints into Aquarius
-# 1. Registering the asset into the Blockchain (into the DID Registry)
+import sys
 
-# %% [markdown]
-# <p><img src="https://raw.githubusercontent.com/oceanprotocol/mantaray/develop/doc/img/jupyter_cell.png" alt="drawing" width="400" align="center"/></p>
-# <p><b>Overall client and service architecture</b></p>
+import logging
+loggers_dict = logging.Logger.manager.loggerDict
 
-# %% [markdown]
-# ### Section 0: Import modules, connect the Ocean Protocol API
+logger = logging.getLogger()
+logger.handlers = []
+
+# Set level
+logger.setLevel(logging.DEBUG)
+
+# FORMAT = "%(asctime)s - %(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
+# FORMAT = "%(asctime)s %(levelno)s: %(module)30s %(message)s"
+FORMAT = "%(levelno)s - %(module)-15s - %(funcName)-15s - %(message)s"
+
+DATE_FMT = "%Y-%m-%d %H:%M:%S"
+DATE_FMT = "%Y-%m-%d %H:%M:%S"
+formatter = logging.Formatter(FORMAT, DATE_FMT)
+
+# Create handler and assign
+handler = logging.StreamHandler(sys.stderr)
+handler.setFormatter(formatter)
+logger.handlers = [handler]
+logger.debug("Logging started")
+
+
 
 #%%
 # Standard imports
-import logging
 import os
 from pathlib import Path
-# Import mantaray and the Ocean API (squid)
-import random
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
-import mantaray_utilities as manta_utils
-from mantaray_utilities.user import password_map
 from pprint import pprint
 # Setup logging
-manta_utils.logging.logger.setLevel('INFO')
 from time import sleep
-print("squid-py Ocean API version:", squid_py.__version__)
+
+logging.info("squid-py Ocean API version:".format(squid_py.__version__))
+
+def password_map(address, password_dict):
+    """Simple utility to match lowercase addresses to the password dictionary
+
+    :param address:
+    :param password_dict:
+    :return:
+    """
+    lower_case_pw_dict = {k.lower(): v for k, v in password_dict.items()}
+    if str.lower(address) in lower_case_pw_dict:
+        password = lower_case_pw_dict[str.lower(address)]
+        return password
+    else:
+        return False
 
 #%%
 # Get the configuration file path for this environment
@@ -167,9 +180,22 @@ owner = ocn._keeper.did_registry.contract_concise.getDIDOwner(asset_id)
 print("Asset ID", asset_id, "owned by", owner)
 assert str.lower(owner) == str.lower(publisher_acct.address)
 
-# %% [markdown]
-# Congratulations on publishing an Asset into Ocean Protocol!
-#
-# Next, let's search for our assets in Ocean Protocol
+
+
+
+
+#%%
+
+import argparse
+parser = argparse.ArgumentParser(description='Videos to images')
+parser.add_argument('--input', type=str, help='Input dir for videos')
+parser.add_argument('outtext', type=str, help='Output dir for image')
+
+args = parser.parse_args()
+
+print(args.audio)
+
+
+
 
 

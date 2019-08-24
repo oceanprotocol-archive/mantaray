@@ -1,0 +1,3 @@
+export PASSWORD_PATH=.nile_passwords
+export OCEAN_CONFIG_PATH=config_nile.ini
+export MARKET_PLACE_PROVIDER_ADDRESS=0x376817c638d2a04f475a73af37f7b51a2862d567
