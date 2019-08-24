@@ -57,20 +57,17 @@ assert JSON_TEMPLATE.exists()
 #%% ARGPARSE
 import argparse
 parser = argparse.ArgumentParser(description='Videos to images')
-parser.add_argument('--url', type=str, help='URL for input audio file')
-parser.add_argument('--price', type=int, help='Selling price in Ocean token')
+parser.add_argument('--did', type=str, help='DID of asset')
 
 args = parser.parse_args()
 logging.info("************************************************************".format())
 logging.info("*** ETHBERLINZWEI HACKATHON                              ***".format())
 logging.info("*** SPEECH2TEXT                                          ***".format())
-logging.info("*** STEP 1 - CLIENT REGISTERS A CLIP INTO OCEAN PROTOCOL ***".format())
+logging.info("*** STEP 2                                               ***".format())
 logging.info("************************************************************".format())
 
 logging.info("".format())
-logging.info("(Step 1.1 not implemented - upload audio file from client to storage)".format())
-logging.info("Publishing Audio to NILE network: {}".format(args.url))
-logging.info("Will set price to {} OCEAN".format(args.price))
+logging.info("Purchasing an audio asset, DID: {}".format(args.did))
 logging.info("".format())
 
 #%%
@@ -86,53 +83,40 @@ configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
 
-#%%
-# Get a publisher account
-
-publisher_acct = manta_utils.user.get_account_by_index(ocn,0)
 
 #%%
-logging.info("Publisher account address: {}".format(publisher_acct.address))
-logging.info("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/10**18))
-logging.info("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/10**18))
+def get_asset_metadata(did):
+    res = ocn.assets.resolve(args.did)
+    return res.metadata
+    # print("RESOLVE")
+    # print(res.did)
+    # print(dir(res))
+    # print(res.metadata)
+    # raise
 
 
-def publish(url, price):
-    # metadata = squid_py.ddo.metadata.Metadata.get_example()
-    # print('Name of asset:', metadata['base']['name'])
-    with open(JSON_TEMPLATE, 'r') as f:
-        metadata = json.load(f)
+metadata = get_asset_metadata(args.did)
 
-    metadata['base']['files'][0]['url'] = url
-    metadata['base']['price'] = str(price)
+logging.info("".format())
+logging.info("Asset {} resolved".format(args.did))
+logging.info("Price {}".format(metadata['base']['price']))
+logging.info("Reward {}".format(metadata['additionalInformation']['reward']))
+pprint(metadata)
 
-    ddo = ocn.assets.create(metadata, publisher_acct)
-    registered_did = ddo.did
-    logging.info("New asset registered at {}".format(str(registered_did)))
-    logging.info("Asset name: {}".format(metadata['base']['name']))
-    logging.info("Encrypted files to secret store, cipher text: [{}...] . ".format(ddo.metadata['base']['encryptedFiles'][:50]))
-    return registered_did
-
-registered_did = publish(args.url, args.price)
-
-#TODO: Better handling based on reciept
-print("Wait for the transaction to complete!")
-sleep(10)
-# %%
-ddo = ocn.assets.resolve(registered_did)
-print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did,ddo.metadata['base']['name']))
-
-# %% [markdown]
-# Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner.
-
-# %%
-# We need the pure ID string as in the DID registry (a DID without the prefixes)
-asset_id = squid_py.did.did_to_id(registered_did)
-owner = ocn._keeper.did_registry.contract_concise.getDIDOwner(asset_id)
-print("Asset ID", asset_id, "owned by", owner)
-assert str.lower(owner) == str.lower(publisher_acct.address)
-
-
+#%%
+# Get a consumer account
+consumer_account = manta_utils.user.get_account_by_index(ocn,1)
+logging.info("Consumer address: {}".format(consumer_account.address))
+logging.info("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
+logging.info("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
+assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
+# Ensure the consumer always has enough Ocean Token (with a margin)
+if 0:
+    if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
+        logging.info("Insufficient Ocean Token balance for this asset!".format())
+        refill_amount = int(15 - ocn.accounts.balance(consumer_account).ocn/10**18)
+        logging.info("Requesting {} tokens".format(refill_amount))
+        ocn.accounts.request_tokens(consumer_account, refill_amount)
 
 
 
