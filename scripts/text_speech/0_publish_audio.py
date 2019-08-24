@@ -60,6 +60,7 @@ parser = argparse.ArgumentParser(description='Publish audio')
 parser.add_argument('--url', type=str, help='URL for input audio file')
 parser.add_argument('--price', type=int, help='Selling price in Ocean token')
 parser.add_argument('--reward', type=int, help='Reward offered in Ocean token')
+parser.add_argument('--number-nodes', type=int, help='Number of processor nodes requested')
 
 args = parser.parse_args()
 logging.info("************************************************************".format())
@@ -73,6 +74,7 @@ logging.info("(Step 1.1 not implemented - upload audio file from client to stora
 logging.info("Publishing Audio to NILE network: {}".format(args.url))
 logging.info("Will set price to {} OCEAN".format(args.price))
 logging.info("Offering {} OCEAN reward".format(args.reward))
+logging.info("Requesting {} processors".format(args.number_nodes))
 logging.info("".format())
 
 #%%
@@ -99,7 +101,7 @@ logging.info("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.acco
 logging.info("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/10**18))
 
 
-def publish(url, price, reward):
+def publish(url, price, reward, number_nodes):
     # metadata = squid_py.ddo.metadata.Metadata.get_example()
     # print('Name of asset:', metadata['base']['name'])
     with open(JSON_TEMPLATE, 'r') as f:
@@ -108,6 +110,7 @@ def publish(url, price, reward):
     metadata['base']['files'][0]['url'] = url
     metadata['base']['price'] = str(price)
     metadata['additionalInformation']['reward'] = str(reward)
+    metadata['additionalInformation']['numberNodes'] = str(number_nodes)
     ddo = ocn.assets.create(metadata, publisher_acct)
     registered_did = ddo.did
     logging.info("New asset registered at {}".format(str(registered_did)))
@@ -116,7 +119,7 @@ def publish(url, price, reward):
     return registered_did
 
 
-registered_did = publish(args.url, args.price, args.reward)
+registered_did = publish(args.url, args.price, args.reward, args.number_nodes)
 
 #TODO: Better handling based on reciept
 print("Wait for the transaction to complete!")

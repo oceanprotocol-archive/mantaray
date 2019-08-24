@@ -35,6 +35,7 @@ from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 from pprint import pprint
 import mantaray_utilities as manta_utils
+from mantaray_utilities.blockchain import subscribe_event
 from mantaray_utilities.user import password_map
 
 #%% CONFIG
@@ -85,9 +86,9 @@ ocn = Ocean(configuration)
 
 
 #%%
-def get_asset_metadata(did):
-    res = ocn.assets.resolve(args.did)
-    return res.metadata
+def get_asset_ddo(did):
+    asset = ocn.assets.resolve(args.did)
+    return asset
     # print("RESOLVE")
     # print(res.did)
     # print(dir(res))
@@ -95,30 +96,52 @@ def get_asset_metadata(did):
     # raise
 
 
-metadata = get_asset_metadata(args.did)
+ddo = get_asset_ddo(args.did)
+metadata = ddo.metadata
 
 logging.info("".format())
 logging.info("Asset {} resolved".format(args.did))
 logging.info("Price {}".format(metadata['base']['price']))
-logging.info("Reward {}".format(metadata['additionalInformation']['reward']))
-pprint(metadata)
+
+if 'additionalInformation' in metadata.keys():
+    logging.info("Reward {}".format(metadata['additionalInformation']['reward']))
+    logging.info("Number processors requested {}".format(metadata['additionalInformation']['numberNodes']))
+
+# pprint(metadata)
 
 #%%
 # Get a consumer account
 consumer_account = manta_utils.user.get_account_by_index(ocn,1)
-logging.info("Consumer address: {}".format(consumer_account.address))
-logging.info("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
-logging.info("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
+logging.info("".format())
+logging.info("Processor address: {}".format(consumer_account.address))
+logging.info("Processor   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
+logging.info("Processor OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
 assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
+
 # Ensure the consumer always has enough Ocean Token (with a margin)
-if 0:
-    if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
-        logging.info("Insufficient Ocean Token balance for this asset!".format())
-        refill_amount = int(15 - ocn.accounts.balance(consumer_account).ocn/10**18)
-        logging.info("Requesting {} tokens".format(refill_amount))
-        ocn.accounts.request_tokens(consumer_account, refill_amount)
+if ocn.accounts.balance(consumer_account).ocn/10**18 < int(metadata['base']['price']) + 1:
+    logging.info("Insufficient Ocean Token balance for this asset!".format())
+    refill_amount = int(15 - ocn.accounts.balance(consumer_account).ocn/10**18)
+    logging.info("Requesting {} tokens".format(refill_amount))
+    ocn.accounts.request_tokens(consumer_account, refill_amount)
+    logging.info("New OCEAN balance: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
 
+#%% ORDER
+agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
+logging.info("Consumer has placed an order for asset {}".format(ddo.did))
+logging.info("The service agreement ID is {}".format(agreement_id))
 
+# %%
 
+keeper = squid_py.keeper.Keeper.get_instance()
 
+subscribe_event("created agreement", keeper, agreement_id)
+subscribe_event("lock reward", keeper, agreement_id)
+subscribe_event("access secret store", keeper, agreement_id)
+subscribe_event("escrow reward", keeper, agreement_id)
 
+#%%
+assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
+ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
+
+logging.info('Success buying asset.')
