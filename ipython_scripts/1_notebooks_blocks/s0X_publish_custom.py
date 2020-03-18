@@ -63,10 +63,10 @@ else:
     raise
 
 pprint(metadata)
-print("Name of Asset:", metadata['base']['name'])
-print("Price of Asset:", metadata['base']['price'])
+print("Name of Asset:", metadata['main']['name'])
+print("Price of Asset:", metadata['main']['price'])
 
-for i, file in enumerate(metadata['base']['files']):
+for i, file in enumerate(metadata['main']['files']):
     print("Asset link {}: {}".format( i, file['url']))
 
 # %% [markdown] ########################################################################################################
@@ -92,7 +92,7 @@ assert len(all_ddos), "There are no assets registered, go to s03_publish_and_reg
 # Get a DID for testing
 selected_ddo = all_ddos[-1]
 selected_did = all_ddos[-1].did
-print("Selected asset name:", all_ddos[-1].metadata['base']['name'])
+print("Selected asset name:", all_ddos[-1].metadata['main']['name'])
 print("Selected DID:",selected_did)
 
 # %% [markdown]

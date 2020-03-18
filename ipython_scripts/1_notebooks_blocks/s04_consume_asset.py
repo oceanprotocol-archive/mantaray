@@ -13,7 +13,10 @@
 #%%
 import logging
 import os
-from squid_py import Metadata, Ocean
+
+from ocean_utils.ddo.metadata import Metadata
+from squid_py import Ocean
+Metadata
 import squid_py
 import mantaray_utilities as manta_utils
 
@@ -92,8 +95,8 @@ print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).
 # Register an asset
 ddo = ocn.assets.create(Metadata.get_example(), publisher_account, providers=[MARKET_PLACE_PROVIDER_ADDRESS])
 logging.info(f'registered ddo: {ddo.did}')
-asset_price = int(ddo.metadata['base']['price']) / 10**18
-asset_name = ddo.metadata['base']['name']
+asset_price = int(ddo.metadata['main']['price']) / 10**18
+asset_name = ddo.metadata['main']['name']
 print("Registered {} for {} OCN".format(asset_name, asset_price))
 
 # %% [markdown]

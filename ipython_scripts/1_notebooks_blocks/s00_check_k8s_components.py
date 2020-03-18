@@ -46,11 +46,14 @@ swagger_pages = dict()
 swagger_pages['aquarius Swagger documentation'] = endpoints_dict['aquarius'] + '/api/v1/docs/'
 swagger_pages['brizo Swagger documentation'] = endpoints_dict['brizo'] + '/api/v1/docs/'
 
+
 def check_endpoint(endpoint_name, endpoint_url, verb='GET', ):
     """HTTP Request on the given URL"""
     res = requests.request(verb, endpoint_url)
     logging.debug("{} : returns {}".format(endpoint_name, res.status_code))
     return res
+
+
 # %%
 # The microscervices for MetaData storage (aquarius) and for service negotiation (brizo) have Swagger documentation :)
 #%%

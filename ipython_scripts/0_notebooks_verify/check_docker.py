@@ -53,14 +53,13 @@ def get_address(api_client, container_id,contract_name):
 
     return api_client.exec_start(ex)
 
+
 # Get the docker image running the smart contracts, by searching on the name
 container_keeper_contracts = [c for c in client.containers.list() if 'keeper-contracts' in c.name][0]
 
 addresses=dict()
-addresses['market.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'OceanMarket').decode("utf-8").rstrip()
-addresses['auth.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'OceanAuth').decode("utf-8").rstrip()
-addresses['token.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'OceanToken').decode("utf-8").rstrip()
-addresses['didregistry.address'] = get_address(low_level_api_client, container_keeper_contracts.id,'DIDRegistry').decode("utf-8").rstrip()
+addresses['token.address'] = get_address(low_level_api_client, container_keeper_contracts.id, 'OceanToken').decode("utf-8").rstrip()
+addresses['didregistry.address'] = get_address(low_level_api_client, container_keeper_contracts.id, 'DIDRegistry').decode("utf-8").rstrip()
 
 print("Artifact addresses retrieved:")
 pprint(addresses)

@@ -21,7 +21,7 @@ RUN mkdir /test_logs
 # Install packages
 RUN pip install mantaray-utilities
 RUN pip install schedule
-RUN pip install squid-py==0.5.11 --ignore-installed
+RUN pip install squid-py==0.9.0 --ignore-installed
 
 ENV USE_K8S_CLUSTER='true'
 ENV DOCKER_START_TIME='now'

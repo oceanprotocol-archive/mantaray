@@ -3,27 +3,30 @@
 # export DOCKER_START_TIME=now
 # export DOCKER_END_TIME=20:00
 # export DOCKER_INTERVAL=30
-# export DOCKER_PUBLISHER_ADDR=0x413c9BA0A05B8A600899B41b0c62dd661e689354
-# export DOCKER_PUBLISHER_PASS=ocean_secret
-# export DOCKER_CONSUMER_ADDR=0x06C0035fE67Cce2B8862D63Dc315D8C8c72207cA
-# export DOCKER_CONSUMER_PASS=ocean_secret
+# export PARITY_ADDRESS=0x413c9BA0A05B8A600899B41b0c62dd661e689354
+# export PARITY_PASSWORD=ocean_secret
+# export PARITY_KEY_FILE=/path/to/publisher/keyfile.json
+# export PARITY_ADDRESS1=0x06C0035fE67Cce2B8862D63Dc315D8C8c72207cA
+# export PARITY_PASSWORD1=ocean_secret
+# export PARITY_KEY_FILE1=/path/to/consumer/keyfile.json
 
 #%%
+import json
 import logging
 import os
-from squid_py import Metadata, Ocean
+
+from ocean_keeper import Keeper
+from ocean_keeper.utils import get_account
+from ocean_utils.agreements.service_types import ServiceTypes
+from squid_py import Ocean
 import squid_py
 import mantaray_utilities as manta_utils
 
 # Setup logging
-from mantaray_utilities.user import get_account_from_config
 from mantaray_utilities.blockchain import subscribe_event
 manta_utils.logging.logger.setLevel('INFO')
 import mantaray_utilities as manta_utils
 from squid_py import Config
-from squid_py.keeper import Keeper
-from squid_py.accounts.account import Account
-from squid_py.keeper.web3_provider import Web3Provider
 from pathlib import Path
 import datetime
 
@@ -53,27 +56,21 @@ keeper = Keeper.get_instance()
 
 #%%
 # DOCKER_STRICT = False
-DOCKER_STRICT = True # Strictly enforce the environment variables
+DOCKER_STRICT = True  # Strictly enforce the environment variables
 if DOCKER_STRICT:
-    assert 'DOCKER_PUBLISHER_ADDR' in os.environ
-    assert 'DOCKER_PUBLISHER_PASS' in os.environ
-    assert 'DOCKER_CONSUMER_ADDR' in os.environ
-    assert 'DOCKER_CONSUMER_PASS' in os.environ
+    assert 'PARITY_ADDRESS' in os.environ
+    assert 'PARITY_PASSWORD' in os.environ
+    assert 'PARITY_KEY_FILE' in os.environ
+    assert 'PARITY_ADDRESS1' in os.environ
+    assert 'PARITY_PASSWORD1' in os.environ
+    assert 'PARITY_KEY_FILE1' in os.environ
 
 # %% [markdown]
 # Get Publisher account, and register an asset for testing
 
 #%%
-if 'DOCKER_PUBLISHER_ADDR' in os.environ:
-    # Get the account from environment variables
-    assert os.environ['DOCKER_PUBLISHER_PASS'], "No password provided for {}".format(os.environ['DOCKER_PUBLISHER_ADDR'])
-    address = os.environ['DOCKER_PUBLISHER_ADDR']
-    address = Web3Provider.get_web3().toChecksumAddress(address)
-    password = os.environ['DOCKER_PUBLISHER_PASS']
-    publisher_account = Account(address, password)
-else:
-    # Use the account from the configuration file
-    publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
+# Get account from env vars: PARITY_ADDRESS, PARITY_PASSWORD, PARITY_KEY_FILE
+publisher_account = get_account(0)
 
 print("Publisher address: {}".format(publisher_account.address))
 print("Publisher   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
@@ -81,29 +78,24 @@ print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).
 
 #%%
 # Register an asset
-ddo = ocn.assets.create(Metadata.get_example(), publisher_account)
+metadata_path = 'assets/sample_metadata.json'
+with open(metadata_path, 'w') as f:
+    metadata = json.load(f)
+
+ddo = ocn.assets.create(metadata, publisher_account)
 logging.info(f'registered ddo: {ddo.did}')
 
 # %% [markdown]
 # Get Consumer account
 #%%
-
-if 'DOCKER_CONSUMER_ADDR' in os.environ:
-    # Get the account from environment variables
-    assert os.environ['DOCKER_CONSUMER_PASS'], "No password provided for {}".format(os.environ['DOCKER_PUBLISHER_ADDR'])
-    address = os.environ['DOCKER_CONSUMER_ADDR']
-    address = Web3Provider.get_web3().toChecksumAddress(address)
-    password = os.environ['DOCKER_CONSUMER_PASS']
-    consumer_account = Account(address, password)
-else:
-    # Use the account from the configuration file
-    consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
+# Get account from env vars: PARITY_ADDRESS1, PARITY_PASSWORD1, PARITY_KEY_FILE1
+consumer_account = get_account(1)
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
-assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insuffient ETH in account {}".format(consumer_account.address)
+assert (ocn.accounts.balance(consumer_account).eth/10**18) > 1, "Insuffient ETH in account {}".format(consumer_account.address)
 # Ensure the consumer always has 10 OCEAN
-if ocn.accounts.balance(consumer_account).ocn/10**18 < 10:
+if (ocn.accounts.balance(consumer_account).ocn/10**18) < 10:
     refill_amount = 10 - ocn.accounts.balance(consumer_account).ocn/10**18 < 10
     ocn.accounts.request_tokens(consumer_account, refill_amount)
 
@@ -131,8 +123,5 @@ subscribe_event("escrow reward", keeper, agreement_id)
 
 assert ocn.agreements.is_access_granted(agreement_id, ddo.did, consumer_account.address)
 
-ocn.assets.consume(agreement_id, ddo.did, 'Access', consumer_account, 'downloads_nile')
+ocn.assets.consume(agreement_id, ddo.did, ServiceTypes.ASSET_ACCESS, consumer_account, 'downloads_nile')
 logging.info('Success buying asset.')
-
-
-

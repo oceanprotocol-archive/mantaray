@@ -20,7 +20,6 @@ from squid_py import ConfigProvider
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
 manta_utils.logging.logger.setLevel('INFO')
-from squid_py.keeper.web3_provider import Web3Provider
 
 print("squid-py Ocean API version:", squid_py.__version__)
 
@@ -69,8 +68,8 @@ manta_utils.assert_contracts.assert_contract_code(ocn, 'nile')
 
 #%%
 print("***OCEAN***")
-print("{} accounts".format(len(ocn.accounts._accounts)))
-for i, account in enumerate(ocn.accounts._accounts):
+print("{} accounts".format(len(ocn.accounts.list())))
+for i, account in enumerate(ocn.accounts.list()):
     print(i, account.address)
 
 #%% [markdown]

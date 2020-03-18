@@ -98,9 +98,9 @@ print("Found the first {} assets registered in the metadata store.".format(len(a
 # Select a single asset DDO from the list
 this_ddo = all_ddos[-1]
 print("Selected asset DID: {}".format(this_ddo.did))
-print("Asset name:", this_ddo.metadata['base']['name'])
-print("Asset price: {} token".format(this_ddo.metadata['base']['price']))
-print("Asset description: {} token".format(this_ddo.metadata['base']['description']))
+print("Asset name:", this_ddo.metadata['main']['name'])
+print("Asset price: {} token".format(this_ddo.metadata['main']['price']))
+print("Asset description: {} token".format(this_ddo.metadata['additionalInformation']['description']))
 
 # %% [markdown]
 # ### Section 3: Searching the Ocean
@@ -121,7 +121,7 @@ price_filter = [5,20]
 query = {"query":{"price":price_filter}}
 search_results = ocn.assets.query(query)
 print("Found {} assets matching price interval {}".format(len(search_results),price_filter))
-all_prices = [result.metadata['base']['price'] for result in search_results]
+all_prices = [result.metadata['main']['price'] for result in search_results]
 print("Average price in this set: {:0.2f}".format(sum(all_prices)/len(all_prices)))
 
 #%% [markdown]
@@ -132,7 +132,7 @@ query = {"query":{"text":["Weather"]}}
 search_results = ocn.assets.query(query)
 print("Found {} assets".format(len(search_results)))
 
-all_names = [result.metadata['base']['name'] for result in search_results]
+all_names = [result.metadata['main']['name'] for result in search_results]
 from collections import Counter
 for name, count in dict(Counter(all_names)).items():
     print("Found {} of '{}'".format(count, name))
@@ -146,4 +146,4 @@ search_results = ocn.assets.query(query)
 print("Found {} assets".format(len(search_results)))
 print_match_idx = -1
 for result in search_results:
-    print("Selected asset: {}, price:{}, {}".format(result.metadata['base']['name'],result.metadata['base']['price'], result.did ))
+    print("Selected asset: {}, price:{}, {}".format(result.metadata['main']['name'],result.metadata['main']['price'], result.did ))

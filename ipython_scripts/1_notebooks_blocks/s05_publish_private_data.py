@@ -1,16 +1,19 @@
 # %% [markdown]
-# # Getting Underway - Publishing assets
-# In this notebook, we will explore how to publish an Asset using Ocean Protocol. An Asset consists of several files
-# which are kept private, and optionally other links which are open (samples, descriptions, etc.).
+# # Getting Underway - Publishing asset with private data and compute service
+# In this notebook, we will explore how to publish an Asset with private dataset and compute service.
+# The private data files will not leave outside the private premises. Instead, a compute service will be
+# available for running algorithms to train on the dataset.
 #
 # A publisher will require access to two services;
 # 1. A service to store the MetaData of the asset (part of the DDO) - 'Aquarius'
-# 1. A service to manage permissioned access to the assets - 'Brizo'
+# 1. A service to manage permissioned access to the compute resource
+#    that is allowed to access the private data - 'Brizo'
 #
 # The publishing of an asset consists of;
 # 1. Preparing the asset files locally
 # 1. Preparing the metadata of the asset
-# 1. Uploading assets or otherwise making them available as URL's
+# 1. Make files URLs or identifiers that can be used to identify the data files when running compute jobs
+# 1. Define the attributes of the compute service (i.e. compute resources and service endpoint)
 # 1. Registering the metadata and service endpoints into Aquarius
 # 1. Registering the asset into the Blockchain (into the DID Registry)
 
@@ -23,17 +26,23 @@
 
 #%%
 # Standard imports
+import json
 import logging
 import os
 from pathlib import Path
 # Import mantaray and the Ocean API (squid)
-import random
 import squid_py
+from ocean_keeper.utils import get_account
+from ocean_utils.agreements.service_factory import ServiceDescriptor
+from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.did import did_to_id
+from ocean_utils.utils.utilities import get_timestamp
+from squid_py.models.algorithm_metadata import AlgorithmMetadata
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 import mantaray_utilities as manta_utils
-from mantaray_utilities.user import password_map
+# from mantaray_utilities.user import password_map
+
 from pprint import pprint
 # Setup logging
 manta_utils.logging.logger.setLevel('INFO')
@@ -61,14 +70,7 @@ ocn = Ocean(configuration)
 #%%
 # Get a publisher account
 
-publisher_acct = manta_utils.user.get_account_by_index(ocn,0)
-
-# path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-# passwords = manta_utils.user.load_passwords(path_passwords)
-#
-# publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
-# publisher_acct.password = password_map(publisher_acct.address, passwords)
-# assert publisher_acct.password
+publisher_acct = get_account(0)
 
 #%%
 print("Publisher account address: {}".format(publisher_acct.address))
@@ -91,8 +93,11 @@ print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.ba
 # a utility in squid-py is used to generate a sample Meta Data dictionary.
 
 #%%
-# Get a simple example of Meta Data from the library directly
-metadata = squid_py.ddo.metadata.Metadata.get_example()
+# Get example of Meta Data from file
+metadata_path = 'assets/sample_metadata.json'
+with open(metadata_path, 'w') as f:
+    metadata = json.load(f)
+
 print('Name of asset:', metadata['main']['name'])
 # Print the entire (JSON) dictionary
 pprint(metadata)
@@ -112,7 +117,28 @@ print("Updated price of Asset:", metadata['main']['price'])
 
 #%%
 for i, file in enumerate(metadata['main']['files']):
-    print("Asset link {}: {}".format( i, file['url']))
+    print("Asset link {}: {}".format(i, file['url']))
+
+#%%
+# Build compute service to be included in the asset DDO.
+cluster = ocn.compute.build_cluster_attributes('kubernetes', '/cluster/url')
+containers = [ocn.compute.build_container_attributes(
+    "tensorflow/tensorflow",
+    "latest",
+    "sha256:cb57ecfa6ebbefd8ffc7f75c0f00e57a7fa739578a429b6f72a0df19315deadc")
+]
+servers = [ocn.compute.build_server_attributes('1', 'xlsize', 16, 0, '16gb', '1tb', 2242244)]
+provider_attributes = ocn.compute.build_service_provider_attributes(
+    'Azure', 'Compute power 1', cluster, containers, servers
+)
+attributes = ocn.compute.create_compute_service_attributes(
+    13, 3600, publisher_acct.address, get_timestamp(), provider_attributes)
+
+service_endpoint = 'http://localhost:8030/api/v1/brizo/services/compute'
+template_id = ocn.keeper.template_manager.create_template_id(
+    ocn.keeper.template_manager.SERVICE_TO_TEMPLATE_NAME['compute']
+)
+service_descriptor = ServiceDescriptor.compute_service_descriptor(attributes, service_endpoint, template_id)
 
 # %% [markdown]
 # ## Section 3 Publish the asset
@@ -125,6 +151,7 @@ for i, file in enumerate(metadata['main']['files']):
 ddo = ocn.assets.create(metadata, publisher_acct)
 registered_did = ddo.did
 print("New asset registered at", registered_did)
+
 # %% [markdown]
 # Inspect the new DDO. We can retrieve the DDO as a dictionary object, feel free to explore the DDO in the cell below!
 #%%
@@ -151,26 +178,35 @@ print("Encrypted files decrypt on purchase! Cipher text: [{}...] . ".format(ddo.
 #+attr_jupyter: some cell metadata stuff
 #+attr_jupyter: some other metadata stuff
 
-#TODO: Better handling based on reciept
-print("Wait for the transaction to complete!")
-sleep(10)
-# %%
-ddo = ocn.assets.resolve(registered_did)
-print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did, ddo.metadata['main']['name']))
+# %% [markdown]
+# Let's take a look at the compute service from the published DDO
+compute_service = ddo.get_service(ServiceTypes.CLOUD_COMPUTE)
+print("Compute service definition: \n{}".format(json.dumps(compute_service.as_dictionary(), indent=2)))
+
 
 # %% [markdown]
-# Similarly, we can verify that this asset is registered into the blockchain, and that you are the owner.
+# Now let's run a python algorithm to do some analysis on this data
+# Load the algorithm from file
+algorithm_path = 'assets/sample_algorithm.json'
+with open(algorithm_path) as f:
+    algorithm_text = f.read()
 
-# %%
-# We need the pure ID string as in the DID registry (a DID without the prefixes)
-asset_id = did_to_id(registered_did)
-owner = ocn.keeper.did_registry.contract_concise.getDIDOwner(asset_id)
-print("Asset ID", asset_id, "owned by", owner)
-assert str.lower(owner) == str.lower(publisher_acct.address)
-
-# %% [markdown]
-# Congratulations on publishing an Asset into Ocean Protocol!
-#
-# Next, let's search for our assets in Ocean Protocol
+# build the algorithm metadata object to use in the compute request
+AlgorithmMetadata(
+    {
+        'language': 'python',
+        'rawcode': algorithm_text,
+        'container': {
+            'tag': 'latest',
+            'image': 'amancevice/pandas',
+            'entrypoint': ''
+        }
+    }
+)
+# Create the service agreement for compute service
+# Wait for the service approval
+# Submit algorithm to start the compute job
+# check the compute job status
+# Wait for results
 
 
