@@ -8,7 +8,7 @@ path_script1 = root_dir / 'tests' / 'resources' / 'test_jupy.py'
 assert path_script1.exists()
 print("Processing", path_script1)
 script_fname = path_script1.stem + '.ipynb'
-outpath = path_script1.parent / script_fname
+out_path = path_script1.parent / script_fname
 
 # Read the script, and parse it into memory
 with path_script1.open() as fin:
