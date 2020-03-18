@@ -8,11 +8,11 @@ First, decide which versions of the dependencies you wish to run. The table belo
 
 | component          | Type             | Date | PyPI     | Github     | Dockerhub | Kubernetes |
 | ------------------ | ---------------- | ---- | -------- | ---------- | --------- | ---------- |
-| squid-py           | Local -main API  |      | 0.2.22   | (develop)* | -         | -          |
-| keeper-contracts   | ABI files        |      | 0.5.3    | (develop)* | -         | -          |
+| squid-py           | Local -main API  |      | 0.9.2    | (develop)* | -         | -          |
+| keeper-contracts   | ABI files        |      | 0.13.2   | (develop)* | -         | -          |
 | mantaray_utilities | Library          |      | MISSING  | 0.1.0      | -         | -          |
-| aquarius           | Service Endpoint |      | 0.1.5    |            |           |            |
-| brizo              | Service Endpoint |      | 0.1.5    |            |           |            |
+| aquarius           | Service Endpoint |      | 1.0.7    |            |           |            |
+| brizo              | Service Endpoint |      | 0.9.3    |            |           |            |
 | Nile               | Ethereum network |      | (online) |            |           |            |
 
 ### Create a virtual environment
@@ -29,7 +29,8 @@ source activate $THISENVNAME
 
 #### Option 1: Install from PyPI
 
-Activate the environment and install the ocean protocol API for python, called **squid-py**. This in turn installs the contract ABI files. 
+Activate the environment and install the ocean protocol API for python, 
+called **squid-py**. This in turn installs the contract ABI files. 
 
 ```
 pip install squid-py
@@ -39,7 +40,9 @@ conda list | egrep 'keeper-contracts|squid-py|mantaray-utilities'
 
 You should verify the versions of squid-py, and keeper-contracts. 
 
-For developers wishing to convert IPython format into Jupyter format, the `jupytext` package can be used. The **mantaray** project has several other dependencies which are listed in the `setup.py` script.
+For developers wishing to convert IPython format into Jupyter format, the `jupytext` 
+package can be used. The **mantaray** project has several other dependencies 
+which are listed in the `setup.py` script.
 
 #### Option 2: Install dependencies from github
 
@@ -65,10 +68,11 @@ THIS_BRANCH=develop
 pip install --upgrade --force-reinstall git+https://github.com/oceanprotocol/$THIS_REPO.git@$THIS_BRANCH
 ```
 
-Even more generally, see the /scripts/install_local.sh script which manages the installation process of multiple repositories and branches. 
+Even more generally, see the /scripts/install_latest.sh script which manages the 
+installation process of multiple repositories and branches. 
 ```
 source activate $THISENVNAME
-source ./scripts/install_local.sh
+source ./scripts/install_latest.sh
 ```
 
 Again, verify your versions: 
@@ -83,15 +87,14 @@ Ensure you have installed [docker](https://docs.docker.com/install/).
 
 `git clone` the [docker images](https://github.com/oceanprotocol/barge) repository and ensure you are in the master branch. 
 
-Edit the `start_ocean.sh` script, and ensure that the `KEEPER_DEPLOY_CONTRACTS="true"`  variable is set. 
 
 If you intend to publish Azure assets, edit the `brizo.env` file and enter your Azure credentials. 
 
-Run the script with the following flags; `./start_ocean.sh --no-pleuston --local-spree-node`
+Run the script with the following flags; `./start_ocean.sh --no-commons --local-spree-node`
 
 This will run the following docker components:
 
-- Backend database: `mongo`
+- Backend database: `elasticsearch`
 - The parity-node: `oceanprotocol/parity-ethereum:beta`
 - The secret-store:`oceanprotocol/parity-ethereum:master`
 - A secret store proxy for CORS: `nginx:alpine` 
@@ -99,24 +102,36 @@ This will run the following docker components:
 - The Metadata Store: `oceanprotocol/aquarius:latest`
 - The services provider: `oceanprotocol/brizo:latest`
 
-The parity node is deployed with accounts which are LOCKED. These must be UNLOCKED with a password to use. 
+The relevant docker-compose files will begin downloading the images, and starting the 
+containers. The ethereum smart contracts will be *compiled* and *migrated* in the 
+`keeper-contracts` container. These contracts will also be copied to your home 
+directory in a `~/.ocean/keeper-contracts/artifacts` folder. 
 
-The relevant docker-compose files will begin downloading the images, and starting the containers. The ethereum smart contracts will be *compiled* and *migrated* in the `keeper-contracts` container. These contracts will also be copied to your home directory in a `~/.ocean/keeper-contracts/artifacts` folder. 
-
-In this folder ensure that there exists several `.json` files with the word `spree` (referring to the local docker simulated testnet). These are the contract *artifacts* or ABI's (Application Binary Interface) which are the signatures of the deployed smart contracts. 
+In this folder ensure that there exists several `.json` files with the word `spree` 
+(referring to the local docker simulated testnet). These are the contract *artifacts* 
+or ABI's (Application Binary Interface) which are the signatures of the deployed 
+smart contracts. 
 
 You can view the running docker pods and versions of the components by executing `docker ps` at the terminal. 
 
 ## 3) Copy the ABI Artifact files
 
-When running a local testnet (i.e. Spree network), you will **always** need to copy the deployed ABI files (contract artifacts). When running against a deployed blockchain (i.e. Nile, or ethereum testnet Kovan, etc.) you will need the exact ABI files which correspond to that blockchain. 
+When running a local testnet (i.e. Spree network), you will **always** need to copy 
+the deployed ABI files (contract artifacts). When running against a deployed blockchain 
+(i.e. Nile, or ethereum testnet Kovan, etc.) you will need the exact ABI files which 
+correspond to that blockchain. 
 
 ### 3.1 Local environment: 
-The contract ABI `.json` files need to exist in the project root of the `mantaray` repo, in a folder called `\artifacts`. Copy all `.json`  files here from `~/.ocean/keeper-contracts/artifacts`. 
+The contract ABI `.json` files need to exist in the project root of the `mantaray` 
+repo, in a folder called `\artifacts`. Copy all `.json`  files here 
+from `~/.ocean/keeper-contracts/artifacts`. 
 
 ### 3.2 Deployed testnet
 
-For Nile and Kovan networks, the contract ABI files have been packaged in [PyPI](https://pypi.org/project/keeper-contracts/), or go directly to the [github source](https://github.com/oceanprotocol/keeper-contracts) for the smart contracts . 
+For Nile and Kovan networks, the contract ABI files have been packaged 
+in [PyPI](https://pypi.org/project/keeper-contracts/), or go directly to 
+the [github source](https://github.com/oceanprotocol/keeper-contracts) for 
+the smart contracts. 
 
 ## 5) Setup publisher accounts 
 
@@ -146,11 +161,11 @@ Complete the following account details to ensure the asset is published and serv
 Copy the `config.ini` file to `config_local.ini`. This configuration file is passed into the main entrypoint of the library
 the **Ocean** class. This configuration file should have the necessary configuration information to instantiate the class. 
 
-Verify the following values refer to an unlocked account: 
+Make sure to set the ethereum account in these environment variables:  
 
 ```
 PARITY_ADDRESS=
-PARITY_ADDRESS=
+PARITY_KEY_FILE=
 PARITY_PASSWORD=
 ```
 
@@ -173,9 +188,10 @@ The API can be explored in IPython, Jupyter Lab, or your preferred Python enviro
 
 `from squid-py.ocean.ocean import Ocean`
 
+`from squid_py.config import Config`
+
 `PATH_CONFIG = "/project/config_local.ini"` (Your path to a the configuration file)
 
-`ocn = Ocean(config_file=PATH_CONFIG)`
+`ocn = Ocean(Config(PATH_CONFIG))`
 
 Or review the script in `/mantaray/ipython_scripts/0_verify/check_squid.py`. 
-
