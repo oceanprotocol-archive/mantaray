@@ -47,7 +47,7 @@ One consequence of the above flow is that once the container and connected disk 
 
 ## Installation
 
-The primary use of Mantaray is an easy way to get starting with Ocean Protocol. Visit [datascience.oceanprotocol.com](https://datascience.oceanprotocol.com/) to test these scripts in a pre-configured Jupyter Lab environment! 
+The primary use of Mantaray is an easy way to get started with Ocean Protocol. Visit [datascience.oceanprotocol.com](https://datascience.oceanprotocol.com/) to test these scripts in a pre-configured Jupyter Lab environment! 
 
 For developers seeking to work on scripts, see [this guide](doc/installation.md) for local development installation. 
 

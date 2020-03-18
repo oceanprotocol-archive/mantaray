@@ -261,7 +261,7 @@
                 "sha256:310bcc24d8bcfc224c605920e1ef01775fce37324ae2681ba97ea67f9dddcb70",
                 "sha256:829950c5a0e373ea1c4b33e03a169a5bdc024cd6ccd56bdc9f48be0495ff0736"
             ],
-            "version": "==0.10.3"
+            "version": "==0.13.2"
         },
         "lru-dict": {
             "hashes": [
@@ -278,7 +278,7 @@
                 "sha256:01aa4834dac46886ef75523f6d7bcbfc25a0e630395c0a4a1ee627c2c25abf40",
                 "sha256:3bb873e681537c65000aafe252511b2713f2e93803227d90d5c18a837a526e3e"
             ],
-            "version": "==0.0.1"
+            "version": "==0.0.2"
         },
         "parsimonious": {
             "hashes": [
@@ -514,7 +514,7 @@
                 "sha256:bd67d2f4e22befb608c412948c5da66846c42518bf2e4556db75d377a5d1ef77"
             ],
             "index": "pypi",
-            "version": "==0.6.15"
+            "version": "==0.9.2"
         },
         "toolz": {
             "hashes": [
