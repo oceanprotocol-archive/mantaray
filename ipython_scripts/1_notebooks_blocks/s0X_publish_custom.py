@@ -7,18 +7,19 @@ import random
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
-import mantaray_utilities as manta_utils
-from mantaray_utilities.user import password_map
+from util.user import password_map
 from pprint import pprint
 import requests
+
 # Setup logging
-manta_utils.logging.logger.setLevel('INFO')
-from time import sleep
+from util import config, user, logging as manta_logging
+
+manta_logging.logger.setLevel('INFO')
 
 #%%
 # Get the configuration file path for this environment
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+CONFIG_INI_PATH = config.get_config_file_path()
+logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
@@ -32,8 +33,8 @@ ocn = Ocean(configuration)
 
 #%%
 # Get a publisher account
-path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-passwords = manta_utils.user.load_passwords(path_passwords)
+path_passwords = config.get_project_path() / 'passwords.csv'
+passwords = user.load_passwords(path_passwords)
 
 publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
 publisher_acct.password = password_map(publisher_acct.address, passwords)
@@ -60,14 +61,14 @@ response = requests.get(this_url)
 if response.status_code == 200:
     metadata = response.json()
 else:
-    raise
+    raise AssertionError("Failed to get metadata.")
 
 pprint(metadata)
 print("Name of Asset:", metadata['main']['name'])
 print("Price of Asset:", metadata['main']['price'])
 
 for i, file in enumerate(metadata['main']['files']):
-    print("Asset link {}: {}".format( i, file['url']))
+    print("Asset link {}: {}".format(i, file['url']))
 
 # %% [markdown] ########################################################################################################
 # REGISTER
@@ -82,8 +83,7 @@ print("New asset registered at", registered_did)
 # ######################################################################################################################
 # %%
 # Use the Query function to get all existing assets
-basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
-basic_query = {"service":{"$elemMatch":{"metadata": {"$exists" : True }}}}
+basic_query = {"service": {"$elemMatch": {"metadata": {"$exists": True}}}}
 all_ddos = ocn.assets.query(basic_query)
 assert len(all_ddos), "There are no assets registered, go to s03_publish_and_register!"
 print("There are {} assets registered in the metadata store.".format(len(all_ddos)))
@@ -93,7 +93,7 @@ assert len(all_ddos), "There are no assets registered, go to s03_publish_and_reg
 selected_ddo = all_ddos[-1]
 selected_did = all_ddos[-1].did
 print("Selected asset name:", all_ddos[-1].metadata['main']['name'])
-print("Selected DID:",selected_did)
+print("Selected DID:", selected_did)
 
 # %% [markdown]
 #
@@ -101,4 +101,3 @@ print("Selected DID:",selected_did)
 service_agreement_id = ocn.assets.order(selected_ddo.did, '0', publisher_acct)
 print('New service agreement id:', service_agreement_id)
 #%%
-

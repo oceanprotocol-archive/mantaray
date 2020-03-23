@@ -20,12 +20,14 @@ from ocean_keeper.utils import get_account
 from ocean_utils.agreements.service_types import ServiceTypes
 from squid_py import Ocean
 import squid_py
-import mantaray_utilities as manta_utils
 
 # Setup logging
-from mantaray_utilities.blockchain import subscribe_event
-manta_utils.logging.logger.setLevel('INFO')
-import mantaray_utilities as manta_utils
+from util.events import subscribe_event
+
+from util import logging as manta_logging, config
+from util.misc import get_metadata_example
+
+manta_logging.logger.setLevel('INFO')
 from squid_py import Config
 from pathlib import Path
 import datetime
@@ -37,16 +39,15 @@ os.environ['USE_K8S_CLUSTER']='true'
 path_log_file = Path('/test_logs') / '{}.log'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 fh = logging.FileHandler(path_log_file)
 fh.setLevel(logging.DEBUG)
-manta_utils.logging.logger.addHandler(fh)
+manta_logging.logger.addHandler(fh)
 logging.info("Log file at: {}".format(path_log_file))
 # %% [markdown]
 # Get the configuration from the INI file
 #%%
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+CONFIG_INI_PATH = config.get_config_file_path()
+logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
-logging.critical("Mantaray Utilities version: {}".format(manta_utils.__version__))
 
 config_from_ini = Config(CONFIG_INI_PATH)
 
@@ -78,9 +79,7 @@ print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).
 
 #%%
 # Register an asset
-metadata_path = 'assets/sample_metadata.json'
-with open(metadata_path, 'w') as f:
-    metadata = json.load(f)
+metadata = get_metadata_example()
 
 ddo = ocn.assets.create(metadata, publisher_account)
 logging.info(f'registered ddo: {ddo.did}')

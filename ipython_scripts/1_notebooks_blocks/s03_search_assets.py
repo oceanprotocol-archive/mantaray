@@ -36,10 +36,11 @@ from pathlib import Path
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
-import mantaray_utilities as manta_utils
 
 # Setup logging
-manta_utils.logging.logger.setLevel('INFO')
+from util import logging as manta_logging, config
+
+manta_logging.logger.setLevel('INFO')
 print("squid-py Ocean API version:", squid_py.__version__)
 #%%
 # Get the configuration file path for this environment
@@ -47,7 +48,7 @@ OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 #%%

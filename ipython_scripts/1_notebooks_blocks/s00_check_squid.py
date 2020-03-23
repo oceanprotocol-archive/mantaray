@@ -8,7 +8,6 @@
 #%%
 # Standard imports
 import logging
-import json
 import pip_api
 from pathlib import Path
 import os
@@ -16,10 +15,11 @@ import os
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from squid_py.ocean.ocean import Ocean
-from squid_py import ConfigProvider
 from squid_py.config import Config
-import mantaray_utilities as manta_utils
-manta_utils.logging.logger.setLevel('INFO')
+
+from util import logging as manta_logging, assert_contracts
+
+manta_logging.logger.setLevel('INFO')
 
 print("squid-py Ocean API version:", squid_py.__version__)
 
@@ -59,9 +59,8 @@ ocn = Ocean(configuration)
 # virtual environment, and you don't need to worry about them. For demonstration purposes, I've moved the artifacts
 # into the project folder here.
 
-from mantaray_utilities import assert_contracts
-manta_utils.assert_contracts.assert_contract_ABI_versions(ocn, 'nile')
-manta_utils.assert_contracts.assert_contract_code(ocn, 'nile')
+assert_contracts.assert_contract_ABI_versions(ocn, 'nile')
+assert_contracts.assert_contract_code(ocn, 'nile')
 
 # %% [markdown]
 # The following cell will print some summary information of the Ocean connection.

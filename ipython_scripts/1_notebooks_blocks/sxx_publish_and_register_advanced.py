@@ -24,16 +24,18 @@ from squid_py.brizo import BrizoProvider
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 
-import mantaray_utilities as manta_utils
 from pprint import pprint
 # Setup logging
-manta_utils.logging.logger.setLevel('CRITICAL')
+from util import logging as manta_logging, config, asset_pretty_print
+from util.misc import get_metadata_example
+
+manta_logging.logger.setLevel('CRITICAL')
 
 #%%
 # Get the configuration file path for this environment
 # os.environ['USE_K8S_CLUSTER'] = 'true'
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+CONFIG_INI_PATH = config.get_config_file_path()
+logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Configuration file selected: {}".format(CONFIG_INI_PATH))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
@@ -62,9 +64,7 @@ if ocn.accounts.balance(publisher_acct).ocn == 0:
 
 #%%
 # Get a simple example of Meta Data from the library directly
-metadata_path = 'assets/sample_metadata.json'
-with open(metadata_path, 'w') as f:
-    metadata = json.load(f)
+metadata = get_metadata_example()
 
 print('Name of asset:', metadata['main']['name'])
 pprint(metadata)
@@ -113,7 +113,7 @@ ddo = ocn.assets.create(metadata, publisher_acct)
 # Your assigned DID:
 registered_did = ddo.did
 print("New asset registered at", registered_did)
-manta_utils.asset_pretty_print.print_ddo(ddo)
+asset_pretty_print.print_ddo(ddo)
 
 # %% [markdown]
 # Verify that this asset exists in the MetaData storage

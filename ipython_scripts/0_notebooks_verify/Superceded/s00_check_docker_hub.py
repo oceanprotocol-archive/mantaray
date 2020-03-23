@@ -6,15 +6,15 @@ import json
 # ## Constants
 organization_name = 'oceanprotocol'
 
-UNAME=""
-UPASS=""
+UNAME = ""
+UPASS = ""
 
 # %%
 # ## Get the access token
 
 url = r'https://hub.docker.com/v2/users/login/'
 headers = None
-data = {'username': UNAME, 'password' : UPASS}
+data = {'username': UNAME, 'password': UPASS}
 params = None
 r = requests.get(url, headers=headers, data=data, params=params)
 
@@ -37,5 +37,4 @@ for repo in repo_def['results']:
         pull_count = repo['pull_count']
     else:
         pull_count = None
-    print("{:25} updated {:20} with {} pulls".format(repo['name'],repo['last_updated'],)
-
+    print("{:25} updated {:20} with {} pulls".format(repo['name'], repo['last_updated'], pull_count))

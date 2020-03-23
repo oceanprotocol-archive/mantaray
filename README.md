@@ -36,24 +36,47 @@ Read–Eval–Print Loop (REPL) found in [Jupyter Notebooks](http://jupyter.org/
 and other editors.
 
 This repo is the source for the front-end facing notebooks. Here's a high level overview; 
-1. First, scripts are written and tested here in this repo, using the `%%` format to deliniate code cells. Testing is done against local components (see the [barge](https://github.com/oceanprotocol/barge) project) or the deployed endpoints in AWS kubernetes. 
-1. Next, the [jupytext](https://github.com/mwouts/jupytext) parser is used to create .ipynb notebooks. 
-1. These notebooks are manually copied into a new [front-facing repo](https://github.com/oceanprotocol/mantaray_jupyter). It is this repo that is pulled into each JupyterLab instance, to keep things clean and simple for the end user. 
-1. The [jupyterhub-helm-configuration](https://github.com/oceanprotocol/jupyterhub-helm-configuration) repo controls the creation of jupyterlab instances (using a [JupyterHub](https://jupyter.org/hub) cluster). 
-1. A docker image of [jupyterhub-helm-configuration](https://github.com/oceanprotocol/jupyterhub-helm-configuration) is created and controls the git-pull of the notebooks, as well as any environment configuration (installation of all dependencies). (See the `Dockerfile` and the `post-start.sh` script in this repo for details.)
-1. Now, for each user, a new container is instantiated (essentially a dedicated virtual machine) from the Dockerfile. The post-start script then pulls the latest notebooks and makes any other changes. 
 
-One consequence of the above flow is that once the container and connected disk image are created, they cannot be automatically updated to new versions. 
+1. First, scripts are written and tested here in this repo, using the `%%` 
+format to deliniate code cells. Testing is done against local components 
+(see the [barge](https://github.com/oceanprotocol/barge) project) or 
+the deployed endpoints in AWS kubernetes. 
+
+1. Next, the [jupytext](https://github.com/mwouts/jupytext) parser is used 
+to create .ipynb notebooks. 
+
+1. These notebooks are manually copied into a new [front-facing repo](https://github.com/oceanprotocol/mantaray_jupyter). 
+It is this repo that is pulled into each JupyterLab instance, to keep things 
+clean and simple for the end user. 
+
+1. The [jupyterhub-helm-configuration](https://github.com/oceanprotocol/jupyterhub-helm-configuration) 
+repo controls the creation of jupyterlab instances (using a [JupyterHub](https://jupyter.org/hub) cluster). 
+
+1. A docker image of [jupyterhub-helm-configuration](https://github.com/oceanprotocol/jupyterhub-helm-configuration) 
+is created and controls the git-pull of the notebooks, as well as any environment 
+configuration (installation of all dependencies). (See the `Dockerfile` and 
+the `post-start.sh` script in this repo for details.)
+
+1. Now, for each user, a new container is instantiated (essentially a dedicated 
+virtual machine) from the Dockerfile. The post-start script then pulls the latest 
+notebooks and makes any other changes. 
+
+One consequence of the above flow is that once the container and connected disk 
+image are created, they cannot be automatically updated to new versions. 
 
 ## Installation
 
-The primary use of Mantaray is an easy way to get started with Ocean Protocol. Visit [datascience.oceanprotocol.com](https://datascience.oceanprotocol.com/) to test these scripts in a pre-configured Jupyter Lab environment! 
+The primary use of Mantaray is an easy way to get started with Ocean Protocol. 
+Visit [datascience.oceanprotocol.com](https://datascience.oceanprotocol.com/) to 
+test these scripts in a pre-configured Jupyter Lab environment! 
 
-For developers seeking to work on scripts, see [this guide](doc/installation.md) for local development installation. 
+For developers seeking to work on scripts, see [this guide](doc/installation.md) for 
+local development installation. 
 
 ## Code style
 
-The information about code style in python is documented in this two links [python-developer-guide](https://github.com/oceanprotocol/dev-ocean/blob/master/doc/development/python-developer-guide.md)
+The information about code style in python is documented in this two links 
+[python-developer-guide](https://github.com/oceanprotocol/dev-ocean/blob/master/doc/development/python-developer-guide.md)
 and [python-style-guide](https://github.com/oceanprotocol/dev-ocean/blob/master/doc/development/python-style-guide.md).
 ​    
 
@@ -64,7 +87,8 @@ Our test use pytest framework.
 
 ## New Version
 
-The `bumpversion.sh` script helps to bump the project version. You can execute the script using as first argument {major|minor|patch} to bump accordingly the version.
+The `bumpversion.sh` script helps to bump the project version. You can execute the 
+script using as first argument {major|minor|patch} to bump accordingly the version.
 
 ## License
 

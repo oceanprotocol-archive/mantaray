@@ -34,5 +34,3 @@ ENV PARITY_PASSWORD1='ocean_secret'
 
 ENTRYPOINT ["/mantaray/docker-entrypoint.sh"]
 
-# RUN pip install --force-reinstall --ignore-installed git+https://github.com/oceanprotocol/mantaray_utilities.git
-

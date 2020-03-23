@@ -23,20 +23,24 @@
 
 #%%
 # Standard imports
+import json
 import logging
 import os
 from pathlib import Path
 # Import mantaray and the Ocean API (squid)
 import random
 import squid_py
+from ocean_keeper.utils import get_account
 from ocean_utils.did import did_to_id
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
-import mantaray_utilities as manta_utils
-from mantaray_utilities.user import password_map
+
 from pprint import pprint
 # Setup logging
-manta_utils.logging.logger.setLevel('INFO')
+from util import logging as manta_logging, config
+from util.misc import get_metadata_example
+
+manta_logging.logger.setLevel('INFO')
 from time import sleep
 print("squid-py Ocean API version:", squid_py.__version__)
 
@@ -46,7 +50,7 @@ OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 #%%
@@ -61,14 +65,7 @@ ocn = Ocean(configuration)
 #%%
 # Get a publisher account
 
-publisher_acct = manta_utils.user.get_account_by_index(ocn,0)
-
-# path_passwords = manta_utils.config.get_project_path() / 'passwords.csv'
-# passwords = manta_utils.user.load_passwords(path_passwords)
-#
-# publisher_acct = random.choice([acct for acct in ocn.accounts.list() if password_map(acct.address, passwords)])
-# publisher_acct.password = password_map(publisher_acct.address, passwords)
-# assert publisher_acct.password
+publisher_acct = get_account(0)
 
 #%%
 print("Publisher account address: {}".format(publisher_acct.address))
@@ -92,7 +89,8 @@ print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.ba
 
 #%%
 # Get a simple example of Meta Data from the library directly
-metadata = squid_py.ddo.metadata.Metadata.get_example()
+metadata = get_metadata_example()
+
 print('Name of asset:', metadata['main']['name'])
 # Print the entire (JSON) dictionary
 pprint(metadata)

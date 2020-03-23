@@ -50,20 +50,9 @@ print("squid_py", squid_py.__version__)
 #%% [markdown]
 # The main class of
 
-#%% [markdown]
-# An set of [utility methods](https://github.com/oceanprotocol/mantaray_utilities) is installed, for extra functionality
-# for the Data Science community.
-
-#%%
-import mantaray_utilities
-print("mantaray_utilities", mantaray_utilities.__version__)
-
 # %% [markdown]
 # Some of the main utilities are the `config` module, and the `user` module, for simulating a User.
 
-#%%
-# The config module makes it easier to manage local and deployed notebooks and components.
-import mantaray_utilities.config
 # The deployment type is discovered using environment variables
 # JUPYTER_DEPLOYMENT    - For JupyterHub/Lab, and deployed cloud components
 # USE_K8S_CLUSTER       - For running scripts locally, but still connecting to the deployed cloud components

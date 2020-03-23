@@ -22,12 +22,14 @@ from pathlib import Path
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
 import squid_py
+from ocean_keeper.utils import get_account
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
-import mantaray_utilities as manta_utils
 
 # Setup logging to a higher level and not flood the console with debug messages
-manta_utils.logging.logger.setLevel('INFO')
+from util import config
+
+logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
 
@@ -37,7 +39,7 @@ OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
-logging.critical("Deployment type: {}".format(manta_utils.config.get_deployment_type()))
+logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 
 #%%
@@ -55,7 +57,7 @@ logging.critical("Ocean smart contract node connected ".format())
 # The PASSWORD_PATH file is a CSV of address,password lines.
 
 #%%
-selected_account = manta_utils.user.get_account(ocn)
+selected_account = get_account(0)
 print("Selected account address:", selected_account.address)
 
 # %% [markdown]

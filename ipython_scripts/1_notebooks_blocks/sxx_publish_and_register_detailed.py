@@ -18,9 +18,9 @@ from ocean_utils.ddo.ddo import DDO
 from squid_py import Config
 from squid_py.ocean.ocean import Ocean
 
-import mantaray_utilities as manta_utils
-
 # Add the local utilities package
+from util import config
+
 utilities_path = pathlib.Path('.') / 'script_fixtures'
 if not utilities_path.exists():
     utilities_path = pathlib.Path('.') / '..' / '..' / 'script_fixtures'
@@ -40,7 +40,7 @@ logging.info("Squid API version: {}".format(squid_py.__version__))
 # %% [markdown]
 # ### Section 2: Instantiate Ocean()
 #%%
-CONFIG_INI_PATH = manta_utils.config.get_config_file_path()
+CONFIG_INI_PATH = config.get_config_file_path()
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
 
