@@ -15,24 +15,25 @@ from ocean_keeper.utils import get_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.ddo.ddo import DDO
+from ocean_utils.utils.utilities import get_timestamp
 from squid_py import Config
 from squid_py.ocean.ocean import Ocean
 
 # Add the local utilities package
 from util import config
 
-utilities_path = pathlib.Path('.') / 'script_fixtures'
-if not utilities_path.exists():
-    utilities_path = pathlib.Path('.') / '..' / '..' / 'script_fixtures'
-assert utilities_path.exists()
+# utilities_path = pathlib.Path('.') / 'script_fixtures'
+# if not utilities_path.exists():
+#     utilities_path = pathlib.Path('.') / '..' / '..' / 'script_fixtures'
+# assert utilities_path.exists()
+#
+# # Get the project root path
+# PATH_PROJECT_ROOT = utilities_path / '..'
+# PATH_PROJECT_ROOT.absolute()
 
-# Get the project root path
-PATH_PROJECT_ROOT = utilities_path / '..'
-PATH_PROJECT_ROOT.absolute()
-
-utilities_path_str = str(utilities_path.absolute())
-if utilities_path_str not in sys.path:
-    sys.path.append(utilities_path_str)
+# utilities_path_str = str(utilities_path.absolute())
+# if utilities_path_str not in sys.path:
+#     sys.path.append(utilities_path_str)
 
 logging.info("Squid API version: {}".format(squid_py.__version__))
 
@@ -54,7 +55,7 @@ template_id = ocn.keeper.template_manager.create_template_id(
 
 #%%
 ddo_path = 'assets/ddo_example.json'
-with open(ddo_path, 'w') as f:
+with open(ddo_path) as f:
     TEST_DDO = json.load(f)
 
 asset = DDO(dictionary=TEST_DDO)
@@ -69,5 +70,8 @@ attributes = {
     }
 }
 
+metadata = asset.metadata
+metadata['main']['dateCreated'] = get_timestamp()
 service_descriptors = [ServiceDescriptor.access_service_descriptor(attributes, ' /serviceEndpoint', template_id)]
-ocn.register_asset(asset.metadata, get_account(0), service_descriptors)
+asset = ocn.assets.create(metadata, get_account(0), service_descriptors)
+print(f'success, registered asset with DID {asset.did}.')

@@ -27,15 +27,15 @@ from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 
 # Setup logging to a higher level and not flood the console with debug messages
-from util import config
+from util import config, logging as manta_logging
 
-logging.logger.setLevel('INFO')
+manta_logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))
 print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%
 # Get the configuration file path for this environment
-OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+OCEAN_CONFIG_PATH = Path(os.path.expanduser(os.environ['OCEAN_CONFIG_PATH']))
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))

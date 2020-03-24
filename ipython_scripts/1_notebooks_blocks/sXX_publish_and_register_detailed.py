@@ -53,7 +53,7 @@ template_id = ocn.keeper.template_manager.create_template_id(
 
 #%%
 ddo_path = 'assets/ddo_example.json'
-with open(ddo_path, 'w') as f:
+with open(ddo_path) as f:
     TEST_DDO = json.load(f)
 
 asset = DDO(dictionary=TEST_DDO)

@@ -31,6 +31,7 @@ from pathlib import Path
 import random
 import squid_py
 from ocean_keeper.utils import get_account
+from ocean_keeper.web3_provider import Web3Provider
 from ocean_utils.did import did_to_id
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
@@ -46,7 +47,7 @@ print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%
 # Get the configuration file path for this environment
-OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+OCEAN_CONFIG_PATH = Path(os.path.expanduser(os.environ['OCEAN_CONFIG_PATH']))
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
@@ -138,7 +139,7 @@ for svc in ddo_dict['service']:
 #%%
 for file_attrib in ddo.metadata['main']['files']:
     assert 'url' not in file_attrib
-print("Encrypted files decrypt on purchase! Cipher text: [{}...] . ".format(ddo.metadata['main']['encryptedFiles'][:50]))
+print("Encrypted files decrypt on purchase! Cipher text: [{}...] . ".format(ddo.metadata['encryptedFiles'][:50]))
 
 # %% [markdown]
 # ## Section 4: Verify your asset
@@ -149,9 +150,18 @@ print("Encrypted files decrypt on purchase! Cipher text: [{}...] . ".format(ddo.
 #+attr_jupyter: some cell metadata stuff
 #+attr_jupyter: some other metadata stuff
 
-#TODO: Better handling based on reciept
+# TODO: Better handling based on reciept
 print("Wait for the transaction to complete!")
 sleep(10)
+web3 = Web3Provider.get_web3()
+event = ocn.keeper.did_registry.subscribe_to_event(
+    ocn.keeper.did_registry.DID_REGISTRY_EVENT_NAME,
+    30,
+    {'_did': web3.toBytes(hexstr=ddo.asset_id)},
+    from_block=0,
+    wait=True
+)
+
 # %%
 ddo = ocn.assets.resolve(registered_did)
 print("Asset '{}' resolved from Aquarius metadata storage: {}".format(ddo.did, ddo.metadata['main']['name']))

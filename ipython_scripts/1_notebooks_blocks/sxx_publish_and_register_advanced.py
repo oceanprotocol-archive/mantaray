@@ -76,7 +76,7 @@ service_timeout = 600  # 10 Minutes
 # When publishing a dataset, you are actually publishing *access* to the dataset. Access is negotiated by the access agent, called 'Brizo'.
 # %%
 brizo = BrizoProvider.get_brizo()
-service_url = brizo.get_service_endpoint(configuration)
+service_url = brizo.get_consume_endpoint(configuration)
 print("To download the dataset, a user will call", service_url)
 
 # %% [markdown]
@@ -134,6 +134,6 @@ except Exception as e:
 # %%
 # We need the pure ID string (a DID without the prefixes)
 asset_id = did_to_id(registered_did)
-owner = ocn.keeper.did_registry.contract_concise.getOwner(asset_id)
+owner = ocn.keeper.did_registry.get_did_owner(asset_id)
 print("Asset ID", asset_id, "owned by", owner)
 assert str.lower(owner) == str.lower(publisher_acct.address)

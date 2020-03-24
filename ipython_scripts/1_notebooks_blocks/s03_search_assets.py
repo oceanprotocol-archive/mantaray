@@ -44,7 +44,7 @@ manta_logging.logger.setLevel('INFO')
 print("squid-py Ocean API version:", squid_py.__version__)
 #%%
 # Get the configuration file path for this environment
-OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+OCEAN_CONFIG_PATH = Path(os.path.expanduser(os.environ['OCEAN_CONFIG_PATH']))
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
@@ -121,9 +121,10 @@ print("Asset description: {} token".format(this_ddo.metadata['additionalInformat
 price_filter = [5,20]
 query = {"query":{"price":price_filter}}
 search_results = ocn.assets.query(query)
-print("Found {} assets matching price interval {}".format(len(search_results),price_filter))
+print("Found {} assets matching price interval {}".format(len(search_results), price_filter))
 all_prices = [result.metadata['main']['price'] for result in search_results]
-print("Average price in this set: {:0.2f}".format(sum(all_prices)/len(all_prices)))
+if all_prices:
+    print("Average price in this set: {:0.2f}".format(sum(all_prices)/len(all_prices)))
 
 #%% [markdown]
 # #### Text search

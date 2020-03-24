@@ -1,5 +1,6 @@
 import os
 import logging
+from pathlib import Path
 
 CONFIG_MAP = {
     'JUPYTER_DEPLOYMENT': {
@@ -74,7 +75,6 @@ def get_project_path():
 
 
 if 0:
-    from pathlib import Path
     # Ensure paths are correct in Jupyter Hub
     # The PATH_PROJECT path variable must be the root of the project folder
     # By default the root is the current working directory

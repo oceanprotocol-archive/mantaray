@@ -15,17 +15,13 @@ def print_ddo(ddo):
     print("DDO DID:", ddo.did)
     print("Services:")
     for svc in ddo.services:
-        if 'conditions' in svc.values:
-            num_conditions = len(svc.values['conditions'])
-        else:
-            num_conditions = 0
-        print("\t{} service with {} conditions".format(svc.type, num_conditions))
-        if 'conditions' in svc.values:
-            for condition in svc.values['conditions']:
-                if hasattr(condition, 'parameters'):
-                    params = [p.name for p in condition.parameters]
-                    param_string = ", ".join(params)
-                    print("\t\t{}.{}({})".format(condition.contract_name, condition.function_name, param_string))
+        svc_values = svc.values()
+        print("\t{} service with {} conditions".format(svc.type, len(svc_values.get('conditions', []))))
+        for condition in svc_values.get('conditions', []):
+            if hasattr(condition, 'parameters'):
+                params = [p.name for p in condition.parameters]
+                param_string = ", ".join(params)
+                print("\t\t{}.{}({})".format(condition.contract_name, condition.function_name, param_string))
 
 
 def print_ocean(ocn):

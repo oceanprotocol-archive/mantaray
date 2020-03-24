@@ -17,6 +17,7 @@ import os
 
 from ocean_keeper import Keeper
 from ocean_keeper.utils import get_account
+from ocean_utils.agreements.service_types import ServiceTypes
 from squid_py import Ocean
 import squid_py
 
@@ -44,7 +45,7 @@ metadata = get_metadata_example()
 
 #%%
 # Get the configuration file path for this environment
-OCEAN_CONFIG_PATH = Path(os.environ['OCEAN_CONFIG_PATH'])
+OCEAN_CONFIG_PATH = Path(os.path.expanduser(os.environ['OCEAN_CONFIG_PATH']))
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
 # The Market Place will be delegated to provide access to your assets, so we need the address
@@ -84,7 +85,7 @@ keeper = Keeper.get_instance()
 # one that you have found via the search api. All you need is the DID of the asset.
 
 #%%
-publisher_account = get_account(0)
+publisher_account = get_account(1)
 
 # publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
 print("Publisher address: {}".format(publisher_account.address))
@@ -103,11 +104,11 @@ print("Registered {} for {} OCN".format(asset_name, asset_price))
 # ## Section 5: Get Consumer account, ensure token balance
 #%%
 # consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
-consumer_account = get_account(1)
+consumer_account = get_account(0)
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
-assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
+# assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
 # Ensure the consumer always has enough Ocean Token (with a margin)
 if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
     logging.info("Insufficient Ocean Token balance for this asset!".format())
@@ -117,8 +118,12 @@ if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
 
 # %% [markdown]
 # ## Section 6: Initiate the agreement for accessing (downloading) the asset, wait for condition events
-#%%
-agreement_id = ocn.assets.order(ddo.did, 'Access', consumer_account)
+# %%
+agreement_id = ocn.assets.order(
+    ddo.did,
+    ddo.get_service(ServiceTypes.ASSET_ACCESS).index,
+    consumer_account
+)
 logging.info("Consumer has placed an order for asset {}".format(ddo.did))
 logging.info("The service agreement ID is {}".format(agreement_id))
 
