@@ -25,9 +25,9 @@ import squid_py
 from ocean_keeper.utils import get_account
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
+from mantaray_utilities import logging as manta_logging, config
 
 # Setup logging to a higher level and not flood the console with debug messages
-from util import config, logging as manta_logging
 
 manta_logging.logger.setLevel('INFO')
 logging.info("Squid API version: {}".format(squid_py.__version__))

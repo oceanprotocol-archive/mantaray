@@ -27,6 +27,8 @@ import json
 import logging
 import os
 from pathlib import Path
+from time import sleep
+
 # Import mantaray and the Ocean API (squid)
 import random
 import squid_py
@@ -35,14 +37,14 @@ from ocean_keeper.web3_provider import Web3Provider
 from ocean_utils.did import did_to_id
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
+from mantaray_utilities import logging as manta_logging, config
+from mantaray_utilities.misc import get_metadata_example
 
 from pprint import pprint
-# Setup logging
-from util import logging as manta_logging, config
-from util.misc import get_metadata_example
 
+# Setup logging
 manta_logging.logger.setLevel('INFO')
-from time import sleep
+
 print("squid-py Ocean API version:", squid_py.__version__)
 
 #%%

@@ -41,12 +41,12 @@ from ocean_utils.utils.utilities import get_timestamp
 from squid_py.models.algorithm_metadata import AlgorithmMetadata
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
+from mantaray_utilities import logging as manta_logging, config
+from mantaray_utilities.misc import get_metadata_example
 
 from pprint import pprint
 
 # Setup logging
-from util import logging as manta_logging, config
-from util.misc import get_metadata_example
 manta_logging.logger.setLevel('INFO')
 print("squid-py Ocean API version:", squid_py.__version__)
 

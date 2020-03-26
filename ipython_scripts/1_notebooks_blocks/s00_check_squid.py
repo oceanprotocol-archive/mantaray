@@ -17,7 +17,7 @@ import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 
-from util import logging as manta_logging, assert_contracts
+from mantaray_utilities import logging as manta_logging, assert_contracts
 
 manta_logging.logger.setLevel('INFO')
 

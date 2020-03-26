@@ -23,12 +23,12 @@ from ocean_utils.did import did_to_id
 from squid_py.brizo import BrizoProvider
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
+from mantaray_utilities import logging as manta_logging, config, asset_pretty_print
+from mantaray_utilities.misc import get_metadata_example
 
 from pprint import pprint
-# Setup logging
-from util import logging as manta_logging, config, asset_pretty_print
-from util.misc import get_metadata_example
 
+# Setup logging
 manta_logging.logger.setLevel('CRITICAL')
 
 #%%

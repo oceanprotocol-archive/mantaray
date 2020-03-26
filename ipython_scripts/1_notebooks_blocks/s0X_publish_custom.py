@@ -10,10 +10,9 @@ from squid_py.config import Config
 from util.user import password_map
 from pprint import pprint
 import requests
+from mantaray_utilities import config, user, logging as manta_logging
 
 # Setup logging
-from util import config, user, logging as manta_logging
-
 manta_logging.logger.setLevel('INFO')
 
 #%%

@@ -14,23 +14,23 @@
 import json
 import logging
 import os
+from pathlib import Path
 
+import web3
 from ocean_keeper import Keeper
 from ocean_keeper.utils import get_account
 from ocean_utils.agreements.service_types import ServiceTypes
 from squid_py import Ocean
 import squid_py
+from squid_py import Config
+
+from mantaray_utilities import logging as manta_logging, config
+from mantaray_utilities.misc import get_metadata_example
+from mantaray_utilities.events import subscribe_event
 
 # Setup logging
-from util.events import subscribe_event
-
-from util import logging as manta_logging, config
-from util.misc import get_metadata_example
 
 manta_logging.logger.setLevel('INFO')
-from squid_py import Config
-from pathlib import Path
-import web3
 
 # Load metadata example
 metadata = get_metadata_example()

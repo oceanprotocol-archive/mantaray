@@ -36,10 +36,9 @@ from pathlib import Path
 import squid_py
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
+from mantaray_utilities import logging as manta_logging, config
 
 # Setup logging
-from util import logging as manta_logging, config
-
 manta_logging.logger.setLevel('INFO')
 print("squid-py Ocean API version:", squid_py.__version__)
 #%%

@@ -17,9 +17,7 @@ from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.ddo.ddo import DDO
 from squid_py import Config
 from squid_py.ocean.ocean import Ocean
-
-# Add the local utilities package
-from util import config
+from mantaray_utilities import config
 
 utilities_path = pathlib.Path('.') / 'script_fixtures'
 if not utilities_path.exists():

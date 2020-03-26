@@ -10,8 +10,7 @@ import os
 import logging
 from pathlib import Path
 
-# import mantaray_utilities.config as manta_config
-import util.logging as manta_logging
+from mantaray_utilities import logging as manta_logging
 
 #%%
 # For this test, set the configuration environment variable for kubernetes.
