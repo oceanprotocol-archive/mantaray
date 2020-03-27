@@ -39,6 +39,8 @@ from mantaray_utilities.user import create_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.utils.utilities import get_timestamp
+from squid_py import ConfigProvider
+from squid_py.brizo.brizo import Brizo
 from squid_py.models.algorithm_metadata import AlgorithmMetadata
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
@@ -59,37 +61,47 @@ logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
 # %%
-# Prepare the provider address to use when creating the asset and service agreement
-web3 = Web3Provider.get_web3()
-provider_address = web3.toChecksumAddress(os.environ.get('MARKET_PLACE_PROVIDER_ADDRESS', ''))
-print(f'Will be using provider (Brizo) address: {provider_address}')
-# %%
 # Instantiate Ocean with the default configuration file.
 configuration = Config(OCEAN_CONFIG_PATH)
+ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
-# faucet is used to request ether from the TESTNET (e.g. the Nile testnet)
+# faucet is used to request eth from the TESTNET (e.g. the Nile testnet)
 faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
 scale = 10**18
+# %%
+# Prepare the provider address to use when creating the asset and service agreement
+web3 = Web3Provider.get_web3()
+provider_address = web3.toChecksumAddress(configuration.provider_address)
+print(f'Will be using provider (Brizo) address: {provider_address}')
 # %% [markdown]
 # We need accounts for the publisher and consumer, let's make new ones
 # %%
-# Publisher account (will be filled with some TESTNET ether automatically)
+# Publisher account (will be filled with some TESTNET eth automatically)
 publisher_acct = create_account(faucet_url, wait=True)
-print("Publisher account address: {}".format(publisher_acct.address))
-# ensure Ocean token balance
-if ocn.accounts.balance(publisher_acct).ocn == 0:
-    ocn.accounts.request_tokens(publisher_acct, 100)
-print("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/scale))
-print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/scale))
 # %%
-# Consumer account (same as above, will have some TESTNET ether added)
+print("Publisher account address: {}".format(publisher_acct.address))
+time.sleep(5)  # wait a bit more for the eth transaction to validate
+# %%
+# ensure Ocean token balance
+if ocn.accounts.balance(publisher_acct).ocn/scale < 100:
+    ocn.accounts.request_tokens(publisher_acct, 100)
+print("Publisher account Testnet 'ETH' balance: {:>6.3f}".format(ocn.accounts.balance(publisher_acct).eth/scale))
+print("Publisher account Testnet Ocean balance: {:>6.3f}".format(ocn.accounts.balance(publisher_acct).ocn/scale))
+assert ocn.accounts.balance(publisher_acct).eth/scale > 0.0, 'Cannot continue without eth.'
+# %%
+# Consumer account (same as above, will have some TESTNET eth added)
 consumer_account = create_account(faucet_url, wait=True)
+# %%
 print("Consumer account address: {}".format(consumer_account.address))
+time.sleep(5)  # wait a bit more for the eth transaction to validate
+# %%
 if ocn.accounts.balance(consumer_account).ocn/scale < 100:
     ocn.accounts.request_tokens(consumer_account, 100)
-# Verify both ocean and ether balance
-print("Consumer account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(consumer_account).eth/scale))
-print("Consumer account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(consumer_account).ocn/scale))
+# Verify both ocean and eth balance
+print("Consumer account Testnet 'ETH' balance: {:>6.3f}".format(ocn.accounts.balance(consumer_account).eth/scale))
+print("Consumer account Testnet Ocean balance: {:>6.3f}".format(ocn.accounts.balance(consumer_account).ocn/scale))
+assert ocn.accounts.balance(consumer_account).eth/scale > 0.0, 'Cannot continue without eth.'
+assert ocn.accounts.balance(consumer_account).ocn/scale > 0.0, 'Cannot continue without Ocean Tokens.'
 
 # %% [markdown]
 # ### Section 1: Publish the asset with compute service
@@ -108,7 +120,7 @@ provider_attributes = ocn.compute.build_service_provider_attributes(
 attributes = ocn.compute.create_compute_service_attributes(
     13, 3600, publisher_acct.address, get_timestamp(), provider_attributes
 )
-service_endpoint = 'http://localhost:8030/api/v1/brizo/services/compute'
+service_endpoint = Brizo.get_compute_endpoint(ocn.config)
 template_id = ocn.keeper.template_manager.create_template_id(
     ocn.keeper.template_manager.SERVICE_TO_TEMPLATE_NAME['compute']
 )
@@ -124,11 +136,15 @@ ddo = ocn.assets.create(
     metadata,
     publisher_acct,
     [service_descriptor],
-    providers=[publisher_acct.address],
+    providers=[provider_address],
     use_secret_store=False
 )
+assert ddo, 'asset registration failed.'
 registered_did = ddo.did
 print("New asset registered at", registered_did)
+asset = ocn.assets.resolve(ddo.did)
+assert asset and asset.did == ddo.did, 'Something is not right.'
+
 # %% [markdown]
 # Let's take a look at the compute service from the published DDO
 # %%
@@ -165,7 +181,7 @@ algorithm_meta = AlgorithmMetadata(
 agreement_id = ocn.compute.order(
     ddo.did,
     consumer_account,
-    provider_address=publisher_acct.address
+    provider_address=provider_address
 )
 print(f'Got agreementId: {agreement_id}')
 # %%
@@ -177,24 +193,26 @@ else:
     print(f'Cannot find agreement event, could be a VM transaction error.')
 # %%
 # Wait for payment transaction
-payment_locked_event = ocn.keeper.lock_reward_condition.subscribe_condition_fulfilled(agreement_id, 30, None, [], wait=True)
+payment_locked_event = ocn.keeper.lock_reward_condition.subscribe_condition_fulfilled(
+    agreement_id, 30, None, [], wait=True, from_block=0
+)
 assert payment_locked_event, 'payment event was not found'
+print('Payment was successful.')
 # %%
 # and wait for service agreement approval from the provider end
-compute_approval_event = ocn.keeper.compute_execution_condition.subscribe_condition_fulfilled(agreement_id, 30, None, [], wait=True)
+compute_approval_event = ocn.keeper.compute_execution_condition.subscribe_condition_fulfilled(
+    agreement_id, 30, None, [], wait=True, from_block=0
+)
 assert compute_approval_event, 'compute agreement is not approved yet.'
+print('Provider approval was successful.')
 
 # %% [markdown]
 # ### Section 4: Run the algorithm remotely on the dataset
 # Now that the agreement is approved by the provider, we can start the compute job
 # %%
 # Submit algorithm to start the compute job
-try:
-    job_id = ocn.compute.start(agreement_id, ddo.did, consumer_account, algorithm_meta=algorithm_meta)
-    print(f'compute job started: jobId={job_id}')
-except Exception as err:
-    print(f'error: {err}')
-    job_id = ''
+job_id = ocn.compute.start(agreement_id, ddo.did, consumer_account, algorithm_meta=algorithm_meta)
+print(f'compute job started: jobId={job_id}')
 # %%
 # check the compute job status
 status = ocn.compute.status(agreement_id, job_id, consumer_account)

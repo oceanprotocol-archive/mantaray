@@ -13,11 +13,12 @@
 #%%
 import logging
 import os
+import time
 from pathlib import Path
 
-import web3
 from mantaray_utilities.user import create_account
 from ocean_keeper import Keeper
+from ocean_keeper.web3_provider import Web3Provider
 from ocean_utils.agreements.service_types import ServiceTypes
 from squid_py import Ocean
 import squid_py
@@ -47,20 +48,16 @@ metadata = get_metadata_example()
 OCEAN_CONFIG_PATH = Path(os.path.expanduser(os.environ['OCEAN_CONFIG_PATH']))
 assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFIG_PATH)
 
-# The Market Place will be delegated to provide access to your assets, so we need the address
-MARKET_PLACE_PROVIDER_ADDRESS = os.environ['MARKET_PLACE_PROVIDER_ADDRESS']
-
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
-logging.info("MARKET_PLACE_PROVIDER_ADDRESS:{}".format(MARKET_PLACE_PROVIDER_ADDRESS))
 #%%
 # Instantiate Ocean with the default configuration file.
 configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
 faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
-
+scale = 10**18
 #%% [markdown]
 # ## Section 2: Delegate access of your asset to the marketplace
 # When we publish a register a DDO to a marketplace, we assign several services and conditions on those services.
@@ -72,7 +69,9 @@ faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
 # conditions are defined ultimately by you, the publisher.
 
 #%%
-MARKET_PLACE_PROVIDER_ADDRESS = web3.Web3.toChecksumAddress(MARKET_PLACE_PROVIDER_ADDRESS)
+# The Market Place will be delegated to provide access to your assets, so we need the address
+MARKET_PLACE_PROVIDER_ADDRESS = Web3Provider.get_web3().toChecksumAddress(configuration.provider_address)
+logging.info("MARKET_PLACE_PROVIDER_ADDRESS:{}".format(MARKET_PLACE_PROVIDER_ADDRESS))
 
 #%% [markdown]
 # ## Section 3: Instantiate Ocean
@@ -84,13 +83,36 @@ keeper = Keeper.get_instance()
 # Of course, you can download your own asset, one that you have created, or
 # one that you have found via the search api. All you need is the DID of the asset.
 
-#%%
-# Create account and get some ether so we can submit transactions
+# %% [markdown]
+# We need accounts for the publisher and consumer, let's make new ones
+# %%
+# Publisher account (will be filled with some TESTNET eth automatically)
 publisher_account = create_account(faucet_url, wait=True)
+# %%
+print("Publisher account address: {}".format(publisher_account.address))
+time.sleep(5)  # wait a bit more for the eth transaction to validate
+# %%
+# ensure Ocean token balance
+if ocn.accounts.balance(publisher_account).ocn/scale < 100:
+    ocn.accounts.request_tokens(publisher_account, 100)
+print("Publisher account Testnet 'ETH' balance: {:>6.3f}".format(ocn.accounts.balance(publisher_account).eth/scale))
+print("Publisher account Testnet Ocean balance: {:>6.3f}".format(ocn.accounts.balance(publisher_account).ocn/scale))
+assert ocn.accounts.balance(publisher_account).eth/scale > 0.0, 'Cannot continue without eth.'
+# %%
+# Consumer account (same as above, will have some TESTNET eth added)
+consumer_account = create_account(faucet_url, wait=True)
+# %%
+print("Consumer account address: {}".format(consumer_account.address))
+time.sleep(5)  # wait a bit more for the eth transaction to validate
+# %%
+if ocn.accounts.balance(consumer_account).ocn/scale < 100:
+    ocn.accounts.request_tokens(consumer_account, 100)
+# Verify both ocean and eth balance
+print("Consumer account Testnet 'ETH' balance: {:>6.3f}".format(ocn.accounts.balance(consumer_account).eth/scale))
+print("Consumer account Testnet Ocean balance: {:>6.3f}".format(ocn.accounts.balance(consumer_account).ocn/scale))
+assert ocn.accounts.balance(consumer_account).eth/scale > 0.0, 'Cannot continue without eth.'
+assert ocn.accounts.balance(consumer_account).ocn/scale > 0.0, 'Cannot continue without Ocean Tokens.'
 
-print("Publisher address: {}".format(publisher_account.address))
-print("Publisher   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
-print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).ocn/10**18))
 
 #%%
 # Register an asset
@@ -101,29 +123,13 @@ asset_name = ddo.metadata['main']['name']
 print("Registered {} for {} OCN".format(asset_name, asset_price))
 
 # %% [markdown]
-# ## Section 5: Get Consumer account, ensure token balance
-#%%
-# Create account and get some ether so we can submit transactions
-consumer_account = create_account(faucet_url, wait=True)
-
-print("Consumer address: {}".format(consumer_account.address))
-print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
-print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))
-# assert ocn.accounts.balance(consumer_account).eth/10**18 > 1, "Insufficient ETH in account {}".format(consumer_account.address)
-# Ensure the consumer always has enough Ocean Token (with a margin)
-if ocn.accounts.balance(consumer_account).ocn/10**18 < asset_price + 1:
-    logging.info("Insufficient Ocean Token balance for this asset!".format())
-    refill_amount = int(15 - ocn.accounts.balance(consumer_account).ocn/10**18)
-    logging.info("Requesting {} tokens".format(refill_amount))
-    ocn.accounts.request_tokens(consumer_account, refill_amount)
-
-# %% [markdown]
 # ## Section 6: Initiate the agreement for accessing (downloading) the asset, wait for condition events
 # %%
 agreement_id = ocn.assets.order(
     ddo.did,
     ddo.get_service(ServiceTypes.ASSET_ACCESS).index,
-    consumer_account
+    consumer_account,
+    provider_address=MARKET_PLACE_PROVIDER_ADDRESS
 )
 logging.info("Consumer has placed an order for asset {}".format(ddo.did))
 logging.info("The service agreement ID is {}".format(agreement_id))
