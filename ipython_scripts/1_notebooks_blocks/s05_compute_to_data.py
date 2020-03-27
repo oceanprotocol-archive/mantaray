@@ -23,7 +23,6 @@
 
 # %% [markdown]
 # ### Section 0: Import modules, connect the Ocean Protocol API
-
 # %%
 # Standard imports
 import json
@@ -34,6 +33,7 @@ from pathlib import Path
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
+from ocean_keeper.web3_provider import Web3Provider
 from mantaray_utilities.misc import get_algorithm_example
 from mantaray_utilities.user import create_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
@@ -58,35 +58,41 @@ assert OCEAN_CONFIG_PATH.exists(), "{} - path does not exist".format(OCEAN_CONFI
 logging.critical("Configuration file selected: {}".format(OCEAN_CONFIG_PATH))
 logging.critical("Deployment type: {}".format(config.get_deployment_type()))
 logging.critical("Squid API version: {}".format(squid_py.__version__))
-
+# %%
+# Prepare the provider address to use when creating the asset and service agreement
+web3 = Web3Provider.get_web3()
+provider_address = web3.toChecksumAddress(os.environ.get('MARKET_PLACE_PROVIDER_ADDRESS', ''))
+print(f'Will be using provider (Brizo) address: {provider_address}')
+# %%
 # Instantiate Ocean with the default configuration file.
 configuration = Config(OCEAN_CONFIG_PATH)
-squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
+# faucet is used to request ether from the TESTNET (e.g. the Nile testnet)
 faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
-
-# Create account and get some ether so we can submit transactions
-publisher_acct = create_account(faucet_url, wait=True)
-
-print("Publisher account address: {}".format(publisher_acct.address))
-print("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/10**18))
-print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/10**18))
-
-
+scale = 10**18
 # %% [markdown]
-# Your account will need some Ocean Token to make real transactions, let's ensure that you are funded!
+# We need accounts for the publisher and consumer, let's make new ones
 # %%
+# Publisher account (will be filled with some TESTNET ether automatically)
+publisher_acct = create_account(faucet_url, wait=True)
+print("Publisher account address: {}".format(publisher_acct.address))
 # ensure Ocean token balance
 if ocn.accounts.balance(publisher_acct).ocn == 0:
     ocn.accounts.request_tokens(publisher_acct, 100)
-
+print("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/scale))
+print("Publisher account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).ocn/scale))
 # %%
-# Get example of Meta Data from file
-metadata = get_metadata_example()
-print('Name of asset:', metadata['main']['name'])
-# Print the entire (JSON) dictionary
-pprint(metadata)
+# Consumer account (same as above, will have some TESTNET ether added)
+consumer_account = create_account(faucet_url, wait=True)
+print("Consumer account address: {}".format(consumer_account.address))
+if ocn.accounts.balance(consumer_account).ocn/scale < 100:
+    ocn.accounts.request_tokens(consumer_account, 100)
+# Verify both ocean and ether balance
+print("Consumer account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(consumer_account).eth/scale))
+print("Consumer account Testnet Ocean balance: {:>6.1f}".format(ocn.accounts.balance(consumer_account).ocn/scale))
 
+# %% [markdown]
+# ### Section 1: Publish the asset with compute service
 # %%
 # Build compute service to be included in the asset DDO.
 cluster = ocn.compute.build_cluster_attributes('kubernetes', '/cluster/url')
@@ -100,27 +106,29 @@ provider_attributes = ocn.compute.build_service_provider_attributes(
     'Azure', 'Compute power 1', cluster, containers, servers
 )
 attributes = ocn.compute.create_compute_service_attributes(
-    13, 3600, publisher_acct.address, get_timestamp(), provider_attributes)
-
+    13, 3600, publisher_acct.address, get_timestamp(), provider_attributes
+)
 service_endpoint = 'http://localhost:8030/api/v1/brizo/services/compute'
 template_id = ocn.keeper.template_manager.create_template_id(
     ocn.keeper.template_manager.SERVICE_TO_TEMPLATE_NAME['compute']
 )
 service_descriptor = ServiceDescriptor.compute_service_descriptor(attributes, service_endpoint, template_id)
-
-# %% [markdown]
-# ## Section  Publish the asset
-# With this metadata object prepared, we are ready to publish the asset into Ocean Protocol.
 # %%
+# Get example of Meta Data from file
+metadata = get_metadata_example()
+# Print the entire (JSON) dictionary
+# pprint(metadata)
+
+# With this metadata object prepared, we are ready to publish the asset into Ocean Protocol.
 ddo = ocn.assets.create(
     metadata,
     publisher_acct,
     [service_descriptor],
-    providers=[publisher_acct.address]
+    providers=[publisher_acct.address],
+    use_secret_store=False
 )
 registered_did = ddo.did
 print("New asset registered at", registered_did)
-
 # %% [markdown]
 # Let's take a look at the compute service from the published DDO
 # %%
@@ -128,8 +136,8 @@ compute_service = ddo.get_service(ServiceTypes.CLOUD_COMPUTE)
 pprint("Compute service definition: \n{}".format(json.dumps(compute_service.as_dictionary(), indent=2)))
 
 # %% [markdown]
-# Now let's run a python algorithm to do some analysis on this data
-# Load the algorithm from file
+# ### Section 2: Preparing the algorithm that will be run
+# Grab the algorithm example from mantaray_utilities
 # %%
 algorithm_text = get_algorithm_example()
 print(f'algorithm: \n{algorithm_text}')
@@ -148,52 +156,62 @@ algorithm_meta = AlgorithmMetadata(
 # print(f'algorith meta: {algorithm_meta.as_dictionary()}')
 
 # %% [markdown]
+# ### Section 3: Subscribe to the compute service
 # Now we can prepare for running the remote compute, first we need to start an agreement to buy the service
 # %%
-# Create account and get some ether so we can submit transactions
-consumer_account = create_account(faucet_url, wait=True)
-
-if ocn.accounts.balance(publisher_acct).ocn == 0:
-    ocn.accounts.request_tokens(publisher_acct, 100)
-
-# Create the service agreement for compute service, payment goes automatically
+# First step in buying a service is placing the order which creates
+# and starts the service agreement process, consumer payment is
+# processed automatically once the agreement is created successfully.
 agreement_id = ocn.compute.order(
     ddo.did,
     consumer_account,
     provider_address=publisher_acct.address
 )
-
-# Wait for the service approval
+print(f'Got agreementId: {agreement_id}')
+# %%
+# We should verify that the agreement is created successfully
+event = ocn.keeper.agreement_manager.subscribe_agreement_created(agreement_id, 20, None, (), wait=True)
+if event:
+    print(f'Got agreement event {agreement_id}: {event}')
+else:
+    print(f'Cannot find agreement event, could be a VM transaction error.')
+# %%
+# Wait for payment transaction
 payment_locked_event = ocn.keeper.lock_reward_condition.subscribe_condition_fulfilled(agreement_id, 30, None, [], wait=True)
 assert payment_locked_event, 'payment event was not found'
+# %%
+# and wait for service agreement approval from the provider end
 compute_approval_event = ocn.keeper.compute_execution_condition.subscribe_condition_fulfilled(agreement_id, 30, None, [], wait=True)
 assert compute_approval_event, 'compute agreement is not approved yet.'
 
 # %% [markdown]
-# And finally, we can start the compute job
+# ### Section 4: Run the algorithm remotely on the dataset
+# Now that the agreement is approved by the provider, we can start the compute job
 # %%
 # Submit algorithm to start the compute job
 try:
     job_id = ocn.compute.start(agreement_id, ddo.did, consumer_account, algorithm_meta=algorithm_meta)
+    print(f'compute job started: jobId={job_id}')
 except Exception as err:
     print(f'error: {err}')
     job_id = ''
-
+# %%
 # check the compute job status
 status = ocn.compute.status(agreement_id, job_id, consumer_account)
 print(f'compute job status: {status}')
-
-# %%
+# %% [markdown]
 # Wait for results
+#
+# %%
 trials = 0
 result = ocn.compute.result(agreement_id, job_id, consumer_account)
 while not result.get('urls'):
-    print(f'result not available yet, trial {trials}/30')
-    time.sleep(5)
+    print(f'result not available yet, trial {trials}/30, '
+          f'status is: {ocn.compute.status(agreement_id, job_id, consumer_account)}')
+    time.sleep(10)
     result = ocn.compute.result(agreement_id, job_id, consumer_account)
     trials = trials + 1
-    if trials > 30:
-        print(f'the run is taking too long, i give up.')
+    if trials > 20:
+        print(f'the run is taking too long, I give up.')
         break
-
 print(f'got result from compute job: {result}')
