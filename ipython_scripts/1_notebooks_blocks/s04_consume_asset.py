@@ -14,11 +14,12 @@
 import json
 import logging
 import os
+import time
 from pathlib import Path
 
 import web3
+from mantaray_utilities.mantaray_utilities.user import create_account, request_ether
 from ocean_keeper import Keeper
-from ocean_keeper.utils import get_account
 from ocean_utils.agreements.service_types import ServiceTypes
 from squid_py import Ocean
 import squid_py
@@ -60,6 +61,7 @@ logging.info("MARKET_PLACE_PROVIDER_ADDRESS:{}".format(MARKET_PLACE_PROVIDER_ADD
 configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
+faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
 
 #%% [markdown]
 # ## Section 2: Delegate access of your asset to the marketplace
@@ -85,9 +87,9 @@ keeper = Keeper.get_instance()
 # one that you have found via the search api. All you need is the DID of the asset.
 
 #%%
-publisher_account = get_account(1)
+# Create account and get some ether so we can submit transactions
+publisher_account = create_account(faucet_url, wait=True)
 
-# publisher_account = get_account_from_config(config_from_ini, 'parity.address', 'parity.password')
 print("Publisher address: {}".format(publisher_account.address))
 print("Publisher   ETH: {:0.1f}".format(ocn.accounts.balance(publisher_account).eth/10**18))
 print("Publisher OCEAN: {:0.1f}".format(ocn.accounts.balance(publisher_account).ocn/10**18))
@@ -103,8 +105,9 @@ print("Registered {} for {} OCN".format(asset_name, asset_price))
 # %% [markdown]
 # ## Section 5: Get Consumer account, ensure token balance
 #%%
-# consumer_account = get_account_from_config(config_from_ini, 'parity.address1', 'parity.password1')
-consumer_account = get_account(0)
+# Create account and get some ether so we can submit transactions
+consumer_account = create_account(faucet_url, wait=True)
+
 print("Consumer address: {}".format(consumer_account.address))
 print("Consumer   ETH: {:0.1f}".format(ocn.accounts.balance(consumer_account).eth/10**18))
 print("Consumer OCEAN: {:0.1f}".format(ocn.accounts.balance(consumer_account).ocn/10**18))

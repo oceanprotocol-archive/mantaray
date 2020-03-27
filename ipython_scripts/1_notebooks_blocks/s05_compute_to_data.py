@@ -34,7 +34,8 @@ from pathlib import Path
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
-from ocean_keeper.utils import get_account
+from mantaray_utilities.mantaray_utilities.misc import get_algorithm_example
+from mantaray_utilities.mantaray_utilities.user import request_ether, create_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.utils.utilities import get_timestamp
@@ -62,7 +63,10 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
-publisher_acct = get_account(0)
+faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
+
+# Create account and get some ether so we can submit transactions
+publisher_acct = create_account(faucet_url, wait=True)
 
 print("Publisher account address: {}".format(publisher_acct.address))
 print("Publisher account Testnet 'ETH' balance: {:>6.1f}".format(ocn.accounts.balance(publisher_acct).eth/10**18))
@@ -127,10 +131,8 @@ pprint("Compute service definition: \n{}".format(json.dumps(compute_service.as_d
 # Now let's run a python algorithm to do some analysis on this data
 # Load the algorithm from file
 # %%
-algorithm_path = os.path.expanduser('./assets/sample_algorithm.py')
-with open(algorithm_path) as f:
-    algorithm_text = f.read()
-
+algorithm_text = get_algorithm_example()
+print(f'algorithm: \n{algorithm_text}')
 # build the algorithm metadata object to use in the compute request
 algorithm_meta = AlgorithmMetadata(
     {
@@ -148,7 +150,12 @@ algorithm_meta = AlgorithmMetadata(
 # %% [markdown]
 # Now we can prepare for running the remote compute, first we need to start an agreement to buy the service
 # %%
-consumer_account = get_account(1)
+# Create account and get some ether so we can submit transactions
+consumer_account = create_account(faucet_url, wait=True)
+
+if ocn.accounts.balance(publisher_acct).ocn == 0:
+    ocn.accounts.request_tokens(publisher_acct, 100)
+
 # Create the service agreement for compute service, payment goes automatically
 agreement_id = ocn.compute.order(
     ddo.did,

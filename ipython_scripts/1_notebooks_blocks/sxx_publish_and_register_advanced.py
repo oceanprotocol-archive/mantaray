@@ -16,7 +16,7 @@ import logging
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
-from ocean_keeper.utils import get_account
+from mantaray_utilities.mantaray_utilities.user import create_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.did import did_to_id
@@ -47,8 +47,10 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 # Instantiate Ocean with the default configuration file.
 configuration = Config(CONFIG_INI_PATH)
 ocn = Ocean(configuration)
+faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
+
 # Get the publisher account
-publisher_acct = get_account(0)
+publisher_acct = create_account(faucet_url, wait=True)
 
 # %% [markdown]
 # Your account will need some Ocean Token to make real transactions

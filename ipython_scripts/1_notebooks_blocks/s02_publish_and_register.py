@@ -32,7 +32,7 @@ from time import sleep
 # Import mantaray and the Ocean API (squid)
 import random
 import squid_py
-from ocean_keeper.utils import get_account
+from mantaray_utilities.mantaray_utilities.user import create_account
 from ocean_keeper.web3_provider import Web3Provider
 from ocean_utils.did import did_to_id
 from squid_py.ocean.ocean import Ocean
@@ -61,6 +61,7 @@ logging.critical("Squid API version: {}".format(squid_py.__version__))
 configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
+faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
 
 # %% [markdown]
 # ### Section 1: A publisher account in Ocean
@@ -68,7 +69,7 @@ ocn = Ocean(configuration)
 #%%
 # Get a publisher account
 
-publisher_acct = get_account(0)
+publisher_acct = create_account(faucet_url, wait=True)
 
 #%%
 print("Publisher account address: {}".format(publisher_acct.address))

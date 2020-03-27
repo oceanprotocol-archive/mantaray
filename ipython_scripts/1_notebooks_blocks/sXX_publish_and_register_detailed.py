@@ -11,6 +11,7 @@ import sys
 import logging
 
 import squid_py
+from mantaray_utilities.mantaray_utilities.misc import get_ddo_example
 from ocean_keeper.utils import get_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_utils.agreements.service_types import ServiceTypes
@@ -50,9 +51,7 @@ template_id = ocn.keeper.template_manager.create_template_id(
 )
 
 #%%
-ddo_path = 'assets/ddo_example.json'
-with open(ddo_path) as f:
-    TEST_DDO = json.load(f)
+TEST_DDO = get_ddo_example()
 
 asset = DDO(dictionary=TEST_DDO)
 asset_price = 10

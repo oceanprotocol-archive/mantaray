@@ -22,7 +22,7 @@ from pathlib import Path
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
 import squid_py
-from ocean_keeper.utils import get_account
+from mantaray_utilities.mantaray_utilities.user import create_account
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 from mantaray_utilities import logging as manta_logging, config
@@ -48,16 +48,14 @@ configuration = Config(OCEAN_CONFIG_PATH)
 squid_py.ConfigProvider.set_config(configuration)
 ocn = Ocean(configuration)
 logging.critical("Ocean smart contract node connected ".format())
+faucet_url = ocn.config.get('keeper-contracts', 'faucet.url')
 
 # %% [markdown]
-# ## Section 3: A 'borrowed' user account
-# For the purposes of these tutorials, we will borrow one of the accounts to play with the test network. A simple
-# wrapper utility will return an account. The `get_account()` utility will select an account at random from Ocean.accounts.
-# This account will be matched with the corresponding password contained in the PASSWORD_PATH environment variable.
-# The PASSWORD_PATH file is a CSV of address,password lines.
+# ## Section 3: Create new user account and fill with some ether
 
 #%%
-selected_account = get_account(0)
+selected_account = create_account(faucet_url, wait=True)
+
 print("Selected account address:", selected_account.address)
 
 # %% [markdown]
