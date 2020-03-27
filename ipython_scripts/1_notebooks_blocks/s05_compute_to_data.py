@@ -35,7 +35,7 @@ from pathlib import Path
 # Import mantaray and the Ocean API (squid)
 import squid_py
 from mantaray_utilities.mantaray_utilities.misc import get_algorithm_example
-from mantaray_utilities.mantaray_utilities.user import request_ether, create_account
+from mantaray_utilities.mantaray_utilities.user import create_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.utils.utilities import get_timestamp

@@ -18,7 +18,7 @@ import time
 from pathlib import Path
 
 import web3
-from mantaray_utilities.mantaray_utilities.user import create_account, request_ether
+from mantaray_utilities.mantaray_utilities.user import create_account
 from ocean_keeper import Keeper
 from ocean_utils.agreements.service_types import ServiceTypes
 from squid_py import Ocean
