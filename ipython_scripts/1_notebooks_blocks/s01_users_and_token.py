@@ -22,7 +22,7 @@ from pathlib import Path
 # Import mantaray and the Ocean API (squid)
 # mantaray_utilities is an extra helper library to simulate interactions with the Ocean API.
 import squid_py
-from mantaray_utilities.mantaray_utilities.user import create_account
+from mantaray_utilities.user import create_account
 from squid_py.ocean.ocean import Ocean
 from squid_py.config import Config
 from mantaray_utilities import logging as manta_logging, config

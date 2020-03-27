@@ -16,7 +16,7 @@ import logging
 
 # Import mantaray and the Ocean API (squid)
 import squid_py
-from mantaray_utilities.mantaray_utilities.user import create_account
+from mantaray_utilities.user import create_account
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_utils.agreements.service_types import ServiceTypes
 from ocean_utils.did import did_to_id

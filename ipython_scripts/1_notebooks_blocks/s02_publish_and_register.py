@@ -32,7 +32,7 @@ from time import sleep
 # Import mantaray and the Ocean API (squid)
 import random
 import squid_py
-from mantaray_utilities.mantaray_utilities.user import create_account
+from mantaray_utilities.user import create_account
 from ocean_keeper.web3_provider import Web3Provider
 from ocean_utils.did import did_to_id
 from squid_py.ocean.ocean import Ocean
